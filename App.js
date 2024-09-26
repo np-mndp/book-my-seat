@@ -6,14 +6,16 @@ import RestaurantDetailScreen from "./screens/RestaurantDetailScreen";
 import SignupScreen from "./screens/SignupScreen";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
+import RestaurantListScreen from "./screens/RestaurantListScreen";
 
 const Stack = createStackNavigator();
 
 export default function App() {
+
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName="Login"
+        initialRouteName="Restaurant List"
         screenOptions={{
           headerStyle: {
             backgroundColor: "#009c5b",
@@ -56,6 +58,13 @@ export default function App() {
           //     </View>
           //   ),
           // })}
+        />
+        <Stack.Screen
+          name="Restaurant List"
+          component={RestaurantListScreen}
+          options={{
+            headerTitle: "",
+          }}
         />
       </Stack.Navigator>
     </NavigationContainer>
