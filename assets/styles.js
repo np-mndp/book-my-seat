@@ -73,7 +73,12 @@ const commonStyles = StyleSheet.create({
   goBack: {
     justifyContent: "flex-start",
     color: "#009c5b",
-    alignItems: "flex-start"
+    alignItems: "flex-start",
+  },
+  error: {
+    color: "red",
+    fontSize: 16,
+    marginBottom: 10,
   },
 });
 
