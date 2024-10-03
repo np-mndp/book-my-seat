@@ -1,16 +1,11 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-} from "react-native";
+import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import commonStyles from "../assets/styles";
 import FirestoreController from "../controllers/FirebaseController";
 
 const LoginScreen = ({ navigation }) => {
-  const [email, setEmail] = useState("owner@gmail.com");
-  const [password, setPassword] = useState("owner12345");
+  const [email, setEmail] = useState("johndoe@gmail.com");
+  const [password, setPassword] = useState("JohnDoe123");
   const [error, setError] = useState(null);
 
   const onLoginPressed = async () => {
@@ -19,8 +14,8 @@ const LoginScreen = ({ navigation }) => {
     } else {
       const firestoreController = FirestoreController.getInstance();
       const result = await firestoreController.login(email, password);
-      if (result.success) {
-        navigation.replace("Main"); // Navigate to the Main tab navigator
+      if (result?.success) {
+        navigation.replace("Restaurant List"); //
       } else {
         setError("Login failed. Please try again.");
       }
@@ -43,7 +38,7 @@ const LoginScreen = ({ navigation }) => {
           }}
           value={email}
           placeholder="email@mail.com"
-          keyboardType="email-address" 
+          keyboardType="email-address"
         />
         <Text style={commonStyles.label}>Password:</Text>
         <TextInput
@@ -56,10 +51,7 @@ const LoginScreen = ({ navigation }) => {
           secureTextEntry={true} // Corrected to boolean
           placeholder="Password"
         />
-        <TouchableOpacity
-          style={commonStyles.button}
-          onPress={onLoginPressed}
-        >
+        <TouchableOpacity style={commonStyles.button} onPress={onLoginPressed}>
           <Text style={commonStyles.buttonText}>Login</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate("Signup")}>
