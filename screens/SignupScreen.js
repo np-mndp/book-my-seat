@@ -30,7 +30,7 @@ const SignupScreen = ({navigation}) => {
           style={commonStyles.button}
           onPress={() => navigation.goBack()}
         >
-          <Text style={commonStyles.buttonText}>Login</Text>
+          <Text style={commonStyles.buttonText}>Register</Text>
         </TouchableOpacity>
         <Text style={commonStyles.goBack}>Back to Sign in</Text>
       </View>

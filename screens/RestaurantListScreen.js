@@ -15,7 +15,7 @@ const RestaurantListScreen = () => {
   const [restaurants, setRestaurants] = useState([
     {
       id: 1,
-      thumbnail: "https://via.placeholder.com/100",
+      thumbnail: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=3174&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       title: "Restaurant 1",
       address: "123 Main St, Anytown, USA",
       rating: 4.5,
@@ -23,7 +23,7 @@ const RestaurantListScreen = () => {
     },
     {
       id: 2,
-      thumbnail: "https://via.placeholder.com/100",
+      thumbnail: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=3174&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       title: "Restaurant 2",
       address: "456 Elm St, Othertown, USA",
       rating: 4.2,
@@ -31,7 +31,7 @@ const RestaurantListScreen = () => {
     },
     {
       id: 3,
-      thumbnail: "https://via.placeholder.com/100",
+      thumbnail: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=3174&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       title: "Restaurant 3",
       address: "789 Oak St, Thistown, USA",
       rating: 4.8,
@@ -39,7 +39,7 @@ const RestaurantListScreen = () => {
     },
     {
       id: 4,
-      thumbnail: "https://via.placeholder.com/100",
+      thumbnail: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=3174&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       title: "Restaurant 4",
       address: "123 Main St, Anytown, USA",
       rating: 4.5,
@@ -47,7 +47,7 @@ const RestaurantListScreen = () => {
     },
     {
       id: 5,
-      thumbnail: "https://via.placeholder.com/100",
+      thumbnail: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=3174&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       title: "Restaurant 5",
       address: "456 Elm St, Othertown, USA",
       rating: 4.2,
@@ -55,7 +55,7 @@ const RestaurantListScreen = () => {
     },
     {
       id: 6,
-      thumbnail: "https://via.placeholder.com/100",
+      thumbnail: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=3174&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       title: "Restaurant 6",
       address: "789 Oak St, Thistown, USA",
       rating: 4.8,
@@ -63,7 +63,7 @@ const RestaurantListScreen = () => {
     },
     {
       id: 7,
-      thumbnail: "https://via.placeholder.com/100",
+      thumbnail: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=3174&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       title: "Restaurant 7",
       address: "123 Main St, Anytown, USA",
       rating: 4.5,
@@ -71,7 +71,7 @@ const RestaurantListScreen = () => {
     },
     {
       id: 8,
-      thumbnail: "https://via.placeholder.com/100",
+      thumbnail: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=3174&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       title: "Restaurant 8",
       address: "456 Elm St, Othertown, USA",
       rating: 4.2,
@@ -79,7 +79,7 @@ const RestaurantListScreen = () => {
     },
     {
       id: 9,
-      thumbnail: "https://via.placeholder.com/100",
+      thumbnail: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=3174&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       title: "Restaurant 9",
       address: "789 Oak St, Thistown, USA",
       rating: 4.8,
