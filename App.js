@@ -8,7 +8,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import RestaurantListScreen from "./screens/RestaurantListScreen";
 import HomeScreen from "./screens/HomeScreen";
-
+//test
 const Stack = createStackNavigator();
 
 export default function App() {
