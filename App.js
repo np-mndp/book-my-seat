@@ -7,15 +7,15 @@ import SignupScreen from "./screens/SignupScreen";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import RestaurantListScreen from "./screens/RestaurantListScreen";
+import HomeScreen from "./screens/HomeScreen";
 
 const Stack = createStackNavigator();
 
 export default function App() {
-
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName="Login"
+        initialRouteName="Home" // Set HomeScreen as the initial route
         screenOptions={{
           headerStyle: {
             backgroundColor: "#009c5b",
@@ -26,6 +26,16 @@ export default function App() {
           },
         }}
       >
+        {/* Home Screen */}
+        <Stack.Screen
+          name="Home"
+          component={HomeScreen}
+          options={{
+            headerTitle: "", // Hide the header title for this screen
+          }}
+        />
+        
+        {/* Other Screens */}
         <Stack.Screen
           name="Login"
           component={LoginScreen}
@@ -39,25 +49,6 @@ export default function App() {
           options={{
             headerTitle: "",
           }}
-          // options={({ navigation }) => ({
-          //   headerShown: true,
-          //   headerRight: () => (
-          //     <View>
-          //       <Pressable
-          //         onPress={() =>
-          //           setVisibility((prevVisibility) =>
-          //             prevVisibility === "none" ? "flex" : "none"
-          //           )
-          //         }
-          //       >
-          //         <Ionicons name="menu-outline" color="white" size={32} />
-          //       </Pressable>
-          //       <View style={{ display: visibility }}>
-          //         <FloatingMenu navigation={navigation} setVisibility={setVisibility} />
-          //       </View>
-          //     </View>
-          //   ),
-          // })}
         />
         <Stack.Screen
           name="Restaurant List"
@@ -68,13 +59,5 @@ export default function App() {
         />
       </Stack.Navigator>
     </NavigationContainer>
-    // <View style={styles.container}>
-    //   <Text>Open up App.js to start working on your app!</Text>
-    //   <StatusBar style="auto" />
-    // </View>
-
-    // <LoginScreen></LoginScreen>
-
-    // <RestaurantDetailScreen />
   );
 }
