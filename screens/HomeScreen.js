@@ -22,7 +22,7 @@ const HomeScreen = () => {
         <Text style={styles.headerText}>SEAT</Text>
         <Text style={styles.headerText}>for any occasion!</Text>
       </View>
-
+      
       {/* Search Bar */}
       <View style={styles.searchContainer}>
         <MaterialCommunityIcons name="magnify" size={24} color="#666" />
