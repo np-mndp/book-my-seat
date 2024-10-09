@@ -2,23 +2,28 @@ import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import commonStyles from "../assets/styles";
 import FirestoreController from "../controllers/FirebaseController";
+import { useDispatch } from "react-redux";
+import { loginUser } from "../actions/authActions";
 
 const LoginScreen = ({ navigation }) => {
-  const [email, setEmail] = useState("johndoe@gmail.com");
-  const [password, setPassword] = useState("JohnDoe123");
+  const [email, setEmail] = useState("mandeep@gmail.com");
+  const [password, setPassword] = useState("Mandeep1234*");
   const [error, setError] = useState(null);
+  const dispatch = useDispatch();
 
   const onLoginPressed = async () => {
     if (!(email.length >= 7) || !(password.length >= 8)) {
       setError("Please enter a valid email and password");
     } else {
-      const firestoreController = FirestoreController.getInstance();
-      const result = await firestoreController.login(email, password);
-      if (result?.success) {
-        navigation.replace("Restaurant List"); //
-      } else {
-        setError("Login failed. Please try again.");
-      }
+      // const firestoreController = FirestoreController.getInstance();
+      // const result = await firestoreController.login(email, password);
+      // if (result?.success) {
+      //   navigation.replace("Home"); //
+      // } else {
+      //   setError("Login failed. Please try again.");
+      // }
+      let result = dispatch(loginUser(email, password));
+      result && navigation.replace("Home");
     }
   };
 

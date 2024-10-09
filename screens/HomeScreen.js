@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   View,
   Text,
@@ -6,13 +6,17 @@ import {
   TouchableOpacity,
   Image,
   StyleSheet,
-  ScrollView
-} from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native'; // Import useNavigation
+  ScrollView,
+} from "react-native";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native"; // Import useNavigation
+import { useSelector } from "react-redux";
 
 const HomeScreen = () => {
   const navigation = useNavigation(); // Initialize navigation
+  const { user, token } = useSelector((state) => state.auth);
+
+  console.log({ "From Home page": { user, token } });
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -53,7 +57,7 @@ const HomeScreen = () => {
         <Text style={styles.recommendationTitle}>You might like...</Text>
         <Image
           source={{
-            uri: 'https://via.placeholder.com/200',
+            uri: "https://via.placeholder.com/200",
           }}
           style={styles.restaurantImage}
         />
@@ -63,7 +67,7 @@ const HomeScreen = () => {
       {/* See More Button */}
       <TouchableOpacity
         style={styles.button}
-        onPress={() => navigation.navigate('Restaurant List')} // Navigate to Restaurant List
+        onPress={() => navigation.navigate("Restaurant List")} // Navigate to Restaurant List
       >
         <Text style={styles.buttonText}>See More</Text>
       </TouchableOpacity>
@@ -74,27 +78,27 @@ const HomeScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    backgroundColor: '#f9f9f9',
+    backgroundColor: "#f9f9f9",
     padding: 16,
   },
   header: {
-    backgroundColor: '#DFF3E3',
+    backgroundColor: "#DFF3E3",
     padding: 16,
     borderRadius: 10,
     marginBottom: 16,
   },
   headerText: {
     fontSize: 24,
-    fontWeight: 'bold',
-    color: '#009c5b',
+    fontWeight: "bold",
+    color: "#009c5b",
   },
   searchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#fff',
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#fff",
     padding: 10,
     borderRadius: 25,
-    borderColor: '#ddd',
+    borderColor: "#ddd",
     borderWidth: 1,
     marginBottom: 20,
   },
@@ -104,20 +108,20 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   categories: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
+    flexDirection: "row",
+    justifyContent: "space-around",
     marginBottom: 20,
   },
   categoryItem: {
-    alignItems: 'center',
+    alignItems: "center",
   },
   recommendation: {
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: 20,
   },
   recommendationTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 10,
   },
   restaurantImage: {
@@ -128,19 +132,19 @@ const styles = StyleSheet.create({
   },
   restaurantName: {
     fontSize: 16,
-    fontWeight: 'bold',
-    color: '#009c5b',
+    fontWeight: "bold",
+    color: "#009c5b",
   },
   button: {
-    backgroundColor: '#009c5b',
+    backgroundColor: "#009c5b",
     padding: 16,
     borderRadius: 25,
-    alignItems: 'center',
+    alignItems: "center",
   },
   buttonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
 });
 
