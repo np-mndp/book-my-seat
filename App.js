@@ -8,6 +8,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import RestaurantListScreen from "./screens/RestaurantListScreen";
 import HomeScreen from "./screens/HomeScreen";
+import ForgotPasswordScreen from "./screens/ForgotPasswordScreen";
 //test
 const Stack = createStackNavigator();
 
@@ -15,7 +16,7 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName="Home" // Set HomeScreen as the initial route
+        initialRouteName="Login" // Set HomeScreen as the initial route
         screenOptions={{
           headerStyle: {
             backgroundColor: "#009c5b",
@@ -28,24 +29,33 @@ export default function App() {
       >
         {/* Home Screen */}
         <Stack.Screen
-          name="Home"
-          component={HomeScreen}
-          options={{
-            headerTitle: "", // Hide the header title for this screen
-          }}
-        />
-        
-        {/* Other Screens */}
-        <Stack.Screen
           name="Login"
           component={LoginScreen}
           options={{
             headerTitle: "",
           }}
         />
+
+        
+        {/* Other Screens */}
+        <Stack.Screen
+          name="Home"
+          component={HomeScreen}
+          options={{
+            headerTitle: "", // Hide the header title for this screen
+          }}
+        />
+       
         <Stack.Screen
           name="Signup"
           component={SignupScreen}
+          options={{
+            headerTitle: "",
+          }}
+        />
+        <Stack.Screen
+          name="ForgotPassword"
+          component={ForgotPasswordScreen}
           options={{
             headerTitle: "",
           }}

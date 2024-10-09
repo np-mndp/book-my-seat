@@ -8,20 +8,29 @@ const commonStyles = StyleSheet.create({
     flexDirection: "column",
     alignItems: "center",
     backgroundColor: "#FFF",
+    padding: 20,
+
   },
   hero: {
-    // flex: 1,
     justifyContent: "center",
     alignItems: "center",
+   
   },
   heroText: {
-    fontSize: 70,
+    fontSize: 32,
     color: "#000",
     fontWeight: "bold",
+    textAlign: "center",
+   
+  },
+  chairImage:{
+    marginTop:10,
+    width:120,
+    height:120,
   },
   logo: {
     fontWeight: "bold",
-    fontSize: 150,
+    fontSize: 120,
     resizeMode: "contain",
   },
   formContainer: {
@@ -31,15 +40,16 @@ const commonStyles = StyleSheet.create({
     width: "100%",
     justifyContent: "center",
     alignItems: "center",
+    marginBottom:90,
   },
   input: {
-    height: 40,
-    width: "80%",
+    height: 50,
+    width: "100%",
     borderColor: "#ccc",
     borderWidth: 1,
-    paddingHorizontal: 10,
+    paddingHorizontal: 15,
     paddingVertical: 10,
-    marginBottom: 5,
+    marginBottom: 10,
     borderRadius: 10,
     backgroundColor: "#fff",
     // Elevation property for Android
@@ -47,29 +57,29 @@ const commonStyles = StyleSheet.create({
   },
   button: {
     backgroundColor: "#009c5b",
-    width: "80%",
+    width: "100%",
     padding: 10,
     marginTop: 25,
-    borderRadius: 5,
+    borderRadius: 10,
     alignItems: "center",
     // Elevation property for Android
     elevation: 10, // The higher the value, the stronger the shadow
   },
   buttonText: {
     color: "#fff",
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: "bold",
   },
   label: {
-    fontSize: 16,
-    color: "#000",
-    marginBottom: 5,
+    fontSize: 13,
+    color: "#333",
+    marginBottom: 15,
     textAlign: "left",
     alignSelf: "flex-start",
-    paddingLeft: "10%",
+    paddingLeft: "2%",
     fontFamily: "monospace",
-    color: "#0F0F0F",
   },
+
   goBack: {
     justifyContent: "flex-start",
     color: "#009c5b",
@@ -77,9 +87,32 @@ const commonStyles = StyleSheet.create({
   },
   error: {
     color: "red",
-    fontSize: 16,
     marginBottom: 10,
+    alignItems: "flex-start",
+    fontSize: 15,
+
   },
+  successMessage: {
+    color: "green",
+    marginBottom: 10,
+    alignItems: "flex-start",
+    fontSize: 15,
+
+  },
+  newAcct:{
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop:40
+  },
+  createAccount:{
+    color: "#009c5b",
+  },
+
+  forgotPassword:{
+    alignSelf: "flex-end",
+    color: "#009c5b",
+    marginTop: 10,
+  }
 });
 
 export default commonStyles;
