@@ -12,8 +12,10 @@ import {
 // import { MaterialCommunityIcons } from "@expo/vector-icons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { useNavigation } from '@react-navigation/native';
 
 const RestaurantListScreen = () => {
+  const navigation = useNavigation(); // Initialize navigation
   const [searchQuery, setSearchQuery] = useState("");
   const [restaurants, setRestaurants] = useState([
     {
@@ -256,8 +258,7 @@ const [originalRestaurants, setOriginalRestaurants] = useState([
   const listItem = (item) => {
     return (
       <TouchableOpacity
-        onPress={() => console.log(`Restaurant ${item.title} pressed`)}
-      >
+      onPress={() => navigation.navigate('RestaurantDetail', { restaurantData: item })} >
         <View style={styles.restaurantItem}>
         <Image source={{ uri: item.thumbnail }} style={styles.thumbnail} />
 

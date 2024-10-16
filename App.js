@@ -9,6 +9,7 @@ import HomeScreen from "./screens/HomeScreen";
 import { Provider } from "react-redux";
 import store, { persistor } from "./configs/Store";
 import { PersistGate } from "redux-persist/integration/react";
+import MapViewScreen from "./screens/MapViewScreen";
 //test
 const Stack = createStackNavigator();
 
@@ -56,6 +57,20 @@ export default function App() {
             <Stack.Screen
               name="Restaurant List"
               component={RestaurantListScreen}
+              options={{
+                headerTitle: "",
+              }}
+            />
+            <Stack.Screen
+              name="RestaurantDetail"
+              component={RestaurantDetailScreen}
+              options={{
+                headerTitle: "",
+              }}
+            />
+            <Stack.Screen
+              name="MapView"
+              component={MapViewScreen}
               options={{
                 headerTitle: "",
               }}
