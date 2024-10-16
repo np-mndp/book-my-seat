@@ -34,7 +34,7 @@ yarn-error.*
 # typescript
 *.tsbuildinfo
 
-#prebuild
+# prebuild
 android/
 ios/
 
