@@ -8,35 +8,44 @@ import {
   StyleSheet,
   ScrollView,
 } from "react-native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native"; // Import useNavigation
-import { useSelector } from "react-redux";
+import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
+import { useSelector, useDispatch } from "react-redux";
+import { logout } from "../actions/authActions";
 
 const HomeScreen = () => {
-  const navigation = useNavigation(); // Initialize navigation
+  const navigation = useNavigation(); 
+  const dispatch = useDispatch();
   const { user, token } = useSelector((state) => state.auth);
 
-  console.log({ "From Home page": { user, token } });
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigation.navigate("LoginScreen"); // Navigate to login after logging out
+  };
+
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      {/* Header */}
       <View style={styles.header}>
+        <TouchableOpacity onPress={handleLogout} style={styles.hamburgerMenu}>
+          <MaterialIcons name="menu" size={28} color="#009c5b" />
+        </TouchableOpacity>
         <Text style={styles.headerText}>Find your</Text>
         <Text style={styles.headerText}>SEAT</Text>
         <Text style={styles.headerText}>for any occasion!</Text>
       </View>
-      
-      {/* Search Bar */}
+
       <View style={styles.searchContainer}>
         <MaterialCommunityIcons name="magnify" size={24} color="#666" />
         <TextInput
           placeholder="Restaurants and Menus"
+          placeholderTextColor="#009c5b"
           style={styles.searchInput}
         />
       </View>
 
-      {/* Categories */}
+
       <View style={styles.categories}>
         <View style={styles.categoryItem}>
           <MaterialCommunityIcons name="coffee" size={40} color="#333" />
@@ -52,7 +61,6 @@ const HomeScreen = () => {
         </View>
       </View>
 
-      {/* You might like Section */}
       <View style={styles.recommendation}>
         <Text style={styles.recommendationTitle}>You might like...</Text>
         <Image
@@ -64,7 +72,7 @@ const HomeScreen = () => {
         <Text style={styles.restaurantName}>THE GOOD SON'S CAFE AND BAR</Text>
       </View>
 
-      {/* See More Button */}
+  
       <TouchableOpacity
         style={styles.button}
         onPress={() => navigation.navigate("Restaurant List")} // Navigate to Restaurant List
@@ -83,14 +91,23 @@ const styles = StyleSheet.create({
   },
   header: {
     backgroundColor: "#DFF3E3",
-    padding: 16,
-    borderRadius: 10,
-    marginBottom: 16,
+    padding: 50,
+    borderRadius: 20,
+    marginBottom: 30,
+    position: "relative",
   },
   headerText: {
     fontSize: 24,
     fontWeight: "bold",
+    top: 5,
+    right:30,
     color: "#009c5b",
+  },
+  hamburgerMenu: {
+    position: "absolute",
+   
+    left: 16,
+    top:10
   },
   searchContainer: {
     flexDirection: "row",
@@ -106,6 +123,8 @@ const styles = StyleSheet.create({
     marginLeft: 8,
     flex: 1,
     fontSize: 16,
+    
+    
   },
   categories: {
     flexDirection: "row",
