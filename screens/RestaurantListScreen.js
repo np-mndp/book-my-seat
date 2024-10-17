@@ -11,179 +11,36 @@ import {
 } from "react-native";
 // import { MaterialCommunityIcons } from "@expo/vector-icons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import FontAwesome from '@expo/vector-icons/FontAwesome';
+import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { API_URL } from "../configs/Constants";
 
-const RestaurantListScreen = () => {
+const RestaurantListScreen = ({navigation}) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [restaurants, setRestaurants] = useState([
     {
       id: 1,
-      thumbnail:
+      images: [
         "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=3174&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      ],
+      title: "Restaurant 1",
+      location: { address: "123 Main St, Anytown, USA" },
+      rating: 4.5,
+      expensiveness: "$$",
+    },
+  ]);
+
+  const [originalRestaurants, setOriginalRestaurants] = useState([
+    {
+      id: 1,
+      images: [
+        "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=3174&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      ],
       title: "Restaurant 1",
       address: "123 Main St, Anytown, USA",
       rating: 4.5,
       expensiveness: "$$",
     },
-    {
-      id: 2,
-      thumbnail:
-        "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=3174&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      title: "Restaurant 2",
-      address: "456 Elm St, Othertown, USA",
-      rating: 4.2,
-      expensiveness: "$",
-    },
-    {
-      id: 3,
-      thumbnail:
-        "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=3174&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      title: "Restaurant 3",
-      address: "789 Oak St, Thistown, USA",
-      rating: 4.8,
-      expensiveness: "$$$",
-    },
-    {
-      id: 4,
-      thumbnail:
-        "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=3174&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      title: "Restaurant 4",
-      address: "123 Main St, Anytown, USA",
-      rating: 4.5,
-      expensiveness: "$$",
-    },
-    {
-      id: 5,
-      thumbnail:
-        "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=3174&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      title: "Restaurant 5",
-      address: "456 Elm St, Othertown, USA",
-      rating: 4.2,
-      expensiveness: "$",
-    },
-    {
-      id: 6,
-      thumbnail:
-        "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=3174&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      title: "Restaurant 6",
-      address: "789 Oak St, Thistown, USA",
-      rating: 4.8,
-      expensiveness: "$$$",
-    },
-    {
-      id: 7,
-      thumbnail:
-        "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=3174&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      title: "Restaurant 7",
-      address: "123 Main St, Anytown, USA",
-      rating: 4.5,
-      expensiveness: "$$",
-    },
-    {
-      id: 8,
-      thumbnail:
-        "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=3174&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      title: "Restaurant 8",
-      address: "456 Elm St, Othertown, USA",
-      rating: 4.2,
-      expensiveness: "$",
-    },
-    {
-      id: 9,
-      thumbnail:
-        "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=3174&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      title: "Restaurant 9",
-      address: "789 Oak St, Thistown, USA",
-      rating: 4.8,
-      expensiveness: "$$$",
-    },
-    // Add more restaurants here...
   ]);
-
-const [originalRestaurants, setOriginalRestaurants] = useState([
-  {
-    id: 1,
-    thumbnail:
-      "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=3174&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    title: "Restaurant 1",
-    address: "123 Main St, Anytown, USA",
-    rating: 4.5,
-    expensiveness: "$$",
-  },
-  {
-    id: 2,
-    thumbnail:
-      "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=3174&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    title: "Restaurant 2",
-    address: "456 Elm St, Othertown, USA",
-    rating: 4.2,
-    expensiveness: "$",
-  },
-  {
-    id: 3,
-    thumbnail:
-      "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=3174&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    title: "Restaurant 3",
-    address: "789 Oak St, Thistown, USA",
-    rating: 4.8,
-    expensiveness: "$$$",
-  },
-  {
-    id: 4,
-    thumbnail:
-      "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=3174&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    title: "Restaurant 4",
-    address: "123 Main St, Anytown, USA",
-    rating: 4.5,
-    expensiveness: "$$",
-  },
-  {
-    id: 5,
-    thumbnail:
-      "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=3174&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    title: "Restaurant 5",
-    address: "456 Elm St, Othertown, USA",
-    rating: 4.2,
-    expensiveness: "$",
-  },
-  {
-    id: 6,
-    thumbnail:
-      "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=3174&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    title: "Restaurant 6",
-    address: "789 Oak St, Thistown, USA",
-    rating: 4.8,
-    expensiveness: "$$$",
-  },
-  {
-    id: 7,
-    thumbnail:
-      "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=3174&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    title: "Restaurant 7",
-    address: "123 Main St, Anytown, USA",
-    rating: 4.5,
-    expensiveness: "$$",
-  },
-  {
-    id: 8,
-    thumbnail:
-      "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=3174&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    title: "Restaurant 8",
-    address: "456 Elm St, Othertown, USA",
-    rating: 4.2,
-    expensiveness: "$",
-  },
-  {
-    id: 9,
-    thumbnail:
-      "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=3174&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    title: "Restaurant 9",
-    address: "789 Oak St, Thistown, USA",
-    rating: 4.8,
-    expensiveness: "$$$",
-  },
-]);
-
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -191,7 +48,6 @@ const [originalRestaurants, setOriginalRestaurants] = useState([
   const [location, setLocation] = useState(null);
 
   useEffect(() => {
-
     const fetchWithTimeout = (url, options, timeout = 5000) => {
       return Promise.race([
         fetch(url, options),
@@ -200,20 +56,20 @@ const [originalRestaurants, setOriginalRestaurants] = useState([
         ),
       ]);
     };
-  
+
     const fetchData = async () => {
       try {
         let params = new URLSearchParams({
           lat: 43.676022,
           lng: -79.411049,
         });
-  
+
         const response = await fetchWithTimeout(
-          `http://192.168.2.1:3000/api/restaurants?${params}`,
+          `${API_URL}/api/restaurants?${params}`,
           { method: "GET" },
           5000 // Timeout set to 5000ms (5 seconds)
         );
-  
+
         if (response.ok) {
           const json = await response.json();
           setRestaurants(json.length > 0 ? json : restaurants);
@@ -227,11 +83,10 @@ const [originalRestaurants, setOriginalRestaurants] = useState([
         setLoading(false); // Stop loading after fetching
       }
     };
-  
+
     // Call the fetch function
     fetchData();
   }, []);
-  
 
   if (loading) {
     return <ActivityIndicator size="large" color="#0000ff" />;
@@ -256,28 +111,26 @@ const [originalRestaurants, setOriginalRestaurants] = useState([
   const listItem = (item) => {
     return (
       <TouchableOpacity
-        onPress={() => console.log(`Restaurant ${item.title} pressed`)}
+        onPress={() =>
+          navigation.navigate("Restaurant Details", { restaurantData: item })
+        }
       >
         <View style={styles.restaurantItem}>
-        <Image source={{ uri: item.thumbnail }} style={styles.thumbnail} />
+          <Image source={{ uri: item.images[0] }} style={styles.thumbnail} />
 
           <View style={styles.restaurantInfo}>
             <Text style={[styles.title, styles.primaryColor]}>
               {item.title}
             </Text>
             <View style={styles.addressContainer}>
-              <MaterialIcons
-                name="location-pin"
-                size={16}
-                color="#cb4539"
-              />
-              <Text style={styles.address}>{item.address}</Text>
+              <MaterialIcons name="location-pin" size={16} color="#cb4539" />
+              <Text style={styles.address}>{item.location.address}</Text>
             </View>
             <View style={styles.ratingContainer}>
               {/* <MaterialIcons name="dollar-sign" size={16} color="#FFD700" /> */}
               <FontAwesome name="dollar" size={15} color="black" />
               <Text style={styles.rating}>{item.expensiveRating}</Text>
-            
+
               {/* <Text style={styles.expensiveness}>{item.expensiveRating}</Text> */}
             </View>
           </View>

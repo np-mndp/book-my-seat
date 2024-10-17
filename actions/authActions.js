@@ -1,5 +1,5 @@
+import { API_URL } from "../configs/Constants";
 import { setUserData } from "../reducers/authReducer";
-import Constants from "expo-constants";
 
 export const loginUser = (email, password) => async (dispatch) => {
   try {
@@ -9,7 +9,7 @@ export const loginUser = (email, password) => async (dispatch) => {
       API_URL: "Constants.extras.API_URL",
     });
 
-    const response = await fetch(`http://192.168.2.1:3000/api/user/login`, {
+    const response = await fetch(`${API_URL}/api/user/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
