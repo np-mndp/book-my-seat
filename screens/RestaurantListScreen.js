@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -7,15 +7,19 @@ import {
   Image,
   StyleSheet,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+// import { MaterialCommunityIcons } from "@expo/vector-icons";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import FontAwesome from '@expo/vector-icons/FontAwesome';
 
 const RestaurantListScreen = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [restaurants, setRestaurants] = useState([
     {
       id: 1,
-      thumbnail: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=3174&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      thumbnail:
+        "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=3174&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       title: "Restaurant 1",
       address: "123 Main St, Anytown, USA",
       rating: 4.5,
@@ -23,7 +27,8 @@ const RestaurantListScreen = () => {
     },
     {
       id: 2,
-      thumbnail: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=3174&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      thumbnail:
+        "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=3174&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       title: "Restaurant 2",
       address: "456 Elm St, Othertown, USA",
       rating: 4.2,
@@ -31,7 +36,8 @@ const RestaurantListScreen = () => {
     },
     {
       id: 3,
-      thumbnail: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=3174&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      thumbnail:
+        "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=3174&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       title: "Restaurant 3",
       address: "789 Oak St, Thistown, USA",
       rating: 4.8,
@@ -39,7 +45,8 @@ const RestaurantListScreen = () => {
     },
     {
       id: 4,
-      thumbnail: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=3174&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      thumbnail:
+        "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=3174&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       title: "Restaurant 4",
       address: "123 Main St, Anytown, USA",
       rating: 4.5,
@@ -47,7 +54,8 @@ const RestaurantListScreen = () => {
     },
     {
       id: 5,
-      thumbnail: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=3174&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      thumbnail:
+        "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=3174&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       title: "Restaurant 5",
       address: "456 Elm St, Othertown, USA",
       rating: 4.2,
@@ -55,7 +63,8 @@ const RestaurantListScreen = () => {
     },
     {
       id: 6,
-      thumbnail: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=3174&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      thumbnail:
+        "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=3174&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       title: "Restaurant 6",
       address: "789 Oak St, Thistown, USA",
       rating: 4.8,
@@ -63,7 +72,8 @@ const RestaurantListScreen = () => {
     },
     {
       id: 7,
-      thumbnail: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=3174&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      thumbnail:
+        "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=3174&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       title: "Restaurant 7",
       address: "123 Main St, Anytown, USA",
       rating: 4.5,
@@ -71,7 +81,8 @@ const RestaurantListScreen = () => {
     },
     {
       id: 8,
-      thumbnail: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=3174&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      thumbnail:
+        "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=3174&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       title: "Restaurant 8",
       address: "456 Elm St, Othertown, USA",
       rating: 4.2,
@@ -79,7 +90,8 @@ const RestaurantListScreen = () => {
     },
     {
       id: 9,
-      thumbnail: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=3174&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      thumbnail:
+        "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=3174&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       title: "Restaurant 9",
       address: "789 Oak St, Thistown, USA",
       rating: 4.8,
@@ -88,35 +100,185 @@ const RestaurantListScreen = () => {
     // Add more restaurants here...
   ]);
 
+const [originalRestaurants, setOriginalRestaurants] = useState([
+  {
+    id: 1,
+    thumbnail:
+      "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=3174&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    title: "Restaurant 1",
+    address: "123 Main St, Anytown, USA",
+    rating: 4.5,
+    expensiveness: "$$",
+  },
+  {
+    id: 2,
+    thumbnail:
+      "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=3174&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    title: "Restaurant 2",
+    address: "456 Elm St, Othertown, USA",
+    rating: 4.2,
+    expensiveness: "$",
+  },
+  {
+    id: 3,
+    thumbnail:
+      "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=3174&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    title: "Restaurant 3",
+    address: "789 Oak St, Thistown, USA",
+    rating: 4.8,
+    expensiveness: "$$$",
+  },
+  {
+    id: 4,
+    thumbnail:
+      "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=3174&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    title: "Restaurant 4",
+    address: "123 Main St, Anytown, USA",
+    rating: 4.5,
+    expensiveness: "$$",
+  },
+  {
+    id: 5,
+    thumbnail:
+      "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=3174&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    title: "Restaurant 5",
+    address: "456 Elm St, Othertown, USA",
+    rating: 4.2,
+    expensiveness: "$",
+  },
+  {
+    id: 6,
+    thumbnail:
+      "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=3174&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    title: "Restaurant 6",
+    address: "789 Oak St, Thistown, USA",
+    rating: 4.8,
+    expensiveness: "$$$",
+  },
+  {
+    id: 7,
+    thumbnail:
+      "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=3174&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    title: "Restaurant 7",
+    address: "123 Main St, Anytown, USA",
+    rating: 4.5,
+    expensiveness: "$$",
+  },
+  {
+    id: 8,
+    thumbnail:
+      "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=3174&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    title: "Restaurant 8",
+    address: "456 Elm St, Othertown, USA",
+    rating: 4.2,
+    expensiveness: "$",
+  },
+  {
+    id: 9,
+    thumbnail:
+      "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=3174&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    title: "Restaurant 9",
+    address: "789 Oak St, Thistown, USA",
+    rating: 4.8,
+    expensiveness: "$$$",
+  },
+]);
+
+
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const [location, setLocation] = useState(null);
+
+  useEffect(() => {
+
+    const fetchWithTimeout = (url, options, timeout = 5000) => {
+      return Promise.race([
+        fetch(url, options),
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Request timed out")), timeout)
+        ),
+      ]);
+    };
+  
+    const fetchData = async () => {
+      try {
+        let params = new URLSearchParams({
+          lat: 43.676022,
+          lng: -79.411049,
+        });
+  
+        const response = await fetchWithTimeout(
+          `http://192.168.2.1:3000/api/restaurants?${params}`,
+          { method: "GET" },
+          5000 // Timeout set to 5000ms (5 seconds)
+        );
+  
+        if (response.ok) {
+          const json = await response.json();
+          setRestaurants(json.length > 0 ? json : restaurants);
+        } else {
+          throw new Error("Failed to fetch"); // Handle server errors
+        }
+      } catch (error) {
+        console.error("Error:", error.message);
+        setRestaurants(restaurants); // Use fallback data in case of an error
+      } finally {
+        setLoading(false); // Stop loading after fetching
+      }
+    };
+  
+    // Call the fetch function
+    fetchData();
+  }, []);
+  
+
+  if (loading) {
+    return <ActivityIndicator size="large" color="#0000ff" />;
+  }
+
+  if (error) {
+    return <Text>Error: {error.message}</Text>;
+  }
+
   const handleSearch = (query) => {
     setSearchQuery(query);
-    const filteredRestaurants = restaurants.filter((restaurant) =>
-      restaurant.title.toLowerCase().includes(query.toLowerCase())
-    );
-    setRestaurants(filteredRestaurants);
+    if (query.length !== 0) {
+      const filteredRestaurants = originalRestaurants.filter((restaurant) =>
+        restaurant.title.toLowerCase().includes(query.toLowerCase())
+      );
+      setRestaurants(filteredRestaurants);
+    } else {
+      setRestaurants(originalRestaurants); // Reset to the full list when the query is empty
+    }
   };
 
   const listItem = (item) => {
     return (
-      <TouchableOpacity onPress={()=>console.log(`Restaurant ${item.title} pressed`)}>
+      <TouchableOpacity
+        onPress={() => console.log(`Restaurant ${item.title} pressed`)}
+      >
         <View style={styles.restaurantItem}>
-          <Image source={{ uri: item.thumbnail }} style={styles.thumbnail} />
+        <Image source={{ uri: item.thumbnail }} style={styles.thumbnail} />
+
           <View style={styles.restaurantInfo}>
             <Text style={[styles.title, styles.primaryColor]}>
               {item.title}
             </Text>
             <View style={styles.addressContainer}>
-              <MaterialCommunityIcons
-                name="map-marker"
+              <MaterialIcons
+                name="location-pin"
                 size={16}
-                color="#666"
+                color="#cb4539"
               />
               <Text style={styles.address}>{item.address}</Text>
             </View>
             <View style={styles.ratingContainer}>
-              <MaterialCommunityIcons name="star" size={16} color="#FFD700" />
-              <Text style={styles.rating}>{item.rating}</Text>
-              <Text style={styles.expensiveness}>{item.expensiveness}</Text>
+              {/* <MaterialIcons name="dollar-sign" size={16} color="#FFD700" /> */}
+              <FontAwesome name="dollar" size={15} color="black" />
+              <Text style={styles.rating}>{item.expensiveRating}</Text>
+            
+              {/* <Text style={styles.expensiveness}>{item.expensiveRating}</Text> */}
             </View>
           </View>
         </View>
@@ -134,6 +296,9 @@ const RestaurantListScreen = () => {
           style={styles.searchInput}
         />
       </View>
+      <TouchableOpacity style={styles.myLocation} onPress={() => {}}>
+        <MaterialIcons name="my-location" size={24} color="black" />
+      </TouchableOpacity>
       <FlatList
         data={restaurants}
         renderItem={({ item }) => listItem(item)}
@@ -218,6 +383,16 @@ const styles = StyleSheet.create({
   },
   primaryColor: {
     color: "#009c5b",
+  },
+  myLocation: {
+    // position: 'absolute',
+    // bottom: 10,
+    // right: 10,
+    backgroundColor: "#fff",
+    padding: 8,
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: "#ddd",
   },
 });
 
