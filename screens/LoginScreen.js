@@ -23,7 +23,7 @@ const LoginScreen = ({ navigation }) => {
       //   setError("Login failed. Please try again.");
       // }
       let result = dispatch(loginUser(email, password));
-      result && navigation.replace("Home");
+      result && navigation.replace("TabView");
     }
   };
 
