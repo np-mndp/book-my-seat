@@ -5,11 +5,11 @@ import SignupScreen from "./screens/SignupScreen";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import RestaurantListScreen from "./screens/RestaurantListScreen";
-import HomeScreen from "./screens/HomeScreen";
+import TabViewScreen from "./screens/TabViewScreen";
 import { Provider } from "react-redux";
 import store, { persistor } from "./configs/Store";
 import { PersistGate } from "redux-persist/integration/react";
-import BookingScreen from "./screens/BookingScreen";
+import MapViewScreen from "./screens/MapViewScreen";
 //test
 const Stack = createStackNavigator();
 
@@ -30,15 +30,14 @@ export default function App() {
               },
             }}
           >
-            {/* Home Screen */}
-            <Stack.Screen
-              name="Home"
-              component={HomeScreen}
+
+<Stack.Screen
+              name="TabView"
+              component={TabViewScreen}
               options={{
-                headerTitle: "", // Hide the header title for this screen
+                headerTitle: "Book My Seat",
               }}
             />
-
             {/* Other Screens */}
             <Stack.Screen
               name="Login"
@@ -58,23 +57,14 @@ export default function App() {
               name="Restaurant List"
               component={RestaurantListScreen}
               options={{
-                headerTitle: "",
+                headerTitle: "Restaurants",
               }}
             />
-             <Stack.Screen
-              name="Booking Screen"
-              component={BookingScreen}
-              options={{
-                headerTitle: "Booking",
-              }}
-            />
-
-
-<Stack.Screen
-              name="Restaurant Details"
+            <Stack.Screen
+              name="RestaurantDetails"
               component={RestaurantDetailScreen}
               options={{
-                headerTitle: "Restaurant Details",
+                headerTitle: "Details",
               }}
             />
           </Stack.Navigator>
