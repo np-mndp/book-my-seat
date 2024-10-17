@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import commonStyles from "../assets/styles";
+import { API_URL } from "../configs/Constants";
 
 const RestaurantDetailScreen = ({ route }) => {
   const navigation = useNavigation(); // Initialize navigation
@@ -26,7 +27,7 @@ const RestaurantDetailScreen = ({ route }) => {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          `http://192.168.2.1:3000/api/restaurants/${restaurantData.id}`,
+          `${API_URL}/api/restaurants/${restaurantData.id}`,
           { method: "GET" }
         );
 

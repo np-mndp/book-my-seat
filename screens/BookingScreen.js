@@ -11,19 +11,26 @@ import {
   Switch,
 } from "react-native";
 import { useSelector } from "react-redux";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
+import moment from "moment";
+import { API_URL } from "../configs/Constants";
 
-const BookingScreen = ({ navigation, route }) => {
-  const { user, token } = useSelector((state) => state.auth);
-  const [name, setName] = useState(user.name);
-  const [phone, setPhone] = useState(user.phone);
-  const [email, setEmail] = useState(user.email);
-  const [guests, setGuests] = useState(1);
-  const [occasion, setOccasion] = useState("");
-  const [specialAccommodation, setSpecialAccommodation] = useState(false);
-  const [specialRequest, setSpecialRequest] = useState("");
-  const [isSpecialOccasion, setIsSpecialOccasion] = useState(false);
+let BookingScreen = ({ navigation, route }) => {
+  let { user, token } = useSelector((state) => state.auth);
+  let [startDate, setStartDate] = useState(
+    moment().format("YYYY-MM-DD HH:mm:ss")
+  );
+  let [openStartDate, setOpenStartDate] = useState(false);
+  let [endDate, setEndDate] = useState(moment().format("YYYY-MM-DD HH:mm:ss"));
+  let [openEndDate, setOpenEndDate] = useState(false);
+  let [customer, setCustomer] = useState(user);
+  let [guests, setGuests] = useState(1);
+  let [eventSpecial, setEventSpecial] = useState("");
+  let [specialAccommodations, setSpecialAccommodations] = useState(false);
+  let [specialRequest, setSpecialRequest] = useState("");
+  let [isSpecialOccasion, setIsSpecialOccasion] = useState(false);
 
-  const restaurant = route.params?.restaurant ?? {
+  let restaurant = route.params?.restaurant ?? {
     title: "THE GOOD SON'S CAFE AND BAR",
     location: { address: "124 St. Clair Ave" },
     description:
@@ -31,27 +38,55 @@ const BookingScreen = ({ navigation, route }) => {
     images: ["https://via.placeholder.com/150"],
   };
 
-  const incrementGuests = () => {
+  let incrementGuests = () => {
     setGuests(guests + 1);
   };
 
-  const decrementGuests = () => {
+  let decrementGuests = () => {
     if (guests > 1) {
       setGuests(guests - 1);
     }
   };
 
-  const handleSubmit = () => {
-    console.log({
-      name,
-      phone,
-      email,
-      guests,
-      isSpecialOccasion,
-      occasion,
-      specialAccommodation,
-      specialRequest,
-    });
+  let handleSubmit = async () => {
+    try {
+      const response = await fetch(`${API_URL}/api/bookings`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          customer,
+          guests,
+          isSpecialOccasion,
+          eventSpecial,
+          specialAccommodations,
+          specialRequest,
+          RestaurantId: route.params?.restaurant?.id,
+        }),
+      });
+      if (response.ok) {
+        Alert.alert(
+          "Booking Confirmed",
+          `Your table for ${guests} at ${restaurant.title} has been booked!`,
+          [{ text: "OK", onPress: () => navigation.navigate("Home") }]
+        );
+      }
+    } catch (error) {
+      Alert.alert(
+        `Error occured while trying to book a table for ${guests} at ${restaurant.title} has been booked! `
+      );
+      console.log(`Booking Error: ${error}`);
+    }
+    // console.log({
+    //   customer,
+    //   guests,
+    //   isSpecialOccasion,
+    //   eventSpecial,
+    //   specialAccommodations,
+    //   specialRequest,
+    // });
 
     Alert.alert(
       "Booking Confirmed",
@@ -85,22 +120,22 @@ const BookingScreen = ({ navigation, route }) => {
       <TextInput
         style={styles.input}
         placeholder="Full Name"
-        value={name}
-        onChangeText={setName}
+        value={customer.name}
+        onChangeText={(name) => setCustomer({ ...customer, name })}
       />
       <View style={styles.row}>
         <TextInput
           style={[styles.input, { flex: 1, marginRight: 10 }]}
           placeholder="Phone"
-          value={phone}
-          onChangeText={setPhone}
+          value={customer.phone}
+          onChangeText={(phone) => setCustomer({ ...customer, phone })}
           keyboardType="phone-pad"
         />
         <TextInput
           style={[styles.input, { flex: 1 }]}
           placeholder="E-Mail"
-          value={email}
-          onChangeText={setEmail}
+          value={customer.email}
+          onChangeText={(email) => setCustomer({ ...customer, email })}
           keyboardType="email-address"
         />
       </View>
@@ -115,7 +150,13 @@ const BookingScreen = ({ navigation, route }) => {
           >
             <Text style={styles.guestButtonText}>-</Text>
           </TouchableOpacity>
-          <Text style={styles.guestNumber}>{guests}</Text>
+          <TextInput
+            style={styles.guestNumber}
+            onChangeText={(text) => setGuests(text.replace(/[^0-9]/g, ""))}
+            keyboardType="numeric"
+          >
+            {guests}
+          </TextInput>
           <TouchableOpacity
             onPress={incrementGuests}
             style={styles.guestButton}
@@ -137,18 +178,75 @@ const BookingScreen = ({ navigation, route }) => {
         <TextInput
           style={styles.input}
           placeholder="Occasion Name"
-          value={occasion}
-          onChangeText={setOccasion}
+          value={eventSpecial}
+          onChangeText={setEventSpecial}
         />
       )}
 
       {/* Special Accommodation Toggle */}
       <View style={styles.row}>
         <Switch
-          value={specialAccommodation}
-          onValueChange={setSpecialAccommodation}
+          value={specialAccommodations}
+          onValueChange={setSpecialAccommodations}
         />
         <Text style={styles.label}>Special Accommodation required?</Text>
+      </View>
+
+      <View style={[styles.column, { justifyContent: "space-around" }]}>
+        <View style={[styles.row, { justifyContent: "space-between" }]}>
+          <Text>Start Date Time</Text>
+          <TouchableOpacity onPress={() => setOpenStartDate(true)}>
+            <Text>
+              {moment(startDate).format("dddd, MMMM Do YYYY, h:mm:ss a")}
+            </Text>
+          </TouchableOpacity>
+        </View>
+        <View style={[styles.row, { justifyContent: "space-between" }]}>
+          <Text>End Date Time</Text>
+          <TouchableOpacity onPress={() => setOpenEndDate(true)}>
+            <Text>
+              {moment(endDate).format("dddd, MMMM Do YYYY, h:mm:ss a")}
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        {openStartDate && (
+          <DateTimePickerModal
+            isVisible={true}
+            mode="datetime"
+            is24Hour={false}
+            minimumDate={new Date()}
+            onConfirm={(dateTime) => {
+              console.log(`Confirmed Date and time: ${dateTime}`);
+              setStartDate(moment(dateTime).toISOString());
+              setOpenStartDate(false);
+            }}
+            onCancel={console.log("Cancelled")}
+          />
+        )}
+        {openEndDate && (
+          <DateTimePickerModal
+            isVisible={true}
+            mode="datetime"
+            is24Hour={false}
+            minimumDate={new Date(startDate)}
+            onConfirm={(dateTime) => {
+              console.log(`Confirmed Date and time: ${dateTime}`);
+              setEndDate(moment(dateTime).toISOString());
+              setOpenEndDate(false);
+            }}
+            onCancel={console.log("Cancelled")}
+          />
+        )}
+        {/* <RNDateTimePicker value={startDate} />
+        <RNDateTimePicker mode="time" value={startDate} /> */}
+        {/* <Text>{endDate}</Text> */}
+        {/* <RNDateTimePicker
+          value={startDate}
+          mode="date"
+          display="default"
+          onChange={() => console.log("On Change triggered")}
+        /> */}
       </View>
 
       {/* Special Requests */}
@@ -169,7 +267,7 @@ const BookingScreen = ({ navigation, route }) => {
   );
 };
 
-const styles = StyleSheet.create({
+let styles = StyleSheet.create({
   container: {
     padding: 20,
     backgroundColor: "#fff",

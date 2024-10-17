@@ -12,6 +12,7 @@ import {
 // import { MaterialCommunityIcons } from "@expo/vector-icons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { API_URL } from "../configs/Constants";
 
 const RestaurantListScreen = ({navigation}) => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -64,7 +65,7 @@ const RestaurantListScreen = ({navigation}) => {
         });
 
         const response = await fetchWithTimeout(
-          `http://192.168.2.1:3000/api/restaurants?${params}`,
+          `${API_URL}/api/restaurants?${params}`,
           { method: "GET" },
           5000 // Timeout set to 5000ms (5 seconds)
         );
