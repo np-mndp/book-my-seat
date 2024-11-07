@@ -9,12 +9,11 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from "react-native";
-// import { MaterialCommunityIcons } from "@expo/vector-icons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { API_URL } from "../configs/Constants";
 
-const RestaurantListScreen = ({navigation}) => {
+const RestaurantListScreen = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [restaurants, setRestaurants] = useState([
     {
@@ -112,7 +111,7 @@ const RestaurantListScreen = ({navigation}) => {
     return (
       <TouchableOpacity
         onPress={() =>
-          navigation.navigate("RestaurantDetails", { restaurantData: item })
+          navigation.navigate("Restaurant Details", { restaurantData: item })
         }
       >
         <View style={styles.restaurantItem}>
@@ -148,10 +147,11 @@ const RestaurantListScreen = ({navigation}) => {
           onChangeText={handleSearch}
           style={styles.searchInput}
         />
+        <TouchableOpacity style={styles.myLocation} onPress={() => {}}>
+          <MaterialIcons name="my-location" size={24} color="black" />
+        </TouchableOpacity>
       </View>
-      <TouchableOpacity style={styles.myLocation} onPress={() => {}}>
-        <MaterialIcons name="my-location" size={24} color="black" />
-      </TouchableOpacity>
+
       <FlatList
         data={restaurants}
         renderItem={({ item }) => listItem(item)}
@@ -175,6 +175,8 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4,
+    display:"flex",
+    flexDirection:'row'
   },
   searchInput: {
     height: 40,
@@ -185,6 +187,15 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 5,
     paddingHorizontal: 16,
+    flex:10
+  },
+  myLocation: {
+    backgroundColor: "#fff",
+    padding: 8,
+    // borderRadius: 5,
+    // borderWidth: 1,
+    // borderColor: "#ddd",
+    flex:1
   },
   restaurantItem: {
     padding: 16,
@@ -237,16 +248,7 @@ const styles = StyleSheet.create({
   primaryColor: {
     color: "#009c5b",
   },
-  myLocation: {
-    // position: 'absolute',
-    // bottom: 10,
-    // right: 10,
-    backgroundColor: "#fff",
-    padding: 8,
-    borderRadius: 5,
-    borderWidth: 1,
-    borderColor: "#ddd",
-  },
+ 
 });
 
 export default RestaurantListScreen;

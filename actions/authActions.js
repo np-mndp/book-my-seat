@@ -1,13 +1,13 @@
 import { API_URL } from "../configs/Constants";
 import { setUserData } from "../reducers/authReducer";
 
-export const loginUser = (email, password) => async (dispatch) => {
+export let loginUser = (email, password) => async (dispatch) => {
   try {
-    console.log(`Good until here/............`, {
-      email,
-      password,
-      API_URL: "Constants.extras.API_URL",
-    });
+    // console.log(`Good until here/............`, {
+    //   email,
+    //   password,
+    //   API_URL: "Constants.extras.API_URL",
+    // });
 
     const response = await fetch(`${API_URL}/api/user/login`, {
       method: "POST",
@@ -30,4 +30,9 @@ export const loginUser = (email, password) => async (dispatch) => {
   } catch (error) {
     console.log(JSON.stringify(error));
   }
+};
+
+export let logoutUser = () => (dispatch) => {
+  // Clear the user data from the Redux store
+  dispatch(setUserData({ user: null, token: null }));
 };

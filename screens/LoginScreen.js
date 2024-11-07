@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import commonStyles from "../assets/styles";
-import FirestoreController from "../controllers/FirebaseController";
 import { useDispatch } from "react-redux";
 import { loginUser } from "../actions/authActions";
 
@@ -15,13 +14,6 @@ const LoginScreen = ({ navigation }) => {
     if (!(email.length >= 7) || !(password.length >= 8)) {
       setError("Please enter a valid email and password");
     } else {
-      // const firestoreController = FirestoreController.getInstance();
-      // const result = await firestoreController.login(email, password);
-      // if (result?.success) {
-      //   navigation.replace("Home"); //
-      // } else {
-      //   setError("Login failed. Please try again.");
-      // }
       let result = dispatch(loginUser(email, password));
       result && navigation.replace("TabView");
     }
