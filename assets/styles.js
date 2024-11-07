@@ -47,7 +47,7 @@ const commonStyles = StyleSheet.create({
   },
   button: {
     backgroundColor: "#009c5b",
-    width: "80%",
+    width: "100%",
     padding: 10,
     marginTop: 25,
     borderRadius: 5,

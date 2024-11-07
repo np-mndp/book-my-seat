@@ -1,33 +1,44 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Alert } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons"; // Importing icons
+import { useDispatch, useSelector } from "react-redux";
+import { logoutUser } from "../actions/authActions";
 
 const ProfileScreen = ({ navigation }) => {
-  // Static user data
-  const userName = "Mandeep Neupane"; // Replace with dynamic data later
-  const userEmail = "john.doe@example.com"; // Replace with dynamic data later
-  const userPhone = "+1 234 567 8901"; // Replace with dynamic data later
-  const userLocation = "Toronto, ON"; // Replace with dynamic data later
+  let dispatch = useDispatch();
+  let { user, token } = useSelector((state) => state.auth);
+
+  const userLocation = "Toronto, ON";
 
   const onSignOutPressed = () => {
-    // Logic for sign out (navigate to login page)
-    console.log("Sign out pressed");
-    navigation.navigate("Login");
+    Alert.alert("Sign Out", `User Signed out successfully !`, [
+      {
+        text: "OK",
+        onPress: () => {
+          navigation.navigate("Login");
+          dispatch(logoutUser());
+        },
+      },
+    ]);
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <MaterialCommunityIcons name="account-circle" size={80} color="#009c5b" />
-        <Text style={styles.title}>{userName}</Text>
+        <MaterialCommunityIcons
+          name="account-circle"
+          size={80}
+          color="#009c5b"
+        />
+        <Text style={styles.title}>{user?.name}</Text>
       </View>
       <View style={styles.infoContainer}>
         <Text style={styles.label}>Email:</Text>
-        <Text style={styles.value}>{userEmail}</Text>
+        <Text style={styles.value}>{user?.email}</Text>
       </View>
       <View style={styles.infoContainer}>
         <Text style={styles.label}>Phone:</Text>
-        <Text style={styles.value}>{userPhone}</Text>
+        <Text style={styles.value}>{user?.phone}</Text>
       </View>
       <View style={styles.infoContainer}>
         <Text style={styles.label}>Location:</Text>

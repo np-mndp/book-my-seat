@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -13,21 +13,20 @@ import {
 import { useSelector } from "react-redux";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import moment from "moment";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { API_URL } from "../configs/Constants";
 
 let BookingScreen = ({ navigation, route }) => {
   let { user, token } = useSelector((state) => state.auth);
-  let [startDate, setStartDate] = useState(
-    moment().format("YYYY-MM-DD HH:mm:ss")
-  );
-  let [openStartDate, setOpenStartDate] = useState(false);
-  let [endDate, setEndDate] = useState(moment().format("YYYY-MM-DD HH:mm:ss"));
-  let [openEndDate, setOpenEndDate] = useState(false);
+  let [loadIn, setLoadIn] = useState(moment().format("YYYY-MM-DD HH:mm:ss"));
+  let [openLoadIn, setOpenLoadIn] = useState(false);
+  let [loadOut, setLoadOut] = useState(moment().format("YYYY-MM-DD HH:mm:ss"));
+  let [openLoadOut, setOpenLoadOut] = useState(false);
   let [customer, setCustomer] = useState(user);
   let [guests, setGuests] = useState(1);
   let [eventSpecial, setEventSpecial] = useState("");
   let [specialAccommodations, setSpecialAccommodations] = useState(false);
-  let [specialRequest, setSpecialRequest] = useState("");
+  let [note, setNote] = useState("");
   let [isSpecialOccasion, setIsSpecialOccasion] = useState(false);
 
   let restaurant = route.params?.restaurant ?? {
@@ -37,6 +36,10 @@ let BookingScreen = ({ navigation, route }) => {
       "Aliquam id eros ipsum. Nulla vitae varius urna. Sed vulputate ligula id tellus tincidunt sodales. Phasellus et lacinia purus.",
     images: ["https://via.placeholder.com/150"],
   };
+
+  useEffect(() => {
+    navigation.setOptions({ title: restaurant.title }); // Set screen title
+  }, [navigation]);
 
   let incrementGuests = () => {
     setGuests(guests + 1);
@@ -62,15 +65,22 @@ let BookingScreen = ({ navigation, route }) => {
           isSpecialOccasion,
           eventSpecial,
           specialAccommodations,
-          specialRequest,
+          note,
           RestaurantId: route.params?.restaurant?.id,
+          loadIn,
+          loadOut,
         }),
       });
       if (response.ok) {
         Alert.alert(
           "Booking Confirmed",
           `Your table for ${guests} at ${restaurant.title} has been booked!`,
-          [{ text: "OK", onPress: () => navigation.navigate("Home") }]
+          [
+            {
+              text: "OK",
+              onPress: () => navigation.navigate("Booking History"),
+            },
+          ]
         );
       }
     } catch (error) {
@@ -79,33 +89,18 @@ let BookingScreen = ({ navigation, route }) => {
       );
       console.log(`Booking Error: ${error}`);
     }
-    // console.log({
-    //   customer,
-    //   guests,
-    //   isSpecialOccasion,
-    //   eventSpecial,
-    //   specialAccommodations,
-    //   specialRequest,
-    // });
-
-    Alert.alert(
-      "Booking Confirmed",
-      `Your table for ${guests} at ${restaurant.title} has been booked!`,
-      [{ text: "OK", onPress: () => navigation.navigate("Home") }]
-    );
   };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      {/* Restaurant Image and Details */}
       <View style={styles.restaurantInfo}>
         <Image
           source={{ uri: restaurant.images[0] }}
           style={styles.restaurantImage}
         />
         <View style={styles.restaurantDetails}>
-          <Text style={styles.restaurantName}>{restaurant.title}</Text>
           <Text style={styles.restaurantAddress}>
+            <MaterialIcons name="location-pin" size={16} color="#cb4539" />
             {restaurant.location.address}
           </Text>
           <Text style={styles.restaurantDescription}>
@@ -195,22 +190,22 @@ let BookingScreen = ({ navigation, route }) => {
       <View style={[styles.column, { justifyContent: "space-around" }]}>
         <View style={[styles.row, { justifyContent: "space-between" }]}>
           <Text>Start Date Time</Text>
-          <TouchableOpacity onPress={() => setOpenStartDate(true)}>
+          <TouchableOpacity onPress={() => setOpenLoadIn(true)}>
             <Text>
-              {moment(startDate).format("dddd, MMMM Do YYYY, h:mm:ss a")}
+              {moment(loadIn).format("dddd, MMMM Do YYYY, h:mm:ss a")}
             </Text>
           </TouchableOpacity>
         </View>
         <View style={[styles.row, { justifyContent: "space-between" }]}>
           <Text>End Date Time</Text>
-          <TouchableOpacity onPress={() => setOpenEndDate(true)}>
+          <TouchableOpacity onPress={() => setOpenLoadOut(true)}>
             <Text>
-              {moment(endDate).format("dddd, MMMM Do YYYY, h:mm:ss a")}
+              {moment(loadOut).format("dddd, MMMM Do YYYY, h:mm:ss a")}
             </Text>
           </TouchableOpacity>
         </View>
 
-        {openStartDate && (
+        {openLoadIn && (
           <DateTimePickerModal
             isVisible={true}
             mode="datetime"
@@ -218,22 +213,22 @@ let BookingScreen = ({ navigation, route }) => {
             minimumDate={new Date()}
             onConfirm={(dateTime) => {
               console.log(`Confirmed Date and time: ${dateTime}`);
-              setStartDate(moment(dateTime).toISOString());
-              setOpenStartDate(false);
+              setLoadIn(moment(dateTime).toISOString());
+              setOpenLoadIn(false);
             }}
             onCancel={console.log("Cancelled")}
           />
         )}
-        {openEndDate && (
+        {openLoadOut && (
           <DateTimePickerModal
             isVisible={true}
             mode="datetime"
             is24Hour={false}
-            minimumDate={new Date(startDate)}
+            minimumDate={new Date(loadIn)}
             onConfirm={(dateTime) => {
               console.log(`Confirmed Date and time: ${dateTime}`);
-              setEndDate(moment(dateTime).toISOString());
-              setOpenEndDate(false);
+              setLoadOut(moment(dateTime).toISOString());
+              setOpenLoadOut(false);
             }}
             onCancel={console.log("Cancelled")}
           />
@@ -253,8 +248,8 @@ let BookingScreen = ({ navigation, route }) => {
       <TextInput
         style={[styles.input, styles.textArea]}
         placeholder="Notes and Special Requests"
-        value={specialRequest}
-        onChangeText={setSpecialRequest}
+        value={note}
+        onChangeText={setNote}
         multiline={true}
         numberOfLines={4}
       />
@@ -279,8 +274,8 @@ let styles = StyleSheet.create({
     alignItems: "center",
   },
   restaurantImage: {
-    width: 100,
-    height: 100,
+    width: 150,
+    height: 150,
     borderRadius: 10,
   },
   restaurantDetails: {
@@ -300,7 +295,7 @@ let styles = StyleSheet.create({
   },
   restaurantDescription: {
     fontSize: 12,
-    color: "#666",
+    color: "#009c5b",
   },
   bookingTitle: {
     fontSize: 20,

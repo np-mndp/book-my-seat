@@ -10,6 +10,8 @@ import { Provider } from "react-redux";
 import store, { persistor } from "./configs/Store";
 import { PersistGate } from "redux-persist/integration/react";
 import MapViewScreen from "./screens/MapViewScreen";
+import BookingScreen from "./screens/BookingScreen";
+import BookingHistoryScreen from "./screens/BookingHistoryScreen";
 //test
 const Stack = createStackNavigator();
 
@@ -30,8 +32,7 @@ export default function App() {
               },
             }}
           >
-
-<Stack.Screen
+            <Stack.Screen
               name="TabView"
               component={TabViewScreen}
               options={{
@@ -61,10 +62,31 @@ export default function App() {
               }}
             />
             <Stack.Screen
-              name="RestaurantDetails"
+              name="Booking Screen"
+              component={BookingScreen}
+              options={[
+                ({ route }) => ({ title: route.params?.restaurant?.title || "Bookings" }),
+                {
+                  headerTitle: "Bookings",
+                },
+              ]}
+            />
+
+            <Stack.Screen
+              name="Restaurant Details"
               component={RestaurantDetailScreen}
+              options={[
+                ({ route }) => ({ title: route.params?.restaurantData?.title || "Details" }),
+                {
+                  headerTitle: "Details",
+                },
+              ]}
+            />
+            <Stack.Screen
+              name="Booking History"
+              component={BookingHistoryScreen}
               options={{
-                headerTitle: "Details",
+                headerTitle: "My Bookings",
               }}
             />
           </Stack.Navigator>
