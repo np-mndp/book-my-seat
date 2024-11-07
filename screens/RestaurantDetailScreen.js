@@ -102,7 +102,7 @@ const RestaurantDetailScreen = ({ route }) => {
         source={{ uri: selectedRestaurant.images[0] }}
         style={styles.image}
       />
-      <Text style={styles.title}>{selectedRestaurant.title}</Text>
+      {/* <Text style={styles.title}>{selectedRestaurant.title}</Text> */}
       <Text style={styles.description}>{selectedRestaurant.description}</Text>
 
       <Text style={styles.menuHeader}>Food Menu</Text>

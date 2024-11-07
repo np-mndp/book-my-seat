@@ -6,6 +6,7 @@ import MapScreenView from "./MapViewScreen";
 import ProfileScreen from "./ProfileScreen"
 import MyBookingsScreen from "./MyBookingsScreen";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import BookingHistoryScreen from "./BookingHistoryScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -44,7 +45,7 @@ const TabViewScreen = () => {
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="MapScreenView" component={MapScreenView} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
-      <Tab.Screen name="MyBookings" component={MyBookingsScreen} />
+      <Tab.Screen name="MyBookings" component={BookingHistoryScreen} />
     </Tab.Navigator>
   );
 };
