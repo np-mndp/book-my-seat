@@ -3,6 +3,7 @@ import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import HomeScreen from "./HomeScreen";
 import MapScreenView from "./MapViewScreen";
+import MapScreenView2 from "./MapViewScreen2";
 import ProfileScreen from "./ProfileScreen"
 import MyBookingsScreen from "./MyBookingsScreen";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -43,7 +44,7 @@ const TabViewScreen = () => {
       })}
     >
       <Tab.Screen name="Home" component={HomeScreen} />
-      <Tab.Screen name="MapScreenView" component={MapScreenView} />
+      <Tab.Screen name="MapScreenView" component={MapScreenView2} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
       <Tab.Screen name="MyBookings" component={BookingHistoryScreen} />
     </Tab.Navigator>

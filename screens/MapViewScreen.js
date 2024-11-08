@@ -3,7 +3,9 @@ import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { StyleSheet, View, TextInput, TouchableOpacity, Text, FlatList } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import * as Location from 'expo-location';
-
+// import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
+// import {PLACES_API_KEY} from '@env';
+// 
 const MapScreenView = () => {
   const [location, setLocation] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");

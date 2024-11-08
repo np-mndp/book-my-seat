@@ -9,7 +9,6 @@ import TabViewScreen from "./screens/TabViewScreen";
 import { Provider } from "react-redux";
 import store, { persistor } from "./configs/Store";
 import { PersistGate } from "redux-persist/integration/react";
-import MapViewScreen from "./screens/MapViewScreen";
 import BookingScreen from "./screens/BookingScreen";
 import BookingHistoryScreen from "./screens/BookingHistoryScreen";
 import ReservationConfirmation from "./screens/ReservationConfirmation";
