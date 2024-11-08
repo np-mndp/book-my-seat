@@ -3,6 +3,7 @@ import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { StyleSheet, View, TextInput, TouchableOpacity, Text, FlatList } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import * as Location from 'expo-location';
+import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 
 const MapScreenView = () => {
   const [location, setLocation] = useState(null);
@@ -94,6 +95,17 @@ const MapScreenView = () => {
           onChangeText={(text) => setSearchQuery(text)}
         />
       </View>
+      <GooglePlacesAutocomplete
+      placeholder='Search'
+      onPress={(data, details = null) => {
+        // 'details' is provided when fetchDetails = true
+        console.log(data, details);
+      }}
+      query={{
+        key: 'YOUR API KEY',
+        language: 'en',
+      }}
+    />
 
       <View style={styles.buttonContainer}>
         <TouchableOpacity onPress={handleGetCurrentLocation} style={styles.locationButton}>
