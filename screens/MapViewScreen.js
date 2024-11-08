@@ -4,6 +4,7 @@ import { StyleSheet, View, TextInput, TouchableOpacity, Text, FlatList } from "r
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import * as Location from 'expo-location';
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
+import PLACES_API_KEY from '@env';
 
 const MapScreenView = () => {
   const [location, setLocation] = useState(null);
@@ -102,7 +103,7 @@ const MapScreenView = () => {
         console.log(data, details);
       }}
       query={{
-        key: 'YOUR API KEY',
+        key: PLACES_API_KEY,
         language: 'en',
       }}
     />
