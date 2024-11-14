@@ -12,7 +12,7 @@ import { PersistGate } from "redux-persist/integration/react";
 import BookingScreen from "./screens/BookingScreen";
 import BookingHistoryScreen from "./screens/BookingHistoryScreen";
 import ReservationConfirmation from "./screens/ReservationConfirmation";
-//test
+//
 const Stack = createStackNavigator();
 
 export default function App() {
