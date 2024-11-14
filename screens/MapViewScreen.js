@@ -11,6 +11,8 @@ const MapScreenView = () => {
   const [places, setPlaces] = useState([]);
   const [filteredRestaurants, setFilteredRestaurants] = useState([]);
   const [loading, setLoading] = useState(false); // State for loader visibility
+  const [currentLocationMarker, setCurrentLocationMarker] = useState(null);
+
   const mapRef = useRef(null);
 
   // Function to fetch current location
@@ -21,7 +23,7 @@ const MapScreenView = () => {
         console.log('Permission to access location was denied');
         return;
       }
-
+  
       let currentLocation = await Location.getCurrentPositionAsync({});
       const newLocation = {
         latitude: currentLocation.coords.latitude,
@@ -29,9 +31,13 @@ const MapScreenView = () => {
         latitudeDelta: 0.005,
         longitudeDelta: 0.005,
       };
-
+  
       setLocation(newLocation);
-
+      setCurrentLocationMarker({
+        latitude: currentLocation.coords.latitude,
+        longitude: currentLocation.coords.longitude,
+      });
+  
       // Update the MapView to center on the current location
       if (mapRef.current) {
         mapRef.current.animateToRegion(newLocation, 1000);
@@ -40,6 +46,7 @@ const MapScreenView = () => {
       console.log("Error fetching location:", error);
     }
   };
+  
 
 // Function to fetch places from Google Places API
 const handleSearch = async () => {
@@ -75,6 +82,7 @@ const handleSearch = async () => {
         longitudeDelta: 0.005,
       }, 1000);
     }
+    setFilteredRestaurants([]);
   };
 
   // Reset search query and results
@@ -125,6 +133,11 @@ const handleSearch = async () => {
         keyExtractor={(item) => item.place_id}
         renderItem={({ item }) => (
           <TouchableOpacity onPress={() => handleRestaurantPress(item)} style={styles.resultItem}>
+            {/* to do: Add an icon or image for restaurants */}
+            <View style={styles.resultIcon}>
+              <MaterialCommunityIcons name="store" size={24} color="#009c5b" />
+            </View>
+            
             <Text style={styles.resultText}>{item.name || 'Unnamed Place'}</Text>
           </TouchableOpacity>
         )}
@@ -132,6 +145,7 @@ const handleSearch = async () => {
       />
     ) : null
   );
+  
 
   // Map view with place markers
   const mapSection = () => (
@@ -157,9 +171,19 @@ const handleSearch = async () => {
             title={place.name}
           />
         ))}
+  
+        {/* Marker for current location */}
+        {currentLocationMarker && (
+          <Marker
+            coordinate={currentLocationMarker}
+            title="My Location"
+            pinColor="green"
+          />
+        )}
       </MapView>
     </View>
   );
+  
 
   return (
     <View style={styles.container}>
@@ -185,11 +209,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#fff",
-    padding: 10,
+    padding: 3,
     borderRadius: 25,
     borderColor: "#009c5b",
     borderWidth: 1,
-    margin: 10,
+    margin: 8,
+    elevation: 4, 
   },
   searchInput: {
     marginLeft: 8,
@@ -234,17 +259,42 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   resultItem: {
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ddd",
+    paddingVertical: 15,
+    paddingHorizontal: 10,
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    marginVertical: 2,
+    elevation: 3, 
+    flexDirection: "row",
+    alignItems: "center",
+    flexShrink: 1,
   },
   resultText: {
-    fontSize: 16,
+    fontSize: 15,
+    fontWeight: "500", 
+    flex: 1,
   },
   resultList: {
-    maxHeight: 200,
-    margin: 15, 
+    maxHeight:250,
+    flexShrink: 1,
+    marginHorizontal: 10, 
+    padding: 10, 
+    margin: 10,
+    borderRadius: 10,
+    borderColor: "#009c5b",
+    borderWidth: 1,
+
+  },
+  resultIcon: {
+    width: 15,
+    height: 15,
+    marginRight: 15,
+    borderRadius: 20, 
+    backgroundColor: "#f0f0f0", 
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
+
 
 export default MapScreenView;
