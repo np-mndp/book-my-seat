@@ -3,40 +3,14 @@ import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { StyleSheet, View, TextInput, TouchableOpacity, Text, FlatList } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import * as Location from 'expo-location';
-// import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
-// import {PLACES_API_KEY} from '@env';
-// 
+import { PLACES_API_KEY } from '@env';
+
 const MapScreenView = () => {
   const [location, setLocation] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [places, setPlaces] = useState([]);
   const [filteredRestaurants, setFilteredRestaurants] = useState([]);
   const mapRef = useRef(null);
-
-  // Example restaurant markers in Toronto
-  const restaurants = [
-    { id: 1, name: "Restaurant A", latitude: 43.65107, longitude: -79.347015 },
-    { id: 2, name: "Restaurant B", latitude: 43.65707, longitude: -79.380715 },
-    { id: 3, name: "Restaurant C", latitude: 43.64507, longitude: -79.383015 },
-    { id: 4, name: "Restaurant D", latitude: 43.66207, longitude: -79.400715 },
-    { id: 5, name: "Restaurant E", latitude: 43.67007, longitude: -79.320715 },
-    { id: 6, name: "Restaurant F", latitude: 43.67107, longitude: -79.337015 },
-    { id: 7, name: "Restaurant G", latitude: 43.66807, longitude: -79.330715 },
-  ];
-
-  // Handle search filtering
-  useEffect(() => {
-    if (searchQuery) {
-      const filtered = restaurants
-        .filter((restaurant) =>
-          restaurant.name.toLowerCase().includes(searchQuery.toLowerCase())
-        )
-        .sort((a, b) => a.name.localeCompare(b.name)) // Sort by name in ascending order
-        .slice(0, 5); // Limit to top 5
-      setFilteredRestaurants(filtered);
-    } else {
-      setFilteredRestaurants([]);
-    }
-  }, [searchQuery]);
 
   // Function to fetch current location
   const handleGetCurrentLocation = async () => {
@@ -66,19 +40,38 @@ const MapScreenView = () => {
     }
   };
 
-  // Function to move the map to a restaurant's location
-  const handleRestaurantPress = (restaurant) => {
+  // Fetch places from Google Places API
+  const handleSearch = async () => {
+    if (!searchQuery) return;
+
+    try {
+      const response = await fetch(
+        `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${searchQuery}&key=${PLACES_API_KEY}`
+      );
+      const data = await response.json();
+
+      if (data.results) {
+        setPlaces(data.results);
+        setFilteredRestaurants(data.results.slice(0, 5)); // Limit to top 5 results
+      }
+    } catch (error) {
+      console.error('Error fetching places:', error);
+    }
+  };
+
+  // Function to move the map to a place's location
+  const handleRestaurantPress = (place) => {
     if (mapRef.current) {
       mapRef.current.animateToRegion({
-        latitude: restaurant.latitude,
-        longitude: restaurant.longitude,
+        latitude: place.geometry.location.lat,
+        longitude: place.geometry.location.lng,
         latitudeDelta: 0.005,
         longitudeDelta: 0.005,
       }, 1000);
     }
   };
 
-  // Function to reset the search query and filtered restaurants
+  // Reset search query and results
   const handleResetSearch = () => {
     setSearchQuery("");
     setFilteredRestaurants([]);
@@ -90,10 +83,11 @@ const MapScreenView = () => {
       <View style={styles.searchContainer}>
         <MaterialCommunityIcons name="magnify" size={24} color="#666" />
         <TextInput
-          placeholder="Search restaurants"
+          placeholder="Search places"
           style={styles.searchInput}
           value={searchQuery}
           onChangeText={(text) => setSearchQuery(text)}
+          onSubmitEditing={handleSearch} // Trigger search on Enter
         />
       </View>
 
@@ -116,10 +110,10 @@ const MapScreenView = () => {
     filteredRestaurants.length > 0 ? (
       <FlatList
         data={filteredRestaurants}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item) => item.place_id}
         renderItem={({ item }) => (
           <TouchableOpacity onPress={() => handleRestaurantPress(item)} style={styles.resultItem}>
-            <Text style={styles.resultText}>{item.name || 'Unnamed Restaurant'}</Text>
+            <Text style={styles.resultText}>{item.name || 'Unnamed Place'}</Text>
           </TouchableOpacity>
         )}
         style={styles.resultList}
@@ -127,7 +121,7 @@ const MapScreenView = () => {
     ) : null
   );
 
-  // Map view with restaurant markers
+  // Map view with place markers
   const mapSection = () => (
     <View style={styles.mapContainer}>
       <MapView
@@ -141,14 +135,14 @@ const MapScreenView = () => {
           longitudeDelta: 0.05,
         }}
       >
-        {restaurants.map((restaurant) => (
+        {places.map((place) => (
           <Marker
-            key={restaurant.id}
+            key={place.place_id}
             coordinate={{
-              latitude: restaurant.latitude,
-              longitude: restaurant.longitude,
+              latitude: place.geometry.location.lat,
+              longitude: place.geometry.location.lng,
             }}
-            title={restaurant.name}
+            title={place.name}
           />
         ))}
       </MapView>
