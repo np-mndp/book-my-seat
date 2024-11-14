@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
-import { StyleSheet, View, TextInput, TouchableOpacity, Text, FlatList } from "react-native";
+import { StyleSheet, View, TextInput, TouchableOpacity, Text, FlatList, ActivityIndicator } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import * as Location from 'expo-location';
 import { PLACES_API_KEY } from '@env';
@@ -10,6 +10,7 @@ const MapScreenView = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [places, setPlaces] = useState([]);
   const [filteredRestaurants, setFilteredRestaurants] = useState([]);
+  const [loading, setLoading] = useState(false); // State for loader visibility
   const mapRef = useRef(null);
 
   // Function to fetch current location
@@ -40,24 +41,29 @@ const MapScreenView = () => {
     }
   };
 
-  // Fetch places from Google Places API
-  const handleSearch = async () => {
-    if (!searchQuery) return;
+// Function to fetch places from Google Places API
+const handleSearch = async () => {
+  if (!searchQuery) return;
 
-    try {
-      const response = await fetch(
-        `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${searchQuery}&key=${PLACES_API_KEY}`
-      );
-      const data = await response.json();
+  setLoading(true); // Show loader before fetching the data
 
-      if (data.results) {
-        setPlaces(data.results);
-        setFilteredRestaurants(data.results.slice(0, 5)); // Limit to top 5 results
-      }
-    } catch (error) {
-      console.error('Error fetching places:', error);
+  try {
+    const response = await fetch(
+      `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${searchQuery}&key=${PLACES_API_KEY}`
+    );
+    const data = await response.json();
+
+    if (data.results) {
+      setFilteredRestaurants(data.results);
+      setPlaces(data.results);  // Update places state for markers
     }
-  };
+
+  } catch (error) {
+    console.error('Error fetching places:', error);
+  } finally {
+    setLoading(false); // Hide loader after the response
+  }
+};
 
   // Function to move the map to a place's location
   const handleRestaurantPress = (place) => {
@@ -81,14 +87,21 @@ const MapScreenView = () => {
   const searchSection = () => (
     <View>
       <View style={styles.searchContainer}>
-        <MaterialCommunityIcons name="magnify" size={24} color="#666" />
         <TextInput
-          placeholder="Search places"
+          placeholder="Search restaurants and places"
           style={styles.searchInput}
           value={searchQuery}
           onChangeText={(text) => setSearchQuery(text)}
-          onSubmitEditing={handleSearch} // Trigger search on Enter
         />
+
+        {/* Search button with loader */}
+        <TouchableOpacity onPress={handleSearch} style={styles.searchButton}>
+          {loading ? (
+            <ActivityIndicator size="small" color="#009c5b" />
+          ) : (
+            <MaterialCommunityIcons name="magnify" size={24} color="#009c5b" />
+          )}
+        </TouchableOpacity>
       </View>
 
       <View style={styles.buttonContainer}>
@@ -104,7 +117,6 @@ const MapScreenView = () => {
       </View>
     </View>
   );
-
   // Search result list below the search bar
   const searchResultList = () => (
     filteredRestaurants.length > 0 ? (
@@ -183,6 +195,12 @@ const styles = StyleSheet.create({
     marginLeft: 8,
     flex: 1,
     fontSize: 16,
+  },
+  searchButton: {
+    marginLeft: 8,
+    padding: 10,
+    backgroundColor: '#fff',
+    borderRadius: 25,
   },
   buttonContainer: {
     flexDirection: "row",
