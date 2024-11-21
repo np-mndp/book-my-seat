@@ -4,18 +4,32 @@ import commonStyles from "../assets/styles";
 import { useDispatch } from "react-redux";
 import { loginUser } from "../actions/authActions";
 
-const LoginScreen = ({ navigation }) => {
-  const [email, setEmail] = useState("mandeep@gmail.com");
-  const [password, setPassword] = useState("Mandeep1234*");
-  const [error, setError] = useState(null);
-  const dispatch = useDispatch();
+let LoginScreen = ({ navigation }) => {
+  let [email, setEmail] = useState("mandeep@gmail.com");
+  let [password, setPassword] = useState("Mandeep1234*");
+  let [error, setError] = useState(null);
+  let dispatch = useDispatch();
 
-  const onLoginPressed = async () => {
+  let onLoginPressed = async () => {
+    // Validate email and password
     if (!(email.length >= 7) || !(password.length >= 8)) {
       setError("Please enter a valid email and password");
-    } else {
-      let result = dispatch(loginUser(email, password));
-      result && navigation.replace("TabView");
+      return;
+    }
+  
+    try {
+      // Wait for the login action to complete
+      let result = await dispatch(loginUser(email, password));
+  
+      // If login was successful, navigate to TabView
+      if (result) {
+        navigation.replace("TabView");
+      } else {
+        setError("Login failed. Please check your credentials and try again.");
+      }
+    } catch (error) {
+      console.error("Error during login:", error);
+      setError("An unexpected error occurred. Please try again.");
     }
   };
 
