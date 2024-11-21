@@ -107,6 +107,16 @@ const RestaurantListScreen = ({ navigation }) => {
     }
   };
 
+  // const RatingStars = (rating) => {
+  //   let stars = <FontAwesome name="dollar" size={15} color="black" />;
+
+  //   for (let i = 1; i < rating; i++) {
+  //     stars += <FontAwesome name="dollar" size={15} color="black" />;
+  //   }
+
+  //   return stars;
+  // };
+
   const listItem = (item) => {
     return (
       <TouchableOpacity
@@ -126,9 +136,18 @@ const RestaurantListScreen = ({ navigation }) => {
               <Text style={styles.address}>{item.location.address}</Text>
             </View>
             <View style={styles.ratingContainer}>
-              {/* <MaterialIcons name="dollar-sign" size={16} color="#FFD700" /> */}
-              <FontAwesome name="dollar" size={15} color="black" />
-              <Text style={styles.rating}>{item.expensiveRating}</Text>
+              {Array.from({ length: item.expensiveRating }, (_, index) => (
+                <FontAwesome
+                  key={index}
+                  name="dollar"
+                  size={15}
+                  color="#DAA520"
+                />
+              ))}
+              {/* <FontAwesome name="dollar" size={15} color="black" />
+              <Text style={styles.rating}>{item.expensiveRating}</Text> */}
+
+              {/* {RatingStars(item.expensiveRating)} */}
 
               {/* <Text style={styles.expensiveness}>{item.expensiveRating}</Text> */}
             </View>
@@ -175,8 +194,8 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4,
-    display:"flex",
-    flexDirection:'row'
+    display: "flex",
+    flexDirection: "row",
   },
   searchInput: {
     height: 40,
@@ -187,7 +206,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 5,
     paddingHorizontal: 16,
-    flex:10
+    flex: 10,
   },
   myLocation: {
     backgroundColor: "#fff",
@@ -195,7 +214,7 @@ const styles = StyleSheet.create({
     // borderRadius: 5,
     // borderWidth: 1,
     // borderColor: "#ddd",
-    flex:1
+    flex: 1,
   },
   restaurantItem: {
     padding: 16,
@@ -248,7 +267,6 @@ const styles = StyleSheet.create({
   primaryColor: {
     color: "#009c5b",
   },
- 
 });
 
 export default RestaurantListScreen;
