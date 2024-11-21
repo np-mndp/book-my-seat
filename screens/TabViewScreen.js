@@ -3,6 +3,7 @@ import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import HomeScreen from "./HomeScreen";
 import MapScreenView from "./MapViewScreen";
+import MapScreenView2 from "./MapViewScreen2";
 import ProfileScreen from "./ProfileScreen"
 import MyBookingsScreen from "./MyBookingsScreen";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
