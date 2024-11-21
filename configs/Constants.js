@@ -1,1 +1,1 @@
-export let API_URL = "http://10.0.0.249:3000"
+export let API_URL = "https://book-my-seat-backend.onrender.com/"

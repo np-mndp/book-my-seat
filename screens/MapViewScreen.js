@@ -1,34 +1,45 @@
 import React, { useEffect, useState, useRef } from "react";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
-import { StyleSheet, View, TextInput, TouchableOpacity, Text, FlatList } from "react-native";
+import {
+  StyleSheet,
+  View,
+  TextInput,
+  TouchableOpacity,
+  Text,
+  FlatList,
+  ActivityIndicator,
+} from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import * as Location from 'expo-location';
+import * as Location from "expo-location";
+import { API_URL } from "../configs/Constants";
 
 const MapScreenView = () => {
   const [location, setLocation] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredRestaurants, setFilteredRestaurants] = useState([]);
   const mapRef = useRef(null);
+  const [restaurants, setRestaurants] = useState();
 
   // Example restaurant markers in Toronto
-  const restaurants = [
-    { id: 1, name: "Restaurant A", latitude: 43.65107, longitude: -79.347015 },
-    { id: 2, name: "Restaurant B", latitude: 43.65707, longitude: -79.380715 },
-    { id: 3, name: "Restaurant C", latitude: 43.64507, longitude: -79.383015 },
-    { id: 4, name: "Restaurant D", latitude: 43.66207, longitude: -79.400715 },
-    { id: 5, name: "Restaurant E", latitude: 43.67007, longitude: -79.320715 },
-    { id: 6, name: "Restaurant F", latitude: 43.67107, longitude: -79.337015 },
-    { id: 7, name: "Restaurant G", latitude: 43.66807, longitude: -79.330715 },
-  ];
+  //  [
+  //   { id: 1, name: "Restaurant A", latitude: 43.65107, longitude: -79.347015 },
+  //   { id: 2, name: "Restaurant B", latitude: 43.65707, longitude: -79.380715 },
+  //   { id: 3, name: "Restaurant C", latitude: 43.64507, longitude: -79.383015 },
+  //   { id: 4, name: "Restaurant D", latitude: 43.66207, longitude: -79.400715 },
+  //   { id: 5, name: "Restaurant E", latitude: 43.67007, longitude: -79.320715 },
+  //   { id: 6, name: "Restaurant F", latitude: 43.67107, longitude: -79.337015 },
+  //   { id: 7, name: "Restaurant G", latitude: 43.66807, longitude: -79.330715 },
+  // ];
 
   // Handle search filtering
   useEffect(() => {
     if (searchQuery) {
       const filtered = restaurants
         .filter((restaurant) =>
-          restaurant.name.toLowerCase().includes(searchQuery.toLowerCase())
+          restaurant.title.toLowerCase().includes(searchQuery.toLowerCase())
         )
-        .sort((a, b) => a.name.localeCompare(b.name)) // Sort by name in ascending order
+        .sort((a, b) => a.title.localeCompare(b.title)) // Sort by name in ascending order
         .slice(0, 5); // Limit to top 5
       setFilteredRestaurants(filtered);
     } else {
@@ -36,12 +47,62 @@ const MapScreenView = () => {
     }
   }, [searchQuery]);
 
+  useEffect(() => {
+    const fetchWithTimeout = (url, options, timeout = 5000) => {
+      return Promise.race([
+        fetch(url, options),
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Request timed out")), timeout)
+        ),
+      ]);
+    };
+
+    const fetchData = async () => {
+      try {
+        let params = new URLSearchParams({
+          lat: 43.676022,
+          lng: -79.411049,
+        });
+
+        const response = await fetchWithTimeout(
+          `${API_URL}/api/restaurants?${params}`,
+          { method: "GET" },
+          5000 // Timeout set to 5000ms (5 seconds)
+        );
+
+        if (response.ok) {
+          const json = await response.json();
+          setRestaurants(json.length > 0 ? json : restaurants);
+          
+        } else {
+          throw new Error("Failed to fetch"); // Handle server errors
+        }
+      } catch (error) {
+        console.error("Error:", error.message);
+        setRestaurants(restaurants); // Use fallback data in case of an error
+      } finally {
+        setIsLoading(false); // Stop loading after fetching
+      }
+    };
+
+    // Call the fetch function
+    fetchData();
+  }, []);
+
+  if (isLoading) {
+    return <ActivityIndicator size="large" color="#0000ff" />;
+  }
+
+  // if (error) {
+  //   return <Text>Error: {error.message}</Text>;
+  // }
+
   // Function to fetch current location
   const handleGetCurrentLocation = async () => {
     try {
       let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        console.log('Permission to access location was denied');
+      if (status !== "granted") {
+        console.log("Permission to access location was denied");
         return;
       }
 
@@ -67,12 +128,15 @@ const MapScreenView = () => {
   // Function to move the map to a restaurant's location
   const handleRestaurantPress = (restaurant) => {
     if (mapRef.current) {
-      mapRef.current.animateToRegion({
-        latitude: restaurant.latitude,
-        longitude: restaurant.longitude,
-        latitudeDelta: 0.005,
-        longitudeDelta: 0.005,
-      }, 1000);
+      mapRef.current.animateToRegion(
+        {
+          latitude: restaurant.location.lat,
+          longitude: restaurant.location.lng,
+          latitudeDelta: 0.005,
+          longitudeDelta: 0.005,
+        },
+        1000
+      );
     }
   };
 
@@ -96,12 +160,22 @@ const MapScreenView = () => {
       </View>
 
       <View style={styles.buttonContainer}>
-        <TouchableOpacity onPress={handleGetCurrentLocation} style={styles.locationButton}>
-          <MaterialCommunityIcons name="crosshairs-gps" size={24} color="#fff" />
+        <TouchableOpacity
+          onPress={handleGetCurrentLocation}
+          style={styles.locationButton}
+        >
+          <MaterialCommunityIcons
+            name="crosshairs-gps"
+            size={24}
+            color="#fff"
+          />
           <Text style={styles.buttonText}>Current Location</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={handleResetSearch} style={styles.resetButton}>
+        <TouchableOpacity
+          onPress={handleResetSearch}
+          style={styles.resetButton}
+        >
           <MaterialCommunityIcons name="refresh" size={24} color="#fff" />
           <Text style={styles.buttonText}>Reset</Text>
         </TouchableOpacity>
@@ -110,20 +184,24 @@ const MapScreenView = () => {
   );
 
   // Search result list below the search bar
-  const searchResultList = () => (
+  const searchResultList = () =>
     filteredRestaurants.length > 0 ? (
       <FlatList
         data={filteredRestaurants}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
-          <TouchableOpacity onPress={() => handleRestaurantPress(item)} style={styles.resultItem}>
-            <Text style={styles.resultText}>{item.name || 'Unnamed Restaurant'}</Text>
+          <TouchableOpacity
+            onPress={() => handleRestaurantPress(item)}
+            style={styles.resultItem}
+          >
+            <Text style={styles.resultText}>
+              {item.title || "Unnamed Restaurant"}
+            </Text>
           </TouchableOpacity>
         )}
         style={styles.resultList}
       />
-    ) : null
-  );
+    ) : null;
 
   // Map view with restaurant markers
   const mapSection = () => (
@@ -143,10 +221,10 @@ const MapScreenView = () => {
           <Marker
             key={restaurant.id}
             coordinate={{
-              latitude: restaurant.latitude,
-              longitude: restaurant.longitude,
+              latitude: restaurant.location.lat,
+              longitude: restaurant.location.lng,
             }}
-            title={restaurant.name}
+            title={restaurant.title}
           />
         ))}
       </MapView>
@@ -190,9 +268,9 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flexDirection: "row",
-    justifyContent: "space-between", 
+    justifyContent: "space-between",
     marginVertical: 10,
-    paddingHorizontal: 10, 
+    paddingHorizontal: 10,
   },
   locationButton: {
     backgroundColor: "#009c5b",
@@ -201,18 +279,18 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    flex: 1, 
-    marginRight: 5, 
+    flex: 1,
+    marginRight: 5,
   },
   resetButton: {
-    backgroundColor: "#ff6347", 
+    backgroundColor: "#ff6347",
     padding: 10,
     borderRadius: 25,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    flex: 1, 
-    marginLeft: 5, 
+    flex: 1,
+    marginLeft: 5,
   },
   buttonText: {
     color: "#fff",
@@ -229,7 +307,7 @@ const styles = StyleSheet.create({
   },
   resultList: {
     maxHeight: 200,
-    margin: 15, 
+    margin: 15,
   },
 });
 
