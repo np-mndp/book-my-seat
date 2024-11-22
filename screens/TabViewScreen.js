@@ -6,7 +6,7 @@ import RestaurantListScreen from "./RestaurantListScreen";
 import MapScreenView from "./MapViewScreen";
 import ProfileScreen from "./ProfileScreen";
 import BookingHistoryScreen from "./BookingHistoryScreen";
-import ReservationScreen from "./manager/ReservationScreen";
+import ReservationsScreen from "./manager/ReservationsScreen";
 import FloorPlanScreen from "./manager/FloorPlanScreen";
 import AddRestaurantScreen from "./manager/AddRestaurantScreen";
 import ManagerProfileScreen from "./manager/ManagerProfileScreen";
