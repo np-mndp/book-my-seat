@@ -60,17 +60,24 @@ const handleSearch = async () => {
     );
     const data = await response.json();
 
+    if (data.status !== 'OK') {
+      console.error('Error from Places API:', data.error_message);
+      return;
+    }
+
     if (data.results) {
       setFilteredRestaurants(data.results);
       setPlaces(data.results);  // Update places state for markers
+    } else {
+      console.log('No results found');
     }
-
   } catch (error) {
     console.error('Error fetching places:', error);
   } finally {
     setLoading(false); // Hide loader after the response
   }
 };
+
 
   // Function to move the map to a place's location
   const handleRestaurantPress = (place) => {
@@ -298,3 +305,4 @@ const styles = StyleSheet.create({
 
 
 export default MapScreenView;
+

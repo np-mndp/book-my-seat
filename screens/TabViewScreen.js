@@ -3,7 +3,7 @@ import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import HomeScreen from "./HomeScreen";
 import MapScreenView from "./MapViewScreen";
-import MapScreenView2 from "./MapViewScreen2";
+// import MapScreenView2 from "./MapViewScreen2";
 import ProfileScreen from "./ProfileScreen"
 import MyBookingsScreen from "./MyBookingsScreen";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -16,7 +16,47 @@ const TabViewScreen = () => {
     <Tab.Navigator
       initialRouteName="Home"
       screenOptions={({ route }) => ({
+        tabBarIcon: ({ color, size }) => {const Tab = createBottomTabNavigator();
+
+const TabViewScreen = () => {
+  return (
+    <Tab.Navigator
+      initialRouteName="Home"
+      screenOptions={({ route }) => ({
         tabBarIcon: ({ color, size }) => {
+          let iconName;
+
+          switch (route.name) {
+            case "Home":
+              iconName = "home";
+              break;
+            case "MapScreenView":
+              iconName = "map";
+              break;
+            case "Profile":
+              iconName = "account";
+              break;
+            case "MyBookings":
+              iconName = "ticket-confirmation";
+              break;
+            default:
+              iconName = "circle";
+          }
+
+          return <MaterialCommunityIcons name={iconName} size={size} color={color} />;
+        },
+        tabBarActiveTintColor: "#009c5b",
+        tabBarInactiveTintColor: "gray",
+        headerShown: false, 
+      })}
+    >
+      <Tab.Screen name="Home" component={HomeScreen} options={{ title: 'Home' }} />
+      <Tab.Screen name="MapScreenView" component={MapScreenView} options={{ title: 'Map' }} />
+      <Tab.Screen name="Profile" component={ProfileScreen} options={{ title: 'Profile' }} />
+      <Tab.Screen name="MyBookings" component={BookingHistoryScreen} options={{ title: 'My Bookings' }} />
+    </Tab.Navigator>
+  );
+};
           let iconName;
 
           switch (route.name) {
