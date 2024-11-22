@@ -85,7 +85,7 @@ const TabViewScreen = () => {
           headerShown: false,
         })}
       >
-        <Tab.Screen name="Reservation" component={ReservationScreen} />
+        <Tab.Screen name="Reservation" component={ReservationsScreen} />
         <Tab.Screen name="AddRestaurant" component={AddRestaurantScreen} />
         <Tab.Screen name="FloorPlan" component={FloorPlanScreen} />
         <Tab.Screen name="ManagerProfile" component={ManagerProfileScreen} />

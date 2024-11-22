@@ -9,11 +9,11 @@ import { PersistGate } from "redux-persist/integration/react";
 import store, { persistor } from "./configs/Store";
 import LoginScreen from "./screens/LoginScreen";
 import SignupScreen from "./screens/SignupScreen";
-import RestaurantListScreen from "./screens/RestaurantListScreen";
-import RestaurantDetailScreen from "./screens/RestaurantDetailScreen";
-import BookingScreen from "./screens/BookingScreen";
-import BookingHistoryScreen from "./screens/BookingHistoryScreen";
-import ReservationConfirmation from "./screens/ReservationConfirmation";
+// import RestaurantListScreen from "./screens/RestaurantListScreen";
+// import RestaurantDetailScreen from "./screens/RestaurantDetailScreen";
+// import BookingScreen from "./screens/BookingScreen";
+// import BookingHistoryScreen from "./screens/BookingHistoryScreen";
+// import ReservationConfirmation from "./screens/ReservationConfirmation";
 import TabViewScreen from "./screens/TabViewScreen";
 
 const Stack = createStackNavigator();

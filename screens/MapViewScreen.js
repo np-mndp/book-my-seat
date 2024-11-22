@@ -197,7 +197,6 @@ const handleSearch = async () => {
         <MaterialCommunityIcons name="magnify" size={24} color="#666" />
         <TextInput
           placeholder="Search restaurants"
-]
           style={styles.searchInput}
           value={searchQuery}
           onChangeText={(text) => setSearchQuery(text)}
