@@ -27,16 +27,6 @@ const MapScreenView = () => {
   const mapRef = useRef(null);
   const [restaurants, setRestaurants] = useState();
 
-  // Example restaurant markers in Toronto
-  //  [
-  //   { id: 1, name: "Restaurant A", latitude: 43.65107, longitude: -79.347015 },
-  //   { id: 2, name: "Restaurant B", latitude: 43.65707, longitude: -79.380715 },
-  //   { id: 3, name: "Restaurant C", latitude: 43.64507, longitude: -79.383015 },
-  //   { id: 4, name: "Restaurant D", latitude: 43.66207, longitude: -79.400715 },
-  //   { id: 5, name: "Restaurant E", latitude: 43.67007, longitude: -79.320715 },
-  //   { id: 6, name: "Restaurant F", latitude: 43.67107, longitude: -79.337015 },
-  //   { id: 7, name: "Restaurant G", latitude: 43.66807, longitude: -79.330715 },
-  // ];
 
   // Handle search filtering
   useEffect(() => {
