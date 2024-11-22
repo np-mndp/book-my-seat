@@ -142,7 +142,7 @@ const MapScreenView = () => {
 const handleSearch = async () => {
   if (!searchQuery) return;
 
-  setLoading(true); // Show loader before fetching the data
+  setIsLoading(true); // Show loader before fetching the data
 
   try {
     const response = await fetch(
@@ -158,7 +158,7 @@ const handleSearch = async () => {
   } catch (error) {
     console.error('Error fetching places:', error);
   } finally {
-    setLoading(false); // Hide loader after the response
+    setIsLoading(false); // Hide loader after the response
   }
 };
 
@@ -169,8 +169,8 @@ const handleSearch = async () => {
 
       mapRef.current.animateToRegion(
         {
-          latitude: restaurant.location.lat,
-          longitude: restaurant.location.lng,
+          latitude: place.location.lat,
+          longitude: place.location.lng,
           latitudeDelta: 0.005,
           longitudeDelta: 0.005,
         },
@@ -197,7 +197,7 @@ const handleSearch = async () => {
         <MaterialCommunityIcons name="magnify" size={24} color="#666" />
         <TextInput
           placeholder="Search restaurants"
-]
+
           style={styles.searchInput}
           value={searchQuery}
           onChangeText={(text) => setSearchQuery(text)}
@@ -206,7 +206,7 @@ const handleSearch = async () => {
 
         {/* Search button with loader */}
         <TouchableOpacity onPress={handleSearch} style={styles.searchButton}>
-          {loading ? (
+          {isLoading ? (
             <ActivityIndicator size="small" color="#009c5b" />
           ) : (
             <MaterialCommunityIcons name="magnify" size={24} color="#009c5b" />
@@ -284,19 +284,19 @@ const handleSearch = async () => {
             key={place.place_id}
             coordinate={{
 
-              latitude: restaurant.location.lat,
-              longitude: restaurant.location.lng,
+              latitude: place.location.lat,
+              longitude: place.location.lng,
             }}
-            title={restaurant.title}
+            title={place.title}
 
 
           />
         ))}
   
         {/* Marker for current location */}
-        {currentLocationMarker && (
+        {location && (
           <Marker
-            coordinate={currentLocationMarker}
+            coordinate={location}
             title="My Location"
             pinColor="green"
           />
