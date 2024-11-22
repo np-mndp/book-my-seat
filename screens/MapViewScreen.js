@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
+
 import {
   StyleSheet,
   View,
@@ -13,11 +14,16 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import * as Location from "expo-location";
 import { API_URL } from "../configs/Constants";
 
+
 const MapScreenView = () => {
   const [location, setLocation] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+
+  const [places, setPlaces] = useState([]);
   const [filteredRestaurants, setFilteredRestaurants] = useState([]);
+
+
   const mapRef = useRef(null);
   const [restaurants, setRestaurants] = useState();
 
@@ -114,7 +120,13 @@ const MapScreenView = () => {
         longitudeDelta: 0.005,
       };
 
+  
       setLocation(newLocation);
+      setCurrentLocationMarker({
+        latitude: currentLocation.coords.latitude,
+        longitude: currentLocation.coords.longitude,
+      });
+  
 
       // Update the MapView to center on the current location
       if (mapRef.current) {
@@ -125,9 +137,36 @@ const MapScreenView = () => {
     }
   };
 
-  // Function to move the map to a restaurant's location
-  const handleRestaurantPress = (restaurant) => {
+
+// Function to fetch places from Google Places API
+const handleSearch = async () => {
+  if (!searchQuery) return;
+
+  setLoading(true); // Show loader before fetching the data
+
+  try {
+    const response = await fetch(
+      `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${searchQuery}&key=${PLACES_API_KEY}`
+    );
+    const data = await response.json();
+
+    if (data.results) {
+      setFilteredRestaurants(data.results);
+      setPlaces(data.results);  // Update places state for markers
+    }
+
+  } catch (error) {
+    console.error('Error fetching places:', error);
+  } finally {
+    setLoading(false); // Hide loader after the response
+  }
+};
+
+  // Function to move the map to a place's location
+  const handleRestaurantPress = (place) => {
     if (mapRef.current) {
+
+
       mapRef.current.animateToRegion(
         {
           latitude: restaurant.location.lat,
@@ -137,10 +176,14 @@ const MapScreenView = () => {
         },
         1000
       );
+
+
     }
+    setFilteredRestaurants([]);
   };
 
-  // Function to reset the search query and filtered restaurants
+  // Reset search query and results
+
   const handleResetSearch = () => {
     setSearchQuery("");
     setFilteredRestaurants([]);
@@ -150,13 +193,26 @@ const MapScreenView = () => {
   const searchSection = () => (
     <View>
       <View style={styles.searchContainer}>
+
         <MaterialCommunityIcons name="magnify" size={24} color="#666" />
         <TextInput
           placeholder="Search restaurants"
+]
           style={styles.searchInput}
           value={searchQuery}
           onChangeText={(text) => setSearchQuery(text)}
         />
+
+
+        {/* Search button with loader */}
+        <TouchableOpacity onPress={handleSearch} style={styles.searchButton}>
+          {loading ? (
+            <ActivityIndicator size="small" color="#009c5b" />
+          ) : (
+            <MaterialCommunityIcons name="magnify" size={24} color="#009c5b" />
+          )}
+        </TouchableOpacity>
+
       </View>
 
       <View style={styles.buttonContainer}>
@@ -188,8 +244,11 @@ const MapScreenView = () => {
     filteredRestaurants.length > 0 ? (
       <FlatList
         data={filteredRestaurants}
-        keyExtractor={(item) => item.id.toString()}
+
+        keyExtractor={(item) => item.place_id}
         renderItem={({ item }) => (
+
+
           <TouchableOpacity
             onPress={() => handleRestaurantPress(item)}
             style={styles.resultItem}
@@ -197,6 +256,7 @@ const MapScreenView = () => {
             <Text style={styles.resultText}>
               {item.title || "Unnamed Restaurant"}
             </Text>
+
           </TouchableOpacity>
         )}
         style={styles.resultList}
@@ -204,6 +264,7 @@ const MapScreenView = () => {
     ) : null;
 
   // Map view with restaurant markers
+
   const mapSection = () => (
     <View style={styles.mapContainer}>
       <MapView
@@ -217,19 +278,33 @@ const MapScreenView = () => {
           longitudeDelta: 0.05,
         }}
       >
-        {restaurants.map((restaurant) => (
+
+        {places.map((place) => (
           <Marker
-            key={restaurant.id}
+            key={place.place_id}
             coordinate={{
+
               latitude: restaurant.location.lat,
               longitude: restaurant.location.lng,
             }}
             title={restaurant.title}
+
+
           />
         ))}
+  
+        {/* Marker for current location */}
+        {currentLocationMarker && (
+          <Marker
+            coordinate={currentLocationMarker}
+            title="My Location"
+            pinColor="green"
+          />
+        )}
       </MapView>
     </View>
   );
+  
 
   return (
     <View style={styles.container}>
@@ -255,16 +330,25 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#fff",
-    padding: 10,
+
+    padding: 3,
     borderRadius: 25,
     borderColor: "#009c5b",
     borderWidth: 1,
-    margin: 10,
+    margin: 8,
+    elevation: 4, 
   },
   searchInput: {
     marginLeft: 8,
     flex: 1,
     fontSize: 16,
+  },
+
+  searchButton: {
+    marginLeft: 8,
+    padding: 10,
+    backgroundColor: '#fff',
+    borderRadius: 25,
   },
   buttonContainer: {
     flexDirection: "row",
@@ -298,17 +382,29 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   resultItem: {
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ddd",
+
+    paddingVertical: 15,
+    paddingHorizontal: 10,
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    marginVertical: 2,
+    elevation: 3, 
+    flexDirection: "row",
+    alignItems: "center",
+    flexShrink: 1,
   },
   resultText: {
-    fontSize: 16,
+    fontSize: 15,
+    fontWeight: "500", 
+    flex: 1,
   },
   resultList: {
+
     maxHeight: 200,
     margin: 15,
+
   },
 });
+
 
 export default MapScreenView;

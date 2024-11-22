@@ -14,6 +14,7 @@ let LoginScreen = ({ navigation }) => {
     // Validate email and password
     if (!(email.length >= 7) || !(password.length >= 8)) {
       setError("Please enter a valid email and password");
+
       return;
     }
   
@@ -30,6 +31,7 @@ let LoginScreen = ({ navigation }) => {
     } catch (error) {
       console.error("Error during login:", error);
       setError("An unexpected error occurred. Please try again.");
+
     }
   };
 
