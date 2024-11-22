@@ -19,8 +19,10 @@ const MapScreenView = () => {
   const [location, setLocation] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+
   const [places, setPlaces] = useState([]);
   const [filteredRestaurants, setFilteredRestaurants] = useState([]);
+
 
   const mapRef = useRef(null);
   const [restaurants, setRestaurants] = useState();
@@ -50,7 +52,6 @@ const MapScreenView = () => {
       setFilteredRestaurants([]);
     }
   }, [searchQuery]);
-
 
   useEffect(() => {
     const fetchWithTimeout = (url, options, timeout = 5000) => {
@@ -110,7 +111,7 @@ const MapScreenView = () => {
         console.log("Permission to access location was denied");
         return;
       }
-  
+
       let currentLocation = await Location.getCurrentPositionAsync({});
       const newLocation = {
         latitude: currentLocation.coords.latitude,
@@ -118,6 +119,7 @@ const MapScreenView = () => {
         latitudeDelta: 0.005,
         longitudeDelta: 0.005,
       };
+
   
       setLocation(newLocation);
       setCurrentLocationMarker({
@@ -125,6 +127,7 @@ const MapScreenView = () => {
         longitude: currentLocation.coords.longitude,
       });
   
+
       // Update the MapView to center on the current location
       if (mapRef.current) {
         mapRef.current.animateToRegion(newLocation, 1000);
@@ -133,7 +136,7 @@ const MapScreenView = () => {
       console.log("Error fetching location:", error);
     }
   };
-  
+
 
 // Function to fetch places from Google Places API
 const handleSearch = async () => {
@@ -163,6 +166,7 @@ const handleSearch = async () => {
   const handleRestaurantPress = (place) => {
     if (mapRef.current) {
 
+
       mapRef.current.animateToRegion(
         {
           latitude: restaurant.location.lat,
@@ -173,11 +177,13 @@ const handleSearch = async () => {
         1000
       );
 
+
     }
     setFilteredRestaurants([]);
   };
 
   // Reset search query and results
+
   const handleResetSearch = () => {
     setSearchQuery("");
     setFilteredRestaurants([]);
@@ -187,12 +193,16 @@ const handleSearch = async () => {
   const searchSection = () => (
     <View>
       <View style={styles.searchContainer}>
+
+        <MaterialCommunityIcons name="magnify" size={24} color="#666" />
         <TextInput
-          placeholder="Search restaurants and places"
+          placeholder="Search restaurants"
+]
           style={styles.searchInput}
           value={searchQuery}
           onChangeText={(text) => setSearchQuery(text)}
         />
+
 
         {/* Search button with loader */}
         <TouchableOpacity onPress={handleSearch} style={styles.searchButton}>
@@ -202,6 +212,7 @@ const handleSearch = async () => {
             <MaterialCommunityIcons name="magnify" size={24} color="#009c5b" />
           )}
         </TouchableOpacity>
+
       </View>
 
       <View style={styles.buttonContainer}>
@@ -227,13 +238,16 @@ const handleSearch = async () => {
       </View>
     </View>
   );
+
   // Search result list below the search bar
   const searchResultList = () =>
     filteredRestaurants.length > 0 ? (
       <FlatList
         data={filteredRestaurants}
+
         keyExtractor={(item) => item.place_id}
         renderItem={({ item }) => (
+
 
           <TouchableOpacity
             onPress={() => handleRestaurantPress(item)}
@@ -247,11 +261,10 @@ const handleSearch = async () => {
         )}
         style={styles.resultList}
       />
-
     ) : null;
 
+  // Map view with restaurant markers
 
-  // Map view with place markers
   const mapSection = () => (
     <View style={styles.mapContainer}>
       <MapView
@@ -265,6 +278,7 @@ const handleSearch = async () => {
           longitudeDelta: 0.05,
         }}
       >
+
         {places.map((place) => (
           <Marker
             key={place.place_id}
@@ -274,6 +288,7 @@ const handleSearch = async () => {
               longitude: restaurant.location.lng,
             }}
             title={restaurant.title}
+
 
           />
         ))}
@@ -315,6 +330,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#fff",
+
     padding: 3,
     borderRadius: 25,
     borderColor: "#009c5b",
@@ -327,6 +343,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 16,
   },
+
   searchButton: {
     marginLeft: 8,
     padding: 10,
@@ -365,6 +382,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   resultItem: {
+
     paddingVertical: 15,
     paddingHorizontal: 10,
     backgroundColor: "#fff",

@@ -16,7 +16,7 @@ export let loginUser = (email, password) => async (dispatch) => {
       },
       body: JSON.stringify({ email, password }),
     });
-    console.log(response);
+    console.log({"THIS IS RESPONSE FROM SERVER":{response}});
 
     const data = await response.json();
     console.log(JSON.stringify({ data }));
@@ -28,7 +28,7 @@ export let loginUser = (email, password) => async (dispatch) => {
       console.log(JSON.stringify(response));
     }
   } catch (error) {
-    console.log(JSON.stringify(error));
+    console.log(JSON.stringify(error.stack));
   }
 };
 

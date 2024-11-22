@@ -9,10 +9,12 @@ import TabViewScreen from "./screens/TabViewScreen";
 import { Provider } from "react-redux";
 import store, { persistor } from "./configs/Store";
 import { PersistGate } from "redux-persist/integration/react";
+import MapViewScreen from "./screens/MapViewScreen";
 import BookingScreen from "./screens/BookingScreen";
 import BookingHistoryScreen from "./screens/BookingHistoryScreen";
+
 import ReservationConfirmation from "./screens/ReservationConfirmation";
-//
+
 const Stack = createStackNavigator();
 
 export default function App() {
@@ -71,6 +73,7 @@ export default function App() {
                 },
               ]}
             />
+
             <Stack.Screen
               name="Restaurant Details"
               component={RestaurantDetailScreen}
@@ -84,6 +87,7 @@ export default function App() {
             <Stack.Screen
               name="Booking History"
               component={BookingHistoryScreen}
+
               options={{
                 headerTitle: "My Bookings",
               }}
@@ -93,6 +97,7 @@ export default function App() {
               component={ReservationConfirmation}
               options={{
                 headerTitle: "Reservation Confirmation",
+
               }}
             />
           </Stack.Navigator>
