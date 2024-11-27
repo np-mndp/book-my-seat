@@ -75,7 +75,7 @@ const BookingHistoryScreen = ({ navigation }) => {
       >
         <View style={styles.bookingCard}>
           <Image
-            source={{ uri: item.Restaurant.images }}
+            source={{ uri: item.Restaurant.images[0] }}
             style={styles.thumbnail}
           />
 
