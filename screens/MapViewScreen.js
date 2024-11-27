@@ -417,7 +417,6 @@ const MapScreenView = () => {
   const [location, setLocation] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [places, setPlaces] = useState([]);
-  const [restaurants, setRestaurants] = useState([]);
   const [filteredRestaurants, setFilteredRestaurants] = useState([]);
   const [loading, setLoading] = useState(false); // State for loader visibility
   const [currentLocationMarker, setCurrentLocationMarker] = useState({
