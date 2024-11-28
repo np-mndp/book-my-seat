@@ -6,10 +6,31 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
+  Alert
 } from "react-native";
 import { FontAwesome5, MaterialIcons } from "@expo/vector-icons";
+import { useDispatch, useSelector } from "react-redux";
+import { logoutUser } from "../../actions/authActions";
+
 
 const ManagerProfileScreen = ({ navigation }) => {
+  let dispatch = useDispatch();
+  let { user, token } = useSelector((state) => state.auth);
+
+
+  const onSignOutPressed = () => {
+    Alert.alert("Sign Out", `User Signed out successfully !`, [
+      {
+        text: "OK",
+        onPress: () => {
+          navigation.replace("Login");
+          dispatch(logoutUser());
+        },
+      },
+    ]);
+  };
+
+
   const managerName = "John Doe";
   const managerNumber = "+1 234 567 890";
   const restaurantDetails = {
@@ -100,6 +121,10 @@ const ManagerProfileScreen = ({ navigation }) => {
             />
             <Text style={styles.buttonText}>View Reservations</Text>
           </TouchableOpacity>
+
+          <TouchableOpacity style={styles.signOutButton} onPress={onSignOutPressed}>
+        <Text style={styles.signOutButtonText}>Sign Out</Text>
+      </TouchableOpacity>
         </View>
       </ScrollView>
     </View>
@@ -183,6 +208,17 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   buttonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
+  }, signOutButton: {
+    marginTop: 20,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    backgroundColor: "#ff4757", // Red color for sign out button
+    borderRadius: 5,
+  },
+  signOutButtonText: {
     color: "#fff",
     fontSize: 16,
     fontWeight: "bold",

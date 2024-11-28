@@ -46,11 +46,14 @@ function App() {
       >
         <Stack.Screen
           name="TabView"
-          component={TabViewScreen}
+          // component={TabViewScreen}
           options={{
             headerTitle: "Book My Seat",
           }}
-        />
+        >
+           {() => <TabViewScreen isManager={user?.isManager} />}
+        </Stack.Screen>
+        
         {/* Other Screens */}
         <Stack.Screen
           name="Login"

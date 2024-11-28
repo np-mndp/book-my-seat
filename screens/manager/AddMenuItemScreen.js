@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, Alert, ScrollView } from "react-native";
 import { useSelector } from "react-redux";
-import { API_URL } from "../configs/Constants";
+import { API_URL } from "../../configs/Constants"
 
 // Enum for Item Type
 const ItemType = {

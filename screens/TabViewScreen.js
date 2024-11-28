@@ -12,10 +12,10 @@ import AddRestaurantScreen from "./manager/AddRestaurantScreen";
 import ManagerProfileScreen from "./manager/ManagerProfileScreen";
 
 const Tab = createBottomTabNavigator();
-const userType = "USER"; // Change to "MANAGER" to test manager screens
 
-const TabViewScreen = () => {
-  if (userType === "USER") {
+const TabViewScreen = ({isManager}) => {
+  console.log(isManager)
+  if (!isManager) {
     return (
       <Tab.Navigator
         initialRouteName="Home"
