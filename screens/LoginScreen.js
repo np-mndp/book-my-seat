@@ -8,9 +8,12 @@ let LoginScreen = ({ navigation }) => {
   let [email, setEmail] = useState("radwane@gmail.com");
   let [password, setPassword] = useState("Radwane1234*");
   let [error, setError] = useState(null);
+  const [isDisabled, setIsDisabled] = useState(false);
   let dispatch = useDispatch();
 
   let onLoginPressed = async () => {
+    //disable login button
+    setIsDisabled(true)
     // Validate email and password
     if (!(email.length >= 7) || !(password.length >= 8)) {
       setError("Please enter a valid email and password");
@@ -25,10 +28,12 @@ let LoginScreen = ({ navigation }) => {
         navigation.replace("TabView");
       } else {
         setError("Login failed. Please check your credentials and try again.");
+        setIsDisabled(false)
       }
     } catch (error) {
       console.error("Error during login:", error);
       setError("An unexpected error occurred. Please try again.");
+      setIsDisabled(false)
     }
   };
 
@@ -61,7 +66,7 @@ let LoginScreen = ({ navigation }) => {
           secureTextEntry={true} // Corrected to boolean
           placeholder="Password"
         />
-        <TouchableOpacity style={commonStyles.button} onPress={onLoginPressed}>
+        <TouchableOpacity disabled={isDisabled} style={commonStyles.button} onPress={onLoginPressed}>
           <Text style={commonStyles.buttonText}>Login</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate("Signup")}>

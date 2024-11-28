@@ -31,7 +31,13 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "expo-font"
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow Book My Seat to use your location."
+        }
+      ],
+      "expo-font" 
     ]
   }
 }
