@@ -12,26 +12,23 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { API_URL } from "../configs/Constants";
 import { useSelector } from "react-redux";
 import moment from "moment";
+import { ReactNativeModal } from "react-native-modal";
+import { ScrollView } from "react-native-gesture-handler";
 
-const BookingHistoryScreen = ({ navigation }) => {
+const BookingHistoryScreen = () => {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [selectedBooking, setSelectedBooking] = useState(null);
+  const [recentBookingsVisible, setRecentBookingsVisible] = useState(true);
+  const [oldBookingsVisible, setOldBookingsVisible] = useState(true);
   let { user, token } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    const fetchWithTimeout = (url, options, timeout = 5000) => {
-      return Promise.race([
-        fetch(url, options),
-        new Promise((_, reject) =>
-          setTimeout(() => reject(new Error("Request timed out")), timeout)
-        ),
-      ]);
-    };
-
     const fetchData = async () => {
       try {
-        const response = await fetchWithTimeout(`${API_URL}/api/bookings`, {
+        const response = await fetch(`${API_URL}/api/bookings`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -42,76 +39,168 @@ const BookingHistoryScreen = ({ navigation }) => {
           const json = await response.json();
           setBookings(json);
         } else {
-          throw new Error("Failed to fetch"); // Handle server errors
+          throw new Error("Failed to fetch");
         }
       } catch (error) {
         console.error("Error:", error.message);
         setError(error.message);
       } finally {
-        setLoading(false); // Stop loading after fetching
+        setLoading(false);
       }
     };
 
-    // Call the fetch function
     fetchData();
   }, []);
 
+  const toggleModal = (booking) => {
+    setSelectedBooking(booking);
+    setModalVisible(!isModalVisible);
+  };
+
+  const renderBooking = (item) => (
+    <TouchableOpacity onPress={() => toggleModal(item)}>
+      
+      <View style={styles.bookingCard}>
+        <Image
+          source={{ uri: item.Restaurant.images[0] }}
+          style={styles.thumbnail}
+        />
+        <View style={styles.bookingInfo}>
+          <Text style={styles.title}>{item.Restaurant.title}</Text>
+          <View style={styles.addressContainer}>
+            <MaterialIcons name="location-pin" size={16} color="#cb4539" />
+            <Text style={styles.address}>
+              {item.Restaurant.location.address}
+            </Text>
+          </View>
+          <View style={styles.bookingDetailsContainer}>
+            <Text style={styles.bookingDetail}>
+              Date: {moment(item.loadIn).format("dddd, MMMM Do YYYY")}
+            </Text>
+          </View>
+        </View>
+      </View>
+    </TouchableOpacity>
+  );
+
+  const last7DaysBookings = bookings.filter((booking) =>
+    moment(booking.loadIn).isSameOrAfter(moment().subtract(7, "days"))
+  );
+  const oldBookings = bookings.filter((booking) =>
+    moment(booking.loadIn).isBefore(moment().subtract(7, "days"))
+  );
+
   if (loading) {
-    return <ActivityIndicator></ActivityIndicator>;
+    return (
+      <View style={styles.loaderContainer}>
+        <ActivityIndicator size="large" color="#009c5b" />
+      </View>
+    );
   }
 
   if (error) {
-    return <Text>Error: {error}</Text>;
+    return (
+      <View style={styles.errorContainer}>
+        <Text>Error: {error}</Text>
+      </View>
+    );
   }
 
-  const listItem = (item) => {
-    return (
-      <TouchableOpacity
-        onPress={
-          () => console.log(`Pressed`)
-
-          //   navigation.navigate("Booking Details", { bookingData: item })
-        }
-      >
-        <View style={styles.bookingCard}>
-          <Image
-            source={{ uri: item.Restaurant.images[0] }}
-            style={styles.thumbnail}
-          />
-
-          <View style={styles.bookingInfo}>
-            <Text style={styles.title}>{item.Restaurant.title}</Text>
-            <View style={styles.addressContainer}>
-              <MaterialIcons name="location-pin" size={16} color="#cb4539" />
-              <Text style={styles.address}>
-                {item.Restaurant.location.address}
-              </Text>
-            </View>
-            <View style={styles.bookingDetailsContainer}>
-              <Text style={styles.bookingDetail}>
-                Guest Count: {item.guests}
-              </Text>
-              <Text style={styles.bookingDetail}>
-                Date: {moment(item.loadIn).format("dddd, MMMM Do YYYY")}
-              </Text>
-              <Text style={styles.bookingDetail}>
-                Special Occasion: {item.eventSpecial}
-              </Text>
-            </View>
-          </View>
-        </View>
-      </TouchableOpacity>
-    );
-  };
-
   return (
-    <View style={styles.container}>
-      <FlatList
-        data={bookings}
-        renderItem={({ item }) => listItem(item)}
-        keyExtractor={(item) => item.id.toString()}
-      />
-    </View>
+    <ScrollView style={styles.container}>
+      <Text style={styles.headerText}>My bookings</Text>
+      {/* Recent Bookings */}
+      <TouchableOpacity
+        style={styles.sectionHeader}
+        onPress={() => setRecentBookingsVisible(!recentBookingsVisible)}
+      >
+        <Text style={styles.sectionHeaderText}>Last 7 Days</Text>
+        <MaterialIcons
+          name={recentBookingsVisible ? "keyboard-arrow-up" : "keyboard-arrow-down"}
+          size={24}
+          color="#666"
+        />
+      </TouchableOpacity>
+      {recentBookingsVisible && (
+        <FlatList
+          data={last7DaysBookings}
+          renderItem={({ item }) => renderBooking(item)}
+          keyExtractor={(item) => item.id.toString()}
+          scrollEnabled={false} //scroll fixed for scrollview child
+        />
+      )}
+
+      {/* Old Bookings */}
+      <TouchableOpacity
+        style={styles.sectionHeader}
+        onPress={() => setOldBookingsVisible(!oldBookingsVisible)}
+      >
+        <Text style={styles.sectionHeaderText}>Old Bookings</Text>
+        <MaterialIcons
+          name={oldBookingsVisible ? "keyboard-arrow-up" : "keyboard-arrow-down"}
+          size={24}
+          color="#666"
+        />
+      </TouchableOpacity>
+      {oldBookingsVisible && (
+        <FlatList
+          data={oldBookings}
+          renderItem={({ item }) => renderBooking(item)}
+          keyExtractor={(item) => item.id.toString()}
+          scrollEnabled={false}
+        />
+      )}
+
+      {/* Booking Details Modal */}
+      <ReactNativeModal
+        isVisible={isModalVisible}
+        onBackdropPress={() => setModalVisible(false)}
+        style={styles.modal}
+      >
+        {selectedBooking ? (
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>
+              {selectedBooking.Restaurant.title}
+            </Text>
+            <Image
+              source={{ uri: selectedBooking.Restaurant.images[0] }}
+              style={styles.modalImage}
+            />
+            <Text style={styles.modalDetail}>
+              Address: {selectedBooking.Restaurant.location.address}
+            </Text>
+            <Text style={styles.modalDetail}>
+              Date: {moment(selectedBooking.loadIn).format(
+                "dddd, MMMM Do YYYY"
+              )}
+            </Text>
+            <Text style={styles.modalDetail}>
+              Guest Count: {selectedBooking.guests}
+            </Text>
+            <Text style={styles.modalDetail}>
+              Special Occasion: {selectedBooking.eventSpecial}
+            </Text>
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={() => setModalVisible(false)}
+            >
+              <Text style={styles.closeButtonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          // Fallback content when no booking is selected
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>No booking selected</Text>
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={() => setModalVisible(false)}
+            >
+              <Text style={styles.closeButtonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+      </ReactNativeModal>
+    </ScrollView>
   );
 };
 
@@ -119,6 +208,27 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#f9f9f9",
+  },
+  headerText: {
+    margin:10,
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#14AE5C",
+    textAlign: "center",
+  },
+  sectionHeader: {
+    padding: 16,
+    backgroundColor: "#eee",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    borderBottomWidth: 1,
+    borderBottomColor: "#ddd",
+  },
+  sectionHeaderText: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#333",
   },
   bookingCard: {
     padding: 16,
@@ -128,8 +238,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   thumbnail: {
-    width: 100,
-    height: 100,
+    width: 80,
+    height: 80,
     borderRadius: 5,
     marginRight: 16,
     borderWidth: 1,
@@ -137,31 +247,57 @@ const styles = StyleSheet.create({
   },
   bookingInfo: {
     flex: 1,
-    marginLeft: 16,
   },
   title: {
     fontSize: 18,
     fontWeight: "bold",
     color: "#333",
-    marginBottom: 4,
   },
   addressContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 8,
+    marginVertical: 8,
   },
   address: {
     fontSize: 16,
     color: "#666",
     marginLeft: 8,
   },
-  bookingDetailsContainer: {
-    flexDirection: "column",
+  modal: {
+    justifyContent: "flex-end",
+    margin: 0,
   },
-  bookingDetail: {
+  modalContent: {
+    backgroundColor: "white",
+    padding: 20,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  modalImage: {
+    width: "100%",
+    height: 200,
+    borderRadius: 10,
+    marginBottom: 10,
+  },
+  modalDetail: {
     fontSize: 16,
-    color: "#333",
-    marginBottom: 4,
+    marginBottom: 5,
+  },
+  closeButton: {
+    marginTop: 10,
+    alignItems: "center",
+    backgroundColor: "#009c5b",
+    padding: 10,
+    borderRadius: 5,
+  },
+  closeButtonText: {
+    color: "white",
+    fontSize: 16,
   },
 });
 
