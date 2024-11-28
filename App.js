@@ -51,7 +51,7 @@ function App() {
             headerTitle: "Book My Seat",
           }}
         >
-           {() => <TabViewScreen isManager={user?.isManager} />}
+           {() => <TabViewScreen />}
         </Stack.Screen>
         
         {/* Other Screens */}

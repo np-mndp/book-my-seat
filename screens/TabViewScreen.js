@@ -2,7 +2,7 @@
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import MapScreenView from "./MapViewScreen";
-import ProfileScreen from "./ProfileScreen"
+import ProfileScreen from "./ProfileScreen";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import RestaurantListScreen from "./RestaurantListScreen";
 import BookingHistoryScreen from "./BookingHistoryScreen";
@@ -10,12 +10,13 @@ import ReservationsScreen from "./manager/ReservationsScreen";
 import FloorPlanScreen from "./manager/FloorPlanScreen";
 import AddRestaurantScreen from "./manager/AddRestaurantScreen";
 import ManagerProfileScreen from "./manager/ManagerProfileScreen";
+import { useSelector } from "react-redux";
 
 const Tab = createBottomTabNavigator();
 
-const TabViewScreen = ({isManager}) => {
-  console.log(isManager)
-  if (!isManager) {
+const TabViewScreen = ({ isManager }) => {
+  let { user, token } = useSelector((state) => state.auth);
+  if (user?.isManager) {
     return (
       <Tab.Navigator
         initialRouteName="Home"
@@ -40,7 +41,13 @@ const TabViewScreen = ({isManager}) => {
                 iconName = "circle";
             }
 
-            return <MaterialCommunityIcons name={iconName} size={size} color={color} />;
+            return (
+              <MaterialCommunityIcons
+                name={iconName}
+                size={size}
+                color={color}
+              />
+            );
           },
           tabBarActiveTintColor: "#009c5b",
           tabBarInactiveTintColor: "gray",
@@ -78,7 +85,13 @@ const TabViewScreen = ({isManager}) => {
                 iconName = "circle";
             }
 
-            return <MaterialCommunityIcons name={iconName} size={size} color={color} />;
+            return (
+              <MaterialCommunityIcons
+                name={iconName}
+                size={size}
+                color={color}
+              />
+            );
           },
           tabBarActiveTintColor: "#009c5b",
           tabBarInactiveTintColor: "gray",
