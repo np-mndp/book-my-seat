@@ -1,15 +1,10 @@
 // TabViewScreen.js
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import HomeScreen from "./HomeScreen";
 import MapScreenView from "./MapViewScreen";
-
 import ProfileScreen from "./ProfileScreen"
-import MyBookingsScreen from "./MyBookingsScreen";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import RestaurantListScreen from "./RestaurantListScreen";
-import MapScreenView from "./MapViewScreen";
-import ProfileScreen from "./ProfileScreen";
 import BookingHistoryScreen from "./BookingHistoryScreen";
 import ReservationsScreen from "./manager/ReservationsScreen";
 import FloorPlanScreen from "./manager/FloorPlanScreen";
@@ -17,7 +12,7 @@ import AddRestaurantScreen from "./manager/AddRestaurantScreen";
 import ManagerProfileScreen from "./manager/ManagerProfileScreen";
 
 const Tab = createBottomTabNavigator();
-const userType = "MANAGER"; // Change to "MANAGER" to test manager screens
+const userType = "USER"; // Change to "MANAGER" to test manager screens
 
 const TabViewScreen = () => {
   if (userType === "USER") {
