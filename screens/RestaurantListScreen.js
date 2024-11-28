@@ -28,23 +28,23 @@ const RestaurantListScreen = ({ navigation }) => {
     },
   ]);
 
-  const [originalRestaurants, setOriginalRestaurants] = useState([
-    {
-      id: 1,
-      images: [
-        "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=3174&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      ],
-      title: "Restaurant 1",
-      address: "123 Main St, Anytown, USA",
-      rating: 4.5,
-      expensiveness: "$$",
-    },
-  ]);
+  // const [originalRestaurants, setOriginalRestaurants] = useState([
+  //   {
+  //     id: 1,
+  //     images: [
+  //       "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=3174&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  //     ],
+  //     title: "Restaurant 1",
+  //     address: "123 Main St, Anytown, USA",
+  //     rating: 4.5,
+  //     expensiveness: "$$",
+  //   },
+  // ]);
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const [location, setLocation] = useState(null);
+  // const [location, setLocation] = useState(null);
 
   useEffect(() => {
     const fetchWithTimeout = (url, options, timeout = 5000) => {
@@ -144,12 +144,6 @@ const RestaurantListScreen = ({ navigation }) => {
                   color="#DAA520"
                 />
               ))}
-              {/* <FontAwesome name="dollar" size={15} color="black" />
-              <Text style={styles.rating}>{item.expensiveRating}</Text> */}
-
-              {/* {RatingStars(item.expensiveRating)} */}
-
-              {/* <Text style={styles.expensiveness}>{item.expensiveRating}</Text> */}
             </View>
           </View>
         </View>
