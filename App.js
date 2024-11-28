@@ -13,7 +13,7 @@ import BookingScreen from "./screens/BookingScreen";
 import BookingHistoryScreen from "./screens/BookingHistoryScreen";
 import AddMenuItemsScreen from "./screens/manager/AddMenuItemScreen"
 
-import ReservationConfirmation from "./screens/ReservationConfirmation";
+// import ReservationConfirmation from "./screens/ReservationConfirmation";
 
 const Stack = createStackNavigator();
 
