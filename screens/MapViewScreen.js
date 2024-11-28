@@ -15,7 +15,6 @@ import {
   FlatList,
   ActivityIndicator,
   Alert,
-  Button,
   Image
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -32,15 +31,13 @@ const MapScreenView = ({ navigation })=> {
   const [location, setLocation] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [places, setPlaces] = useState([]);
-  // const [filteredRestaurants, setFilteredRestaurants] = useState([]);
   const [loading, setLoading] = useState(false); // State for loader visibility
   const [currentLocationMarker, setCurrentLocationMarker] = useState();
   const [restaurants, setRestaurants] = useState(); //results from backend
   const [sliderValue, setSliderValue] = useState(10);
-  // const [bottomSheetVisibility, setBottomSheetVisibility] = useState(false);
 
   const sliderValues = [10, 20, 30, 40, 50];
-  const snapPoints = useMemo(() => ["25%", "50%", "70%"], ["50%"]);
+  const snapPoints = useMemo(() => ["25%", "50%", "70%"], []);
   const initialIndex = -1; // Ensure the BottomSheet starts in a closed state
 
   //ref for mapview
@@ -56,24 +53,9 @@ const MapScreenView = ({ navigation })=> {
 
   // Function to close the Bottom Sheet
   const handleCloseBottomSheet = useCallback(() => {
-    console.log("On close bottom sheet")
+    // console.log("On close bottom sheet")
     bottomSheetRef.current?.close(); // Closes the Bottom Sheet
   }, []);
-
-  // const showAlert = (data) => {
-  //   Alert.alert(
-  //     data.title,
-  //     data.message,
-  //     [
-  //       {
-  //         text: "OK",
-  //         onPress: () => console.log("OK Pressed"),
-  //         style: "default",
-  //       },
-  //     ],
-  //     { cancelable: true } // User can dismiss the alert by tapping outside
-  //   );
-  // };
 
   // Fetch user's location when the component mounts
   useEffect(() => {
@@ -145,7 +127,6 @@ const MapScreenView = ({ navigation })=> {
           // }
         } else {
           throw new Error("Failed to fetch restaurant data.");
-          Alert.alert("Error", "Could not fetch restaurant data. Please try again.");
         }
       } catch (error) {
         console.error("Error fetching restaurants:", error.message);
@@ -259,8 +240,6 @@ const MapScreenView = ({ navigation })=> {
       );
     }
     setPlaces([]);
-    // console.log(places)
-    // console.log("PLACES========")
   };
 
   // Reset search query and results
@@ -438,12 +417,6 @@ const MapScreenView = ({ navigation })=> {
                   color="#DAA520"
                 />
               ))}
-              {/* <FontAwesome name="dollar" size={15} color="black" />
-              <Text style={styles.rating}>{item.expensiveRating}</Text> */}
-
-              {/* {RatingStars(item.expensiveRating)} */}
-
-              {/* <Text style={styles.expensiveness}>{item.expensiveRating}</Text> */}
             </View>
           </View>
         </View>
@@ -616,8 +589,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
-    borderBottomLeftRadius: 10,  // Optional: for rounded bottom edges
-    borderBottomRightRadius: 10, // Optional: for rounded bottom edges
     borderColor: '#ccc',
     borderWidth: 1,
     elevation: 5, // Add shadow effect
@@ -695,7 +666,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     alignSelf: 'center',
-    elevation: 4, // Add subtle shadow effect
+    elevation: 4, //  subtle shadow effect
   },
   closeButtonText: {
     fontSize: 16,
