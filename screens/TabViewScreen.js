@@ -1,6 +1,11 @@
 // TabViewScreen.js
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import HomeScreen from "./HomeScreen";
+import MapScreenView from "./MapViewScreen";
+
+import ProfileScreen from "./ProfileScreen"
+import MyBookingsScreen from "./MyBookingsScreen";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import RestaurantListScreen from "./RestaurantListScreen";
 import MapScreenView from "./MapViewScreen";

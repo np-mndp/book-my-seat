@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Alert } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Alert, Image } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons"; // Importing icons
 import { useDispatch, useSelector } from "react-redux";
 import { logoutUser } from "../actions/authActions";
@@ -25,11 +25,7 @@ const ProfileScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <MaterialCommunityIcons
-          name="account-circle"
-          size={80}
-          color="#009c5b"
-        />
+        <Image source={{ uri: user?.profilePicture }} style={styles.thumbnail} />
         <Text style={styles.title}>{user?.name}</Text>
       </View>
       <View style={styles.infoContainer}>
@@ -94,6 +90,12 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     fontWeight: "bold",
+  },
+  thumbnail: {
+    width: 100,
+    height: 100,
+    borderRadius: 10,
+    resizeMode: "cover",
   },
 });
 

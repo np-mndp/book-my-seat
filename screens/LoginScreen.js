@@ -5,8 +5,8 @@ import { useDispatch } from "react-redux";
 import { loginUser } from "../actions/authActions";
 
 let LoginScreen = ({ navigation }) => {
-  let [email, setEmail] = useState("biraj@gmail.com");
-  let [password, setPassword] = useState("Biraj1234*");
+  let [email, setEmail] = useState("radwane@gmail.com");
+  let [password, setPassword] = useState("Radwane1234*");
   let [error, setError] = useState(null);
   let dispatch = useDispatch();
 
@@ -14,14 +14,12 @@ let LoginScreen = ({ navigation }) => {
     // Validate email and password
     if (!(email.length >= 7) || !(password.length >= 8)) {
       setError("Please enter a valid email and password");
-
       return;
     }
-  
+
     try {
       // Wait for the login action to complete
       let result = await dispatch(loginUser(email, password));
-  
       // If login was successful, navigate to TabView
       if (result) {
         navigation.replace("TabView");
@@ -31,7 +29,6 @@ let LoginScreen = ({ navigation }) => {
     } catch (error) {
       console.error("Error during login:", error);
       setError("An unexpected error occurred. Please try again.");
-
     }
   };
 
