@@ -110,7 +110,7 @@ const HomeScreen = () => {
       <View style={styles.searchContainer}>
         <MaterialCommunityIcons name="magnify" size={24} color="#666" />
         <TextInput
-          placeholder="Search Restaurants and Menus"
+          placeholder="Search Restaurants near you"
           style={styles.searchInput}
           value={searchQuery}
           onChangeText={handleSearch}
