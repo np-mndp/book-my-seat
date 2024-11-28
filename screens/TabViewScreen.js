@@ -16,7 +16,7 @@ const Tab = createBottomTabNavigator();
 
 const TabViewScreen = ({ isManager }) => {
   let { user, token } = useSelector((state) => state.auth);
-  if (user?.isManager == false) {
+  if (user?.isManager == true) {
     return (
       <Tab.Navigator
         initialRouteName="Home"
