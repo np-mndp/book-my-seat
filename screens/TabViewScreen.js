@@ -29,7 +29,7 @@ const TabViewScreen = ({ isManager }) => {
               case "Home":
                 iconName = "home";
                 break;
-              case "MapScreenView":
+              case "Search on Map":
                 iconName = "map";
                 break;
               case "Profile":
@@ -56,7 +56,7 @@ const TabViewScreen = ({ isManager }) => {
         })}
       >
         <Tab.Screen name="Home" component={HomeScreen} />
-        <Tab.Screen name="MapScreenView" component={MapScreenView} />
+        <Tab.Screen name="Search on Map" component={MapScreenView} />
         <Tab.Screen name="Profile" component={ProfileScreen} />
         <Tab.Screen name="MyBookings" component={BookingHistoryScreen} />
       </Tab.Navigator>

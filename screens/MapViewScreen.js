@@ -187,7 +187,8 @@ const MapScreenView = ({ navigation })=> {
       const data = await response.json();
 
       if (data.status !== "OK") {
-        console.error("Error from Places API:", data.error_message);
+        // console.error("Error from Places API:", data.error_message);
+        Alert.alert("No data found", "Consider chanding your search query!");
         return;
       }
 
