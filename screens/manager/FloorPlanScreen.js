@@ -1,48 +1,89 @@
-import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
+import React, { useState } from "react";
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
 
 const FloorPlanScreen = ({ navigation }) => {
-  // Dummy data for tables
-  const tables = [
-    { id: "1", number: 1, x: 1, y: 1 },
-    { id: "2", number: 2, x: 2, y: 1 },
-    { id: "3", number: 3, x: 3, y: 1 },
-    { id: "4", number: 4, x: 1, y: 2 },
-    { id: "5", number: 5, x: 2, y: 2 },
-    { id: "6", number: 6, x: 3, y: 2 },
-    { id: "7", number: 7, x: 1, y: 3 },
-    { id: "8", number: 8, x: 2, y: 3 },
-    { id: "9", number: 9, x: 3, y: 3 },
-  ];
+  // Initial tables data
+  const [tables, setTables] = useState([
+    { seats: "", tableCount: "", place: "" },
+  ]);
+
+  // Add new table set
+  const addTableSet = () => {
+    setTables([
+      ...tables,
+      { seats: "", tableCount: "", place: "" },
+    ]);
+  };
+
+  // Remove table set
+  const removeTableSet = (index) => {
+    const newTables = tables.filter((_, idx) => idx !== index);
+    setTables(newTables);
+  };
+
+  // Handle input change
+  const handleInputChange = (index, field, value) => {
+    const updatedTables = [...tables];
+    updatedTables[index][field] = value;
+    setTables(updatedTables);
+  };
+
+  // Handle submit action
+  const handleSubmit = () => {
+    // Logic for submitting the data (e.g., sending to a server or saving to Firebase)
+    console.log("Tables submitted:", tables);
+    // Navigate back after submitting
+    navigation.goBack();
+  };
 
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Restaurant Floor Plan</Text>
 
       <ScrollView contentContainerStyle={styles.floorPlanContainer}>
-        {/* Render Tables */}
-        {tables.map((table) => (
-          <View
-            key={table.id}
-            style={[
-              styles.table,
-              { left: `${table.x * 30}%`, top: `${table.y * 30}%` },
-            ]}
-          >
-            <Text style={styles.tableNumber}>{table.number}</Text>
+        {tables.map((table, index) => (
+          <View key={index} style={styles.card}>
+            <Text style={styles.cardHeader}>Table Set {index + 1}</Text>
+
+            <TextInput
+              style={styles.input}
+              placeholder="Seats"
+              value={table.seats}
+              onChangeText={(text) => handleInputChange(index, "seats", text)}
+              keyboardType="number-pad"
+            />
+
+            <TextInput
+              style={styles.input}
+              placeholder="Table Count"
+              value={table.tableCount}
+              onChangeText={(text) => handleInputChange(index, "tableCount", text)}
+              keyboardType="number-pad"
+            />
+
+            <TextInput
+              style={styles.input}
+              placeholder="Place"
+              value={table.place}
+              onChangeText={(text) => handleInputChange(index, "place", text)}
+            />
+
+            <TouchableOpacity
+              style={styles.deleteButton}
+              onPress={() => removeTableSet(index)}
+            >
+              <Text style={styles.deleteButtonText}>×</Text>
+            </TouchableOpacity>
           </View>
         ))}
+
+        <TouchableOpacity style={styles.addButton} onPress={addTableSet}>
+          <Text style={styles.addButtonText}>Add Another Set of Tables</Text>
+        </TouchableOpacity>
       </ScrollView>
 
-      <TouchableOpacity style={styles.button} onPress={() => navigation.goBack()}>
-        <Text style={styles.buttonText}>Back to Profile</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={[styles.button, styles.editButton]}
-        onPress={() => navigation.navigate('EditFloorPlanScreen')} // Navigate to the edit screen
-      >
-        <Text style={styles.buttonText}>Edit Restaurant Layout</Text>
+      <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+        <Text style={styles.buttonText}>Submit</Text>
       </TouchableOpacity>
     </View>
   );
@@ -62,31 +103,60 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   floorPlanContainer: {
-    position: "relative",
     width: "100%",
-    height: 300,
-    borderWidth: 2,
-    borderColor: "#ddd",
     marginBottom: 20,
-    backgroundColor: "#e2e2e2",
   },
-  table: {
-    position: "absolute",
-    width: 40, // Reduced size
-    height: 40, // Reduced size
-    backgroundColor: "#3498db",
-    borderRadius: 8, // Slightly more rounded
-    justifyContent: "center",
-    alignItems: "center",
+  card: {
+    backgroundColor: "#fff",
+    padding: 15,
+    borderRadius: 8,
+    marginBottom: 20,
     shadowColor: "#000",
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
     shadowOffset: { width: 0, height: 4 },
     elevation: 5,
   },
-  tableNumber: {
-    fontSize: 14, // Smaller font size for the table number
+  cardHeader: {
+    fontSize: 18,
+    fontWeight: "600",
+    marginBottom: 10,
+  },
+  input: {
+    height: 40,
+    borderColor: "#ccc",
+    borderWidth: 1,
+    borderRadius: 8,
+    marginBottom: 15,
+    paddingLeft: 10,
+    fontSize: 16,
+  },
+  deleteButton: {
+    position: "absolute",
+    top: 5,
+    right: 5,
+    backgroundColor: "#e74c3c",
+    borderRadius: 12,
+    padding: 5,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  deleteButtonText: {
+    fontSize: 20,
     color: "#fff",
+    fontWeight: "bold",
+  },
+  addButton: {
+    backgroundColor: "#2ca850",
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    marginTop: 20,
+    alignSelf: "center",
+  },
+  addButtonText: {
+    color: "#fff",
+    fontSize: 16,
     fontWeight: "bold",
   },
   button: {
@@ -101,10 +171,6 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     fontWeight: "bold",
-  },
-  editButton: {
-    backgroundColor: "#f39c12", // Change the color for the edit button
-    marginTop: 10,
   },
 });
 
