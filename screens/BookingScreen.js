@@ -18,10 +18,10 @@ import { API_URL } from "../configs/Constants";
 
 let BookingScreen = ({ navigation, route }) => {
   let { user, token } = useSelector((state) => state.auth);
-  let [loadIn, setLoadIn] = useState(moment().format("YYYY-MM-DD HH:mm:ss"));
-  let [openLoadIn, setOpenLoadIn] = useState(false);
-  let [loadOut, setLoadOut] = useState(moment().format("YYYY-MM-DD HH:mm:ss"));
-  let [openLoadOut, setOpenLoadOut] = useState(false);
+  let [reservationDateTime, setReservationDateTime] = useState(
+    moment().format("YYYY-MM-DD HH:mm:ss")
+  );
+  let [openDateTimePicker, setOpenDateTimePicker] = useState(false);
   let [customer, setCustomer] = useState(user);
   let [guests, setGuests] = useState(1);
   let [eventSpecial, setEventSpecial] = useState("");
@@ -67,8 +67,7 @@ let BookingScreen = ({ navigation, route }) => {
           specialAccommodations,
           note,
           RestaurantId: route.params?.restaurant?.id,
-          loadIn,
-          loadOut,
+          reservationDateTime,
         }),
       });
       if (response.ok) {
@@ -85,10 +84,24 @@ let BookingScreen = ({ navigation, route }) => {
       }
     } catch (error) {
       Alert.alert(
-        `Error occured while trying to book a table for ${guests} at ${restaurant.title} has been booked! `
+        `Error occurred while trying to book a table for ${guests} at ${restaurant.title}`
       );
       console.log(`Booking Error: ${error}`);
     }
+  };
+
+  // Handle date/time picker
+  const showDateTimePicker = () => {
+    setOpenDateTimePicker(true);
+  };
+
+  const hideDateTimePicker = () => {
+    setOpenDateTimePicker(false);
+  };
+
+  const handleDateTimeConfirm = (date) => {
+    setReservationDateTime(moment(date).format("YYYY-MM-DD HH:mm:ss"));
+    hideDateTimePicker();
   };
 
   return (
@@ -146,12 +159,11 @@ let BookingScreen = ({ navigation, route }) => {
             <Text style={styles.guestButtonText}>-</Text>
           </TouchableOpacity>
           <TextInput
-            style={styles.guestNumber}
+            style={[styles.input, styles.guestNumber]}
             onChangeText={(text) => setGuests(text.replace(/[^0-9]/g, ""))}
             keyboardType="numeric"
-          >
-            {guests}
-          </TextInput>
+            value={String(guests)}
+          />
           <TouchableOpacity
             onPress={incrementGuests}
             style={styles.guestButton}
@@ -187,63 +199,6 @@ let BookingScreen = ({ navigation, route }) => {
         <Text style={styles.label}>Special Accommodation required?</Text>
       </View>
 
-      <View style={[styles.column, { justifyContent: "space-around" }]}>
-        <View style={[styles.row, { justifyContent: "space-between" }]}>
-          <Text>Start Date Time</Text>
-          <TouchableOpacity onPress={() => setOpenLoadIn(true)}>
-            <Text>
-              {moment(loadIn).format("dddd, MMMM Do YYYY, h:mm:ss a")}
-            </Text>
-          </TouchableOpacity>
-        </View>
-        <View style={[styles.row, { justifyContent: "space-between" }]}>
-          <Text>End Date Time</Text>
-          <TouchableOpacity onPress={() => setOpenLoadOut(true)}>
-            <Text>
-              {moment(loadOut).format("dddd, MMMM Do YYYY, h:mm:ss a")}
-            </Text>
-          </TouchableOpacity>
-        </View>
-
-        {openLoadIn && (
-          <DateTimePickerModal
-            isVisible={true}
-            mode="datetime"
-            is24Hour={false}
-            minimumDate={new Date()}
-            onConfirm={(dateTime) => {
-              console.log(`Confirmed Date and time: ${dateTime}`);
-              setLoadIn(moment(dateTime).toISOString());
-              setOpenLoadIn(false);
-            }}
-            onCancel={console.log("Cancelled")}
-          />
-        )}
-        {openLoadOut && (
-          <DateTimePickerModal
-            isVisible={true}
-            mode="datetime"
-            is24Hour={false}
-            minimumDate={new Date(loadIn)}
-            onConfirm={(dateTime) => {
-              console.log(`Confirmed Date and time: ${dateTime}`);
-              setLoadOut(moment(dateTime).toISOString());
-              setOpenLoadOut(false);
-            }}
-            onCancel={console.log("Cancelled")}
-          />
-        )}
-        {/* <RNDateTimePicker value={startDate} />
-        <RNDateTimePicker mode="time" value={startDate} /> */}
-        {/* <Text>{endDate}</Text> */}
-        {/* <RNDateTimePicker
-          value={startDate}
-          mode="date"
-          display="default"
-          onChange={() => console.log("On Change triggered")}
-        /> */}
-      </View>
-
       {/* Special Requests */}
       <TextInput
         style={[styles.input, styles.textArea]}
@@ -254,9 +209,23 @@ let BookingScreen = ({ navigation, route }) => {
         numberOfLines={4}
       />
 
+      {/* Reservation Date and Time Picker */}
+      <TouchableOpacity onPress={showDateTimePicker} style={styles.datePickerButton}>
+        <Text style={styles.datePickerText}>
+          {reservationDateTime ? moment(reservationDateTime).format("MMMM Do YYYY, h:mm A") : "Select Date & Time"}
+        </Text>
+      </TouchableOpacity>
+      <DateTimePickerModal
+        isVisible={openDateTimePicker}
+        mode="datetime"
+        date={new Date(reservationDateTime)}
+        onConfirm={handleDateTimeConfirm}
+        onCancel={hideDateTimePicker}
+      />
+
       {/* Submit Button */}
       <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-        <Text style={styles.submitButtonText}>Submit</Text>
+        <Text style={styles.submitButtonText}>Book Now</Text>
       </TouchableOpacity>
     </ScrollView>
   );
@@ -272,44 +241,46 @@ let styles = StyleSheet.create({
     flexDirection: "row",
     marginBottom: 20,
     alignItems: "center",
+    borderBottomWidth: 1,
+    borderBottomColor: "#eee",
+    paddingBottom: 20,
   },
   restaurantImage: {
-    width: 150,
-    height: 150,
+    width: 100,
+    height: 100,
     borderRadius: 10,
   },
   restaurantDetails: {
     marginLeft: 20,
     flex: 1,
   },
-  restaurantName: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#009c5b",
-    marginBottom: 4,
-  },
   restaurantAddress: {
     fontSize: 14,
-    color: "#666",
+    color: "#888",
     marginBottom: 8,
+    fontFamily: "Roboto",
   },
   restaurantDescription: {
     fontSize: 12,
-    color: "#009c5b",
+    color: "#555",
+    fontFamily: "Roboto",
   },
   bookingTitle: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: "bold",
     marginBottom: 20,
+    color: "#333",
+    fontFamily: "Roboto",
   },
   input: {
-    height: 40,
+    height: 45,
     borderColor: "#ddd",
     borderWidth: 1,
     borderRadius: 5,
     marginBottom: 15,
-    paddingHorizontal: 10,
+    paddingHorizontal: 12,
     backgroundColor: "#f9f9f9",
+    fontFamily: "Roboto",
   },
   row: {
     flexDirection: "row",
@@ -319,43 +290,62 @@ let styles = StyleSheet.create({
   label: {
     fontSize: 16,
     color: "#333",
+    flex: 1,
+    fontFamily: "Roboto",
   },
   guestControls: {
     flexDirection: "row",
     alignItems: "center",
-    marginLeft: "auto",
   },
   guestButton: {
-    width: 30,
-    height: 30,
-    borderRadius: 5,
-    backgroundColor: "#ddd",
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "#4CAF50",
     justifyContent: "center",
     alignItems: "center",
   },
   guestButtonText: {
-    fontSize: 18,
+    fontSize: 22,
+    color: "#fff",
+    fontFamily: "Roboto",
   },
   guestNumber: {
-    marginHorizontal: 10,
+    width: 60,
+    textAlign: "center",
+    fontSize: 18,
+    fontFamily: "Roboto",
+  },
+  datePickerButton: {
+    backgroundColor: "#cb4539",
+    paddingVertical: 12,
+    borderRadius: 5,
+    marginBottom: 20,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  datePickerText: {
+    color: "#fff",
     fontSize: 16,
+    fontFamily: "Roboto",
+  },
+  submitButton: {
+    backgroundColor: "#4CAF50",
+    paddingVertical: 12,
+    borderRadius: 5,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  submitButtonText: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#fff",
+    fontFamily: "Roboto",
   },
   textArea: {
     height: 100,
     textAlignVertical: "top",
-  },
-  submitButton: {
-    backgroundColor: "#009c5b",
-    paddingVertical: 15,
-    borderRadius: 5,
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 10,
-  },
-  submitButtonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
+    paddingTop: 10,
   },
 });
 

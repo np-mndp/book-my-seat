@@ -11,6 +11,7 @@ import store, { persistor } from "./configs/Store";
 import { PersistGate } from "redux-persist/integration/react";
 import BookingScreen from "./screens/BookingScreen";
 import BookingHistoryScreen from "./screens/BookingHistoryScreen";
+import AddMenuItemsScreen from "./screens/manager/AddMenuItemScreen"
 
 import ReservationConfirmation from "./screens/ReservationConfirmation";
 
@@ -111,7 +112,15 @@ function App() {
             headerTitle: "Reservation Confirmation",
           }}
         />
+        <Stack.Screen
+              name="AddMenuItemsScreen"
+              component={AddMenuItemsScreen}
+              options={{
+                headerTitle: "Menu Items",
+              }}
+            />
       </Stack.Navigator>
+      
     </NavigationContainer>
   );
 }
