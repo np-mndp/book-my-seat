@@ -10,13 +10,14 @@ import ReservationsScreen from "./manager/ReservationsScreen";
 import FloorPlanScreen from "./manager/FloorPlanScreen";
 import AddRestaurantScreen from "./manager/AddRestaurantScreen";
 import ManagerProfileScreen from "./manager/ManagerProfileScreen";
+import HomeScreen from "./HomeScreen";
 import { useSelector } from "react-redux";
 
 const Tab = createBottomTabNavigator();
 
 const TabViewScreen = ({ isManager }) => {
-  let { user, token } = useSelector((state) => state.auth);
-  if (user?.isManager) {
+  let { user } = useSelector((state) => state.auth);
+  if (user?.isManager == true) {
     return (
       <Tab.Navigator
         initialRouteName="Home"
@@ -28,7 +29,7 @@ const TabViewScreen = ({ isManager }) => {
               case "Home":
                 iconName = "home";
                 break;
-              case "MapScreenView":
+              case "Search on Map":
                 iconName = "map";
                 break;
               case "Profile":
@@ -54,8 +55,8 @@ const TabViewScreen = ({ isManager }) => {
           headerShown: false,
         })}
       >
-        <Tab.Screen name="Home" component={RestaurantListScreen} />
-        <Tab.Screen name="MapScreenView" component={MapScreenView} />
+        <Tab.Screen name="Home" component={HomeScreen} />
+        <Tab.Screen name="Search on Map" component={MapScreenView} />
         <Tab.Screen name="Profile" component={ProfileScreen} />
         <Tab.Screen name="MyBookings" component={BookingHistoryScreen} />
       </Tab.Navigator>
