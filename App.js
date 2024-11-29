@@ -12,7 +12,7 @@ import { PersistGate } from "redux-persist/integration/react";
 import BookingScreen from "./screens/BookingScreen";
 import BookingHistoryScreen from "./screens/BookingHistoryScreen";
 import AddMenuItemsScreen from "./screens/manager/AddMenuItemScreen"
-
+import AddRestaurantScreen from "./screens/manager/AddRestaurantScreen";
 import ReservationConfirmation from "./screens/ReservationConfirmation";
 
 const Stack = createStackNavigator();
@@ -33,7 +33,8 @@ function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName={user ? "TabView" : "Login"} // Set HomeScreen as the initial route
+        initialRouteName={user ? "TabView" : "Login"} // Set HomeScreen as the initial 
+        //initialRouteName={"AddRestaurantScreen"}
         screenOptions={{
           headerStyle: {
             backgroundColor: "#009c5b",
@@ -60,6 +61,13 @@ function App() {
           component={LoginScreen}
           options={{
             headerTitle: "",
+          }}
+        />
+        <Stack.Screen
+          name="AddRestaurantScreen"
+          component={AddRestaurantScreen}
+          options={{
+            headerTitle: "Add Restaurants",
           }}
         />
         <Stack.Screen
