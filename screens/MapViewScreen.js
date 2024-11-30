@@ -2,8 +2,8 @@ import React, {
   useEffect,
   useState,
   useRef,
-  useMemo,
-  useCallback,
+  // useMemo,
+  // useCallback,
 } from "react";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import {
@@ -22,8 +22,6 @@ import * as Location from "expo-location";
 import { PLACES_API_KEY } from "@env";
 import { API_URL } from "../configs/Constants";
 import Slider from "@react-native-community/slider";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
-import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 
@@ -37,25 +35,25 @@ const MapScreenView = ({ navigation })=> {
   const [sliderValue, setSliderValue] = useState(10);
 
   const sliderValues = [10, 20, 30, 40, 50];
-  const snapPoints = useMemo(() => ["25%", "50%", "70%"], []);
-  const initialIndex = -1; // Ensure the BottomSheet starts in a closed state
+  // const snapPoints = useMemo(() => ["25%", "50%", "70%"], []);
+  // const initialIndex = -1; // Ensure the BottomSheet starts in a closed state
 
   //ref for mapview
   const mapRef = useRef(null);
   // Ref for the Bottom Sheet
-  const bottomSheetRef = useRef(null);
+  // const bottomSheetRef = useRef(null);
 
   // Function to open the Bottom Sheet
-  const handleOpenBottomSheet = useCallback(() => {
-    // console.log("On Open bottom sheet")
-    bottomSheetRef.current?.expand(); // Expands to the first snap point
-  }, []);
+  // const handleOpenBottomSheet = useCallback(() => {
+  //   // console.log("On Open bottom sheet")
+  //   bottomSheetRef.current?.expand(); // Expands to the first snap point
+  // }, []);
 
   // Function to close the Bottom Sheet
-  const handleCloseBottomSheet = useCallback(() => {
-    // console.log("On close bottom sheet")
-    bottomSheetRef.current?.close(); // Closes the Bottom Sheet
-  }, []);
+  // const handleCloseBottomSheet = useCallback(() => {
+  //   // console.log("On close bottom sheet")
+  //   bottomSheetRef.current?.close(); // Closes the Bottom Sheet
+  // }, []);
 
   // Fetch user's location when the component mounts
   useEffect(() => {
@@ -250,7 +248,7 @@ const MapScreenView = ({ navigation })=> {
     setCurrentLocationMarker();
     setLocation();
     setSliderValue(10);
-    handleCloseBottomSheet();
+    // handleCloseBottomSheet();
   };
 
   // Search bar with location and reset button
@@ -427,7 +425,7 @@ const MapScreenView = ({ navigation })=> {
 
   return (
     <View style={styles.container}>
-      <GestureHandlerRootView style={styles.gestureContainer}>
+      {/* <GestureHandlerRootView style={styles.gestureContainer}> */}
       {searchSection()}
       {slider()}
       {searchResultList()}
@@ -435,14 +433,14 @@ const MapScreenView = ({ navigation })=> {
 
       {/* Bottom Sheet */}
       
-      <BottomSheet
+      {/* <BottomSheet
       ref={bottomSheetRef}
       snapPoints={snapPoints}
       index={initialIndex}
       enablePanDownToClose // Allows dragging down to close
-    >
+    > */}
       {/* Content inside Bottom Sheet */}
-      <BottomSheetView style={styles.sheetContentContainer}>
+      {/* <BottomSheetView style={styles.sheetContentContainer}>
   {restaurants && restaurants.length > 0 ? (
     <>
       <Text style={styles.sheetTitle}>Restaurants Nearby Locator</Text>
@@ -461,9 +459,9 @@ const MapScreenView = ({ navigation })=> {
   <TouchableOpacity onPress={handleCloseBottomSheet} style={styles.closeButton}>
     <Text style={styles.closeButtonText}>Close</Text>
   </TouchableOpacity>
-</BottomSheetView>
-    </BottomSheet>
-    </GestureHandlerRootView>
+</BottomSheetView> */}
+    {/* </BottomSheet>
+    </GestureHandlerRootView> */}
     </View>
   );
 };
