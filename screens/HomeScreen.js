@@ -140,10 +140,11 @@ const HomeScreen = () => {
       )}
 
       {/* Restaurant List */}
-      
+      {!loading && searchQuery.trim() === "" && filteredRestaurants.length > 0 && (
    <Text style={styles.restaurantName}>
               Or check other restaurants...
             </Text>
+      )}
       
       {loading ? (
         <ActivityIndicator size="large" color="#14AE5C" />

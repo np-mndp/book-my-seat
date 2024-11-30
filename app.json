@@ -1,18 +1,24 @@
 {
   "expo": {
-    "name": "book-my-seat",
+    "name": "Book My Seat",
     "slug": "book-my-seat",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
+    "experiments": {
+      "newArchEnabled": true
+    },
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "extra":{
-      "API_URL" :"http://192.168.2.1:3000"
+    "extra": {
+      "API_URL": "http://192.168.2.1:3000",
+      "eas": {
+        "projectId": "570449e0-c62d-4572-acee-273283fb0862"
+      }
     },
     "ios": {
       "supportsTablet": true
@@ -25,7 +31,8 @@
       "permissions": [
         "ACCESS_FINE_LOCATION",
         "ACCESS_COARSE_LOCATION"
-      ]
+      ],
+      "package": "com.birajgtm.bookmyseat"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -37,7 +44,7 @@
           "locationAlwaysAndWhenInUsePermission": "Allow Book My Seat to use your location."
         }
       ],
-      "expo-font" 
+      "expo-font"
     ]
   }
 }
