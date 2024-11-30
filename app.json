@@ -29,7 +29,12 @@
         "ACCESS_FINE_LOCATION",
         "ACCESS_COARSE_LOCATION"
       ],
-      "package": "com.birajgtm.bookmyseat"
+      "package": "com.birajgtm.bookmyseat",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyAyTHnJZq3WrKkL_4wAZRs9-ajlIK0EGbA"
+        }
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"
