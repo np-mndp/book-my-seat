@@ -1,8 +1,21 @@
-import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity, FlatList } from "react-native";
+import React, { useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  FlatList,
+  ActivityIndicator,
+} from "react-native";
 import { MaterialIcons } from "@expo/vector-icons"; // For icons
+import { useSelector } from "react-redux";
+import { API_URL } from "../../configs/Constants";
+import moment from "moment/moment";
 
 const ReservationsScreen = ({ navigation }) => {
+  const [bookings, setBookings] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   // Dummy data for reservations
   const reservations = [
     { id: "1", name: "John Doe", people: 4, time: "12:30 PM" },
@@ -16,9 +29,56 @@ const ReservationsScreen = ({ navigation }) => {
   ];
 
   // Calculate first and last reservation times and total people
+  let { user, token } = useSelector((state) => state.auth);
   const firstResoTime = reservations[0]?.time;
   const lastResoTime = reservations[reservations.length - 1]?.time;
-  const totalPeople = reservations.reduce((total, res) => total + res.people, 0);
+  const totalPeople = reservations.reduce(
+    (total, res) => total + res.people,
+    0
+  );
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(`${API_URL}/api/bookings`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (response.ok) {
+          const json = await response.json();
+          setBookings(json);
+        } else {
+          throw new Error("Failed to fetch");
+        }
+      } catch (error) {
+        console.error("Error:", error.message);
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  });
+
+  if (loading) {
+    return (
+      <View style={styles.loaderContainer}>
+        <ActivityIndicator size="large" color="#009c5b" />
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={styles.errorContainer}>
+        <Text>Error: {error}</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -26,35 +86,54 @@ const ReservationsScreen = ({ navigation }) => {
       <View style={styles.summaryContainer}>
         <View style={styles.summaryItem}>
           <MaterialIcons name="schedule" size={24} color="#2ca850" />
-          <Text style={styles.summaryText}>First reservation time: {firstResoTime}</Text>
+          <Text style={styles.summaryText}>
+            First reservation time: {firstResoTime}
+          </Text>
         </View>
         <View style={styles.summaryItem}>
           <MaterialIcons name="people" size={24} color="#e67e22" />
-          <Text style={styles.summaryText}>Total number of people: {totalPeople}</Text>
+          <Text style={styles.summaryText}>
+            Total number of people: {totalPeople}
+          </Text>
         </View>
         <View style={styles.summaryItem}>
           <MaterialIcons name="schedule" size={24} color="#3498db" />
-          <Text style={styles.summaryText}>Last reservation time: {lastResoTime}</Text>
+          <Text style={styles.summaryText}>
+            Last reservation time: {lastResoTime}
+          </Text>
         </View>
       </View>
 
       {/* List of reservations */}
       <FlatList
-        data={reservations}
+        data={bookings}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <View style={styles.reservationCard}>
-            <Text style={styles.cardHeader}>{item.name}</Text>
+            <View style={{display:"flex", flexDirection:"row", justifyContent:"space-between"}}>
+              <Text style={[styles.cardHeader, { color: "#e67e22" }]}>
+                {item.customer?.name}
+              </Text>
+              <Text> @ </Text>
+              <Text style={[styles.cardHeader, { color: "#2ca850" }]}>
+                {item.Restaurant?.title}
+              </Text>
+            </View>
             <View style={styles.reservationDetails}>
-              <Text style={styles.detailText}>People: {item.people}</Text>
-              <Text style={styles.detailText}>Time: {item.time}</Text>
+              <Text style={styles.detailText}>People: {item.guests}</Text>
+              <Text style={styles.detailText}>
+                Time: {moment(item.loadIn).calendar()}
+              </Text>
             </View>
           </View>
         )}
         contentContainerStyle={styles.listContainer}
       />
 
-      <TouchableOpacity style={styles.button} onPress={() => navigation.goBack()}>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => navigation.goBack()}
+      >
         <Text style={styles.buttonText}>Back to Profile</Text>
       </TouchableOpacity>
     </View>
