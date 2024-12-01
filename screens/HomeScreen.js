@@ -27,7 +27,7 @@ const HomeScreen = () => {
     const fetchRestaurants = async () => {
       try {
         const response = await fetch(
-          `${API_URL}/api/restaurants?lat=43.676022&lng=-79.411049`
+          `${API_URL}/api/restaurants?lat=43.676022&lng=-79.411049&radius=400`
         );
         if (response.ok) {
           const json = await response.json();
