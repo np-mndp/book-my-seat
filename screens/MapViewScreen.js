@@ -21,10 +21,10 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import * as Location from "expo-location";
 import { API_URL } from "../configs/Constants";
 import Slider from "@react-native-community/slider";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
 
 const MapScreenView = ({ navigation })=> {
   const [location, setLocation] = useState(null);
@@ -88,7 +88,7 @@ const MapScreenView = ({ navigation })=> {
         console.error("Error requesting location:", error);
         Alert.alert("Error", "Could not request for location, make sure you have given permission.");
       }
-      handleCloseBottomSheet()
+      // handleCloseBottomSheet()
     };
     requestLocation();
   }, []);
@@ -181,7 +181,7 @@ const MapScreenView = ({ navigation })=> {
 
     try {
       const response = await fetch(
-        `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${searchQuery}&key=${process.env.EXPO_PUBLIC_PLACES_API_KEY }`
+        `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${searchQuery}&key=${process.env.EXPO_PUBLIC_PLACES_API_KEY}`
       );
       const data = await response.json();
 
