@@ -1,39 +1,79 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView, Image } from 'react-native';
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+  Image,
+  Alert,
+} from "react-native";
+import { API_URL } from "../../configs/Constants";
+import { useSelector } from "react-redux";
 
 const AddRestaurantScreen = ({ navigation }) => {
-  const [title, setTitle] = useState('');
-  const [cuisine, setCuisine] = useState('');
-  const [description, setDescription] = useState('');
-  const [expensiveRating, setExpensiveRating] = useState('');
-  const [latitude, setLatitude] = useState('');
-  const [longitude, setLongitude] = useState('');
-  const [county, setCounty] = useState('');
-  const [address, setAddress] = useState('');
-  const [images, setImages] = useState('');
+  let { user, token } = useSelector((state) => state.auth);
 
-  const handleSave = () => {
-    // Prepare data to match the database structure
-    const restaurantData = {
-      title: title,
-      cuisine: cuisine.split(',').map((item) => item.trim()), // Convert comma-separated string to an array
-      description: description,
-      expensiveRating: parseInt(expensiveRating, 10), // Convert to integer
-      location: {
-        lat: parseFloat(latitude),
-        lng: parseFloat(longitude),
-        county: county,
-        address: address,
-      },
-      images: images.split(',').map((item) => item.trim()), // Convert comma-separated string to an array
-    };
+  //Restaurant Details
+  const [title, setTitle] = useState("");
+  const [cuisine, setCuisine] = useState("");
+  const [description, setDescription] = useState("");
+  const [expensiveRating, setExpensiveRating] = useState("");
+  const [latitude, setLatitude] = useState("");
+  const [longitude, setLongitude] = useState("");
+  const [county, setCounty] = useState("");
+  const [address, setAddress] = useState("");
+  const [images, setImages] = useState("");
 
-    console.log("Restaurant Data:", restaurantData);
-    alert('Restaurant added successfully!');
-    navigation.goBack();
-
-    // Add logic to save `restaurantData` to Firebase
+  const handleRatingChange = (text) => {
+    // Allow only numbers
+    const numericValue = text.replace(/[^0-9]/g, "");
+    setExpensiveRating(numericValue);
   };
+
+  const handleSave = async () => {
+    try {
+      const response = await fetch(`${API_URL}/api/restaurants`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          title: title,
+          cousine: cuisine.split(",").map((item) => item.trim()), // Convert comma-separated string to an array
+          description: description,
+          expensiveRating: parseInt(expensiveRating, 10), // Convert to integer
+          location: {
+            lat: parseFloat(latitude),
+            lng: parseFloat(longitude),
+            county: county,
+            address: address,
+          },
+          images: images.split(",").map((item) => item.trim()), // Convert comma-separated string to an array
+        }),
+      });
+  
+      if (response.ok) {
+        Alert.alert(
+          "Success",
+          "Restaurant added successfully!",
+          [
+            {
+              text: "OK",
+              onPress: () => navigation.navigate("ManagerProfile"), // Replace with your target screen
+            },
+          ]
+        );
+      } else {
+        Alert.alert("Error", "Failed to add the restaurant. Please try again.");
+      }
+    } catch (error) {
+      Alert.alert("Error", `Error occurred: ${error.message}`);
+    }
+  };
+  
 
   return (
     <ScrollView style={styles.container}>
@@ -79,7 +119,7 @@ const AddRestaurantScreen = ({ navigation }) => {
           placeholderTextColor="#999"
           keyboardType="number-pad"
           value={expensiveRating}
-          onChangeText={setExpensiveRating}
+          onChangeText={handleRatingChange}
         />
         <Text style={styles.sectionTitle}>Location</Text>
         <TextInput

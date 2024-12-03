@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -6,20 +6,52 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
-  Alert
+  FlatList,
+  Alert,
+  RefreshControl,
 } from "react-native";
-import { FontAwesome5, MaterialIcons } from "@expo/vector-icons";
+import { FontAwesome5, MaterialIcons, FontAwesome } from "@expo/vector-icons";
 import { useDispatch, useSelector } from "react-redux";
 import { logoutUser } from "../../actions/authActions";
-
+import { API_URL } from "../../configs/Constants";
 
 const ManagerProfileScreen = ({ navigation }) => {
-  let dispatch = useDispatch();
-  let { user, token } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+  const { user, token } = useSelector((state) => state.auth);
 
+  const [restaurants, setRestaurants] = useState([]);
+  const [error, setError] = useState(null);
+  const [refreshing, setRefreshing] = useState(false);
+
+  // Function to fetch restaurant data
+  const fetchRestaurants = async () => {
+    try {
+      const response = await fetch(`${API_URL}/api/restaurants`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        const json = await response.json();
+        setRestaurants(json);
+        console.log("refeshing")
+      } else {
+        throw new Error("Failed to fetch restaurant details.");
+      }
+    } catch (err) {
+      console.error("Error:", err.message);
+      setError(err.message);
+    }
+  };
+
+  useEffect(() => {
+    fetchRestaurants();
+  }, []);
 
   const onSignOutPressed = () => {
-    Alert.alert("Sign Out", `User Signed out successfully !`, [
+    Alert.alert("Sign Out", `User Signed out successfully!`, [
       {
         text: "OK",
         onPress: () => {
@@ -30,58 +62,67 @@ const ManagerProfileScreen = ({ navigation }) => {
     ]);
   };
 
-
-  const managerName = "John Doe";
-  const managerNumber = "+1 234 567 890";
-  const restaurantDetails = {
-    name: "Delicious Dine",
-    address: "123 Foodie Lane, Flavor Town",
-    cuisine: "Italian",
-    contactNumber: "+1 987 654 321",
+  const onRefresh = () => {
+    setRefreshing(true);
+    fetchRestaurants()
+      .then(() => setRefreshing(false))  // Stop refreshing after data fetch
+      .catch(() => setRefreshing(false)); // Handle any errors
   };
-  const restaurantLogo =
-    "https://logo.com/image-cdn/images/kts928pd/production/b16518743564f361bc3caa3dfda70fe3466b1020-444x446.png?w=1080&q=72&fm=webp";
+
+  const renderRestaurant = ({ item }) => (
+    <View style={styles.restaurantCard}>
+      <Image source={{ uri: item.images[0] }} style={styles.restaurantImage} />
+      <View style={styles.restaurantInfo}>
+        <Text style={styles.restaurantName}>{item.title || "N/A"}</Text>
+        <Text style={styles.restaurantDescription} numberOfLines={2}>
+          {item.description || "No description available."}
+        </Text>
+        <View style={styles.ratingContainer}>
+          {Array.from({ length: item.expensiveRating }, (_, index) => (
+            <FontAwesome
+              key={index}
+              name="dollar"
+              size={15}
+              color="#DAA520"
+            />
+          ))}
+        </View>
+        <Text style={styles.restaurantAddress}>{item.location.address || "N/A"}</Text>
+      </View>
+    </View>
+  );
 
   return (
     <View style={styles.container}>
-      {/* Restaurant Banner */}
-      <View style={styles.bannerContainer}>
-        <Image
-          source={{
-            uri: "https://wallpapers.com/images/featured/restaurant-background-2ez77umko2vj5w02.jpg",
-          }}
-          style={styles.banner}
-        />
+      <View style={styles.titleSection}>
+        <Text style={styles.title}>My Profile</Text>
       </View>
-
-      <ScrollView>
-        {/* Profile Section */}
-        <View style={styles.profileSection}>
-          <Image source={{ uri: restaurantLogo }} style={styles.profileImage} />
-          <View>
-            <Text style={styles.managerName}>{managerName}</Text>
-            <Text style={styles.managerNumber}>{managerNumber}</Text>
+      <View style={styles.profileSection}>
+        <Image source={{ uri: user.profilePicture }} style={styles.profileImage} />
+        <View>
+          <Text style={styles.managerName}>{user.name}</Text>
+          <View style={styles.managerNumber}>
+            <FontAwesome5 name="phone-alt" size={16} color="#666" style={{ marginRight: 5 }} />
+            <Text>{user.phone}</Text>
           </View>
         </View>
-
-        {/* Restaurant Details Section */}
-        <View style={styles.restaurantDetails}>
-          <Text style={styles.restaurantDetailTitle}>Restaurant Details</Text>
-          <Text style={styles.restaurantDetailText}>
-            Name: {restaurantDetails.name}
-          </Text>
-          <Text style={styles.restaurantDetailText}>
-            Address: {restaurantDetails.address}
-          </Text>
-          <Text style={styles.restaurantDetailText}>
-            Cuisine: {restaurantDetails.cuisine}
-          </Text>
-          <Text style={styles.restaurantDetailText}>
-            Contact: {restaurantDetails.contactNumber}
-          </Text>
+      </View>
+      <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
+        <View>
+          <Text style={styles.restaurantDetailTitle}>My Restaurants</Text>
+          <FlatList
+            data={restaurants}
+            renderItem={renderRestaurant}
+            keyExtractor={(item) => item.id.toString()}
+            style={styles.restaurantList}
+            scrollEnabled= {false}
+          />
         </View>
 
-        {/* Action Buttons with Icons */}
         <View style={styles.buttonsContainer}>
           <TouchableOpacity
             style={styles.button}
@@ -123,8 +164,8 @@ const ManagerProfileScreen = ({ navigation }) => {
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.signOutButton} onPress={onSignOutPressed}>
-        <Text style={styles.signOutButtonText}>Sign Out</Text>
-      </TouchableOpacity>
+            <Text style={styles.signOutButtonText}>Sign Out</Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </View>
@@ -135,93 +176,147 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
+    paddingBottom: 20,
   },
-  bannerContainer: {
-    position: "relative",
+
+  titleSection: {
+    marginTop: 10,
+    marginBottom: 10,
+    paddingHorizontal: 15,
   },
-  banner: {
-    width: "100%",
-    height: 200,
-    resizeMode: "cover",
+  title: {
+    fontSize: 24,
+    fontWeight: "700",
+    color: "#2ca850",
+    textAlign: "center",
   },
+
   profileSection: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 15,
+    padding: 20,
     backgroundColor: "#f8f8f8",
     borderBottomWidth: 1,
     borderBottomColor: "#ddd",
+    marginHorizontal: 15,
+    marginBottom: 10,
+    borderRadius: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    elevation: 5,
   },
   profileImage: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    marginRight: 15,
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    marginRight: 20,
+    borderWidth: 2,
+    borderColor: "#ddd",
   },
   managerName: {
     fontSize: 22,
-    fontWeight: "bold",
+    fontWeight: "700",
     color: "#333",
   },
   managerNumber: {
+    flexDirection: "row",
     fontSize: 16,
-    color: "#555",
+    color: "#666",
     marginTop: 5,
   },
-  restaurantDetails: {
-    padding: 15,
-    backgroundColor: "#f1f1f1",
-    margin: 15,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: "#ddd",
-  },
+
   restaurantDetailTitle: {
     fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 10,
+    fontWeight: "600",
     color: "#2ca850",
+    marginBottom: 10,
+    textAlign: "center",
   },
-  restaurantDetailText: {
-    fontSize: 16,
+
+  restaurantList: {
+    paddingHorizontal: 15,
+    marginBottom: 20,
+  },
+
+  restaurantCard: {
+    flexDirection: "row",
+    marginBottom: 15,
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 5,
+    borderWidth: 1,
+    borderColor: "#ddd",
+    overflow: "hidden",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  restaurantImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 20,
+  },
+  restaurantInfo: {
+    flex: 1,
+    padding: 10,
+    justifyContent: "space-between",
+  },
+  restaurantName: {
+    fontSize: 18,
+    fontWeight: "600",
     color: "#333",
-    marginBottom: 5,
   },
+  restaurantDescription: {
+    fontSize: 14,
+    color: "#666",
+    marginTop: 5,
+  },
+  ratingContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  restaurantAddress: {
+    fontSize: 14,
+    color: "#888",
+    marginTop: 5,
+  },
+
   buttonsContainer: {
-    padding: 20,
+    paddingHorizontal: 15,
+    paddingVertical: 10,
   },
   button: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#2ca850",
-    paddingVertical: 15,
-    borderRadius: 8,
-    marginBottom: 15,
     justifyContent: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 3,
-    elevation: 5,
+    backgroundColor: "#2ca850",
+    padding: 12,
+    marginVertical: 5,
+    borderRadius: 8,
   },
   icon: {
     marginRight: 10,
   },
   buttonText: {
-    color: "#fff",
     fontSize: 16,
-    fontWeight: "bold",
-  }, signOutButton: {
+    color: "white",
+  },
+
+  signOutButton: {
+    backgroundColor: "#e74c3c",
+    padding: 12,
+    borderRadius: 8,
     marginTop: 20,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    backgroundColor: "#ff4757", // Red color for sign out button
-    borderRadius: 5,
+    alignItems: "center",
   },
   signOutButtonText: {
     color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
+    fontSize: 18,
   },
 });
 
