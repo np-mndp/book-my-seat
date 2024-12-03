@@ -98,12 +98,12 @@ const ManagerProfileScreen = ({ navigation }) => {
         <Text style={styles.title}>My Profile</Text>
       </View>
       <View style={styles.profileSection}>
-        <Image source={{ uri: user.profilePicture }} style={styles.profileImage} />
+        <Image source={{ uri: user?.profilePicture }} style={styles.profileImage} />
         <View>
           <Text style={styles.managerName}>{user.name}</Text>
           <View style={styles.managerNumber}>
             <FontAwesome5 name="phone-alt" size={16} color="#666" style={{ marginRight: 5 }} />
-            <Text>{user.phone}</Text>
+            <Text>{user?.phone}</Text>
           </View>
         </View>
       </View>

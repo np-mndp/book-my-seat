@@ -49,7 +49,7 @@ const ReservationsScreen = ({ navigation }) => {
 
         if (response.ok) {
           const json = await response.json();
-          setBookings(json);
+          setBookings(json.pastBookings);
         } else {
           throw new Error("Failed to fetch");
         }

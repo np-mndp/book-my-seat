@@ -59,7 +59,6 @@ const BookingHistoryScreen = () => {
 
   const renderBooking = (item) => (
     <TouchableOpacity onPress={() => toggleModal(item)}>
-      
       <View style={styles.bookingCard}>
         <Image
           source={{ uri: item.Restaurant.images[0] }}
@@ -83,12 +82,8 @@ const BookingHistoryScreen = () => {
     </TouchableOpacity>
   );
 
-  const last7DaysBookings = bookings.filter((booking) =>
-    moment(booking.loadIn).isSameOrAfter(moment().subtract(7, "days"))
-  );
-  const oldBookings = bookings.filter((booking) =>
-    moment(booking.loadIn).isBefore(moment().subtract(7, "days"))
-  );
+  const last7DaysBookings = bookings.bookings;
+  const oldBookings = bookings.pastBookings;
 
   if (loading) {
     return (
@@ -114,9 +109,11 @@ const BookingHistoryScreen = () => {
         style={styles.sectionHeader}
         onPress={() => setRecentBookingsVisible(!recentBookingsVisible)}
       >
-        <Text style={styles.sectionHeaderText}>Last 7 Days</Text>
+        <Text style={styles.sectionHeaderText}>Upcoming Bookings</Text>
         <MaterialIcons
-          name={recentBookingsVisible ? "keyboard-arrow-up" : "keyboard-arrow-down"}
+          name={
+            recentBookingsVisible ? "keyboard-arrow-up" : "keyboard-arrow-down"
+          }
           size={24}
           color="#666"
         />
@@ -135,9 +132,11 @@ const BookingHistoryScreen = () => {
         style={styles.sectionHeader}
         onPress={() => setOldBookingsVisible(!oldBookingsVisible)}
       >
-        <Text style={styles.sectionHeaderText}>Old Bookings</Text>
+        <Text style={styles.sectionHeaderText}>Past Bookings</Text>
         <MaterialIcons
-          name={oldBookingsVisible ? "keyboard-arrow-up" : "keyboard-arrow-down"}
+          name={
+            oldBookingsVisible ? "keyboard-arrow-up" : "keyboard-arrow-down"
+          }
           size={24}
           color="#666"
         />
@@ -170,9 +169,8 @@ const BookingHistoryScreen = () => {
               Address: {selectedBooking.Restaurant.location.address}
             </Text>
             <Text style={styles.modalDetail}>
-              Date: {moment(selectedBooking.loadIn).format(
-                "dddd, MMMM Do YYYY"
-              )}
+              Date:{" "}
+              {moment(selectedBooking.loadIn).format("dddd, MMMM Do YYYY")}
             </Text>
             <Text style={styles.modalDetail}>
               Guest Count: {selectedBooking.guests}
@@ -210,7 +208,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#f9f9f9",
   },
   headerText: {
-    margin:10,
+    margin: 10,
     fontSize: 24,
     fontWeight: "bold",
     color: "#14AE5C",
