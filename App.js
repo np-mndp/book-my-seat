@@ -34,7 +34,7 @@ function App() {
     <NavigationContainer>
       <Stack.Navigator
         initialRouteName={user ? "TabView" : "Login"} // Set HomeScreen as the initial 
-        //initialRouteName={"AddRestaurantScreen"}
+       // initialRouteName={"Login"}
         screenOptions={{
           headerStyle: {
             backgroundColor: "#009c5b",
@@ -47,7 +47,7 @@ function App() {
       >
         <Stack.Screen
           name="TabView"
-          // component={TabViewScreen}
+         //  component={TabViewScreen}
           options={{
             headerTitle: "Book My Seat",
           }}
