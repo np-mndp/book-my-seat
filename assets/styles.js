@@ -52,6 +52,8 @@ const commonStyles = StyleSheet.create({
     marginTop: 25,
     borderRadius: 5,
     alignItems: "center",
+    flexDirection: "row",
+    justifyContent: "center",
     // Elevation property for Android
     elevation: 10, // The higher the value, the stronger the shadow
   },
@@ -59,6 +61,8 @@ const commonStyles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     fontWeight: "bold",
+    // justifyContent: "space-around",
+    alignItems: "center",
   },
   label: {
     fontSize: 16,
