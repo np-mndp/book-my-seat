@@ -5,24 +5,24 @@ import {
   Image,
   FlatList,
   StyleSheet,
-  ScrollView,
   TouchableOpacity,
   ActivityIndicator,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import commonStyles from "../assets/styles";
 import { API_URL } from "../configs/Constants";
+import { MaterialCommunityIcons } from "@expo/vector-icons"; // Importing MaterialIcons for food icons
 
 const RestaurantDetailScreen = ({ route }) => {
-  const navigation = useNavigation(); // Initialize navigation
-  const { restaurantData } = route.params; // Extract restaurant object
+  const navigation = useNavigation();
+  const { restaurantData } = route.params;
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [selectedRestaurant, setSelectedRestaurant] = useState({});
 
   useEffect(() => {
-    navigation.setOptions({ title: restaurantData.title }); // Set screen title
+    navigation.setOptions({ title: restaurantData.title });
 
     const fetchData = async () => {
       try {
@@ -39,12 +39,12 @@ const RestaurantDetailScreen = ({ route }) => {
             setError(`No such restaurant ${restaurantData.title} found`);
           }
         } else {
-          throw new Error("Failed to fetch"); // Handle server errors
+          throw new Error("Failed to fetch");
         }
       } catch (error) {
-        setError(error.message); // Set error message
+        setError(error.message);
       } finally {
-        setLoading(false); // Stop loading after fetching
+        setLoading(false);
       }
     };
 
@@ -67,16 +67,15 @@ const RestaurantDetailScreen = ({ route }) => {
     );
   }
 
-  // Extract restaurant data from selectedRestaurant
   const restaurant = {
     name: selectedRestaurant.title || restaurantData.title,
     description:
       "A cozy restaurant serving a variety of delicious dishes made from fresh ingredients. Enjoy our warm atmosphere and friendly service.",
     image: selectedRestaurant.thumbnail || restaurantData.thumbnail,
     foodMenu: selectedRestaurant.foodMenu || [
-      { id: 1, title: "Spaghetti Carbonara", price: "$12.99" },
-      { id: 2, title: "Grilled Salmon", price: "$15.99" },
-      { id: 3, title: "Caesar Salad", price: "$10.99" },
+      { id: 1, title: "Spaghetti Carbonara", price: "$12.99", icon: "pasta" },
+      { id: 2, title: "Grilled Salmon", price: "$15.99", icon: "fish" },
+      { id: 3, title: "Caesar Salad", price: "$10.99", icon: "leaf" },
     ],
     beverageMenu: selectedRestaurant.beverageMenu || [
       { id: 1, title: "Coca Cola", price: "$1.99" },
@@ -87,6 +86,12 @@ const RestaurantDetailScreen = ({ route }) => {
 
   const renderMenuItem = ({ item }) => (
     <View style={styles.menuItem}>
+      <MaterialCommunityIcons
+        name={item.icon || "food"}
+        size={24}
+        color="#000"
+        style={styles.menuItemIcon}
+      />
       <Text style={styles.menuItemTitle}>{item.title}</Text>
       <Text style={styles.menuItemPrice}>{item.price}</Text>
     </View>
@@ -102,7 +107,6 @@ const RestaurantDetailScreen = ({ route }) => {
         source={{ uri: selectedRestaurant.images[0] }}
         style={styles.image}
       />
-      {/* <Text style={styles.title}>{selectedRestaurant.title}</Text> */}
       <Text style={styles.description}>{selectedRestaurant.description}</Text>
 
       <Text style={styles.menuHeader}>Food Menu</Text>
@@ -137,30 +141,32 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginBottom: 16,
   },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 8,
-  },
   description: {
     fontSize: 16,
     marginBottom: 16,
     lineHeight: 22,
+    color: "#555",
   },
   menuHeader: {
     fontSize: 20,
     fontWeight: "bold",
     marginVertical: 10,
+    color: "#333",
   },
   menuItem: {
     flexDirection: "row",
+    alignItems: "center",
     justifyContent: "space-between",
-    paddingVertical: 10,
+    paddingVertical: 12,
     borderBottomWidth: 1,
     borderBottomColor: "#ccc",
   },
+  menuItemIcon: {
+    marginRight: 10,
+  },
   menuItemTitle: {
     fontSize: 16,
+    flex: 1,
   },
   menuItemPrice: {
     fontSize: 16,
