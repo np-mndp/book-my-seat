@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -11,10 +11,13 @@ import {
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { logoutUser } from "../actions/authActions";
+import { API_URL } from "../configs/Constants";
+import moment from "moment";
 
 const ProfileScreen = ({ navigation }) => {
   const dispatch = useDispatch();
-  const { user } = useSelector((state) => state.auth);
+  const { user, token } = useSelector((state) => state.auth);
+  const [bookings, setBookings] = useState(null);
 
   // Dummy data for reservations
   const dummyBookings = [
@@ -23,14 +26,16 @@ const ProfileScreen = ({ navigation }) => {
       restaurant: "Joe's Diner",
       date: "2024-11-30",
       time: "7:00 PM",
-      image: "https://assets.cntraveller.in/photos/63d8e5103d7229d4cf308f01/16:9/w_1024,c_limit/Prequel-lead.jpg",
+      image:
+        "https://assets.cntraveller.in/photos/63d8e5103d7229d4cf308f01/16:9/w_1024,c_limit/Prequel-lead.jpg",
     },
     {
       id: "2",
       restaurant: "La Bella Italia",
       date: "2024-11-25",
       time: "6:30 PM",
-      image: "https://assets.cntraveller.in/photos/63d8e5103d7229d4cf308f01/16:9/w_1024,c_limit/Prequel-lead.jpg",
+      image:
+        "https://assets.cntraveller.in/photos/63d8e5103d7229d4cf308f01/16:9/w_1024,c_limit/Prequel-lead.jpg",
     },
   ];
 
@@ -47,6 +52,33 @@ const ProfileScreen = ({ navigation }) => {
       },
     ]);
   };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(`${API_URL}/api/bookings`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (response.ok) {
+          const json = await response.json();
+          setBookings(json);
+        } else {
+          throw new Error("Failed to fetch");
+        }
+      } catch (error) {
+        console.error("Error:", error.message);
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <SafeAreaView style={styles.safeContainer}>
@@ -78,7 +110,9 @@ const ProfileScreen = ({ navigation }) => {
         <View style={styles.detailsCard}>
           <View style={styles.infoRow}>
             <Text style={styles.label}>Email:</Text>
-            <Text style={styles.value}>{user?.email || "john.doe@example.com"}</Text>
+            <Text style={styles.value}>
+              {user?.email || "john.doe@example.com"}
+            </Text>
           </View>
           <View style={styles.separator} />
           <View style={styles.infoRow}>
@@ -94,22 +128,29 @@ const ProfileScreen = ({ navigation }) => {
 
         {/* Reservation List Section */}
         <View style={styles.reservationsContainer}>
-          <Text style={styles.title}>My Bookings</Text>
-          <FlatList
-            data={dummyBookings}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              <View style={styles.bookingItem}>
-                <Image source={{ uri: item.image }} style={styles.bookingImage} />
-                <View style={styles.bookingInfo}>
-                  <Text style={styles.restaurantName}>{item.restaurant}</Text>
-                  <Text style={styles.bookingDetails}>
-                    Date: {item.date} | Time: {item.time}
-                  </Text>
+          <Text style={styles.title}>Upcoming Bookings</Text>
+          {bookings && (
+            <FlatList
+              data={bookings.bookings}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item }) => (
+                <View style={styles.bookingItem}>
+                  <Image
+                    source={{ uri: item.Restaurant.images[0] }}
+                    style={styles.bookingImage}
+                  />
+                  <View style={styles.bookingInfo}>
+                    <Text style={styles.restaurantName}>
+                      {item.Restaurant.title}
+                    </Text>
+                    <Text style={styles.bookingDetails}>
+                      Date: {moment(item.loadIn).format("MMMM Do YYYY, h:mm a")}
+                    </Text>
+                  </View>
                 </View>
-              </View>
-            )}
-          />
+              )}
+            />
+          )}
         </View>
 
         {/* Sign Out Button */}
