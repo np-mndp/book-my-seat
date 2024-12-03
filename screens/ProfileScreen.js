@@ -1,5 +1,12 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Alert, Image } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Alert,
+  Image,
+} from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons"; // Importing icons
 import { useDispatch, useSelector } from "react-redux";
 import { logoutUser } from "../actions/authActions";
@@ -24,25 +31,33 @@ const ProfileScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Image source={{ uri: user?.profilePicture }} style={styles.thumbnail} />
-        <Text style={styles.title}>{user?.name}</Text>
+      <View style={styles.profileContainer}>
+        <View style={styles.header}>
+          <Image
+            source={{ uri: user?.profilePicture }}
+            style={styles.thumbnail}
+          />
+          <Text style={styles.title}>{user?.name}</Text>
+        </View>
+        <View style={styles.infoContainer}>
+          <Text style={styles.label}>Email:</Text>
+          <Text style={styles.value}>{user?.email}</Text>
+        </View>
+        <View style={styles.infoContainer}>
+          <Text style={styles.label}>Phone:</Text>
+          <Text style={styles.value}>{user?.phone}</Text>
+        </View>
+        <View style={styles.infoContainer}>
+          <Text style={styles.label}>Location:</Text>
+          <Text style={styles.value}>{userLocation}</Text>
+        </View>
+        <TouchableOpacity
+          style={styles.signOutButton}
+          onPress={onSignOutPressed}
+        >
+          <Text style={styles.signOutButtonText}>Sign Out</Text>
+        </TouchableOpacity>
       </View>
-      <View style={styles.infoContainer}>
-        <Text style={styles.label}>Email:</Text>
-        <Text style={styles.value}>{user?.email}</Text>
-      </View>
-      <View style={styles.infoContainer}>
-        <Text style={styles.label}>Phone:</Text>
-        <Text style={styles.value}>{user?.phone}</Text>
-      </View>
-      <View style={styles.infoContainer}>
-        <Text style={styles.label}>Location:</Text>
-        <Text style={styles.value}>{userLocation}</Text>
-      </View>
-      <TouchableOpacity style={styles.signOutButton} onPress={onSignOutPressed}>
-        <Text style={styles.signOutButtonText}>Sign Out</Text>
-      </TouchableOpacity>
     </View>
   );
 };
@@ -54,6 +69,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 20,
     backgroundColor: "#f8f9fa", // Light background color
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 7,
+    },
+    shadowOpacity: 0.43,
+    shadowRadius: 9.51,
+
+    elevation: 15,
   },
   header: {
     alignItems: "center",
@@ -96,6 +120,20 @@ const styles = StyleSheet.create({
     height: 100,
     borderRadius: 10,
     resizeMode: "cover",
+  },
+  profileContainer: {
+    backgroundColor: "#FFFFFF",
+    padding: 20,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 7,
+    },
+    shadowOpacity: 0.43,
+    shadowRadius: 9.51,
+
+    elevation: 15,
+    borderRadius: 15
   },
 });
 
