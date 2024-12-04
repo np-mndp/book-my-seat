@@ -69,8 +69,8 @@ const BookingHistoryScreen = () => {
           <View style={styles.addressContainer}>
             <MaterialIcons name="location-pin" size={16} color="#cb4539" />
             <Text style={styles.address}>
-              {item.Restaurant.location.address}
-            </Text>
+            {selectedBooking?.Restaurant?.location?.address ?? "N/A"}
+            </Text> 
           </View>
           <View style={styles.bookingDetailsContainer}>
             <Text style={styles.bookingDetail}>
@@ -82,8 +82,9 @@ const BookingHistoryScreen = () => {
     </TouchableOpacity>
   );
 
-  const last7DaysBookings = bookings.bookings;
-  const oldBookings = bookings.pastBookings;
+  // const last7DaysBookings = bookings.bookings;
+  // console.log(last7DaysBookings)
+  // const oldBookings = bookings.pastBookings;
 
   if (loading) {
     return (
@@ -119,13 +120,17 @@ const BookingHistoryScreen = () => {
         />
       </TouchableOpacity>
       {recentBookingsVisible && (
-        <FlatList
-          data={last7DaysBookings}
-          renderItem={({ item }) => renderBooking(item)}
-          keyExtractor={(item) => item.id.toString()}
-          scrollEnabled={false} //scroll fixed for scrollview child
-        />
-      )}
+  bookings.bookings && bookings.bookings.length > 0 ? (
+    <FlatList
+      data={bookings.bookings}
+      renderItem={({ item }) => renderBooking(item)}
+      keyExtractor={(item) => item.id.toString()}
+      scrollEnabled={false} // Scroll fixed for ScrollView child
+    />
+  ) : (
+    <Text style={styles.sectionHeaderText}>No booking available</Text>
+  )
+)}
 
       {/* Old Bookings */}
       <TouchableOpacity
@@ -142,13 +147,17 @@ const BookingHistoryScreen = () => {
         />
       </TouchableOpacity>
       {oldBookingsVisible && (
-        <FlatList
-          data={oldBookings}
-          renderItem={({ item }) => renderBooking(item)}
-          keyExtractor={(item) => item.id.toString()}
-          scrollEnabled={false}
-        />
-      )}
+  bookings.pastBookings && bookings.pastBookings.length > 0 ? (
+    <FlatList
+      data={bookings.pastBookings}
+      renderItem={({ item }) => renderBooking(item)}
+      keyExtractor={(item) => item.id.toString()}
+      scrollEnabled={false} // Scroll fixed for ScrollView child
+    />
+  ) : (
+    <Text style={styles.sectionHeaderText}>No booking available</Text>
+  )
+)}
 
       {/* Booking Details Modal */}
       <ReactNativeModal
@@ -166,7 +175,7 @@ const BookingHistoryScreen = () => {
               style={styles.modalImage}
             />
             <Text style={styles.modalDetail}>
-              Address: {selectedBooking.Restaurant.location.address}
+              Address: {selectedBooking?.Restaurant?.location?.address ?? "N/A"}
             </Text>
             <Text style={styles.modalDetail}>
               Date:{" "}
@@ -227,6 +236,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     color: "#333",
+    textAlign: "center"
   },
   bookingCard: {
     padding: 16,

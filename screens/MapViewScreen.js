@@ -19,11 +19,11 @@ import {
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import * as Location from "expo-location";
-import { PLACES_API_KEY } from "@env";
+// import { PLACES_API_KEY } from "@env";
 import { API_URL } from "../configs/Constants";
 import Slider from "@react-native-community/slider";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
+import BottomSheet, { BottomSheetScrollView, BottomSheetView , BottomSheetFlatList } from "@gorhom/bottom-sheet";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 
@@ -34,7 +34,7 @@ const MapScreenView = ({ navigation })=> {
   const [loading, setLoading] = useState(false); // State for loader visibility
   const [currentLocationMarker, setCurrentLocationMarker] = useState();
   const [restaurants, setRestaurants] = useState(); //results from backend
-  const [sliderValue, setSliderValue] = useState(10);
+  const [sliderValue, setSliderValue] = useState(100000);
 
   const sliderValues = [10, 20, 30, 40, 50];
   const snapPoints = useMemo(() => ["25%", "50%", "70%"], []);
@@ -56,6 +56,13 @@ const MapScreenView = ({ navigation })=> {
     // console.log("On close bottom sheet")
     bottomSheetRef.current?.close(); // Closes the Bottom Sheet
   }, []);
+
+  useEffect(() => {
+    // Call the fetch function
+    if (currentLocationMarker) {
+      fetchData();
+    }
+  }, [currentLocationMarker, sliderValue]);
 
   // Fetch user's location when the component mounts
   useEffect(() => {
@@ -95,52 +102,45 @@ const MapScreenView = ({ navigation })=> {
   }, []);
 
   // Fetch restaurant data from the backend
-  useEffect(() => {
-    const fetchWithTimeout = (url, options, timeout = 5000) => {
-      return Promise.race([
-        fetch(url, options),
-        new Promise((_, reject) =>
-          setTimeout(() => reject(new Error("Request timed out")), timeout)
-        ),
-      ]);
-    };
+  const fetchData = async () => {
+    try {
+      let params = new URLSearchParams({
+        lat: currentLocationMarker.latitude,
+        lng: currentLocationMarker.longitude,
+        radius: sliderValue,
+      });
 
-    const fetchData = async () => {
-      try {
-        let params = new URLSearchParams({
-          lat: currentLocationMarker.latitude,
-          lng: currentLocationMarker.longitude,
-          radius: sliderValue,
-        });
-
-        const response = await fetchWithTimeout(
-          `${API_URL}/api/restaurants?${params}`,
-          { method: "GET" },
-          5000 // Timeout set to 5000ms (5 seconds)
-        );
-        if (response.ok) {
-          const json = await response.json();
-          console.log({ json });
-          setRestaurants(json);
-          // if(json.length > 0){
-            handleOpenBottomSheet()
-          // }
-        } else {
-          throw new Error("Failed to fetch restaurant data.");
-        }
-      } catch (error) {
-        console.error("Error fetching restaurants:", error.message);
-        Alert.alert("Error", "Could not fetch restaurant data. Please try again.");
-      } finally {
-        setLoading(false);
+      const response = await fetchWithTimeout(
+        `${API_URL}/api/restaurants?${params}`,
+        { method: "GET" },
+        5000 // Timeout set to 5000ms (5 seconds)
+      );
+      if (response.ok) {
+        const json = await response.json();
+        console.log({ json });
+        setRestaurants(json);
+        // if(json.length > 0){
+          handleOpenBottomSheet()
+        // }
+      } else {
+        throw new Error("Failed to fetch restaurant data.");
       }
-    };
-
-    // Call the fetch function
-    if (currentLocationMarker) {
-      fetchData();
+    } catch (error) {
+      console.error("Error fetching restaurants:", error.message);
+      Alert.alert("Error", "Could not fetch restaurant data. Please try again.");
+    } finally {
+      setLoading(false);
     }
-  }, [currentLocationMarker, sliderValue]);
+  };
+
+  const fetchWithTimeout = (url, options, timeout = 5000) => {
+    return Promise.race([
+      fetch(url, options),
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error("Request timed out")), timeout)
+      ),
+    ]);
+  };
 
   // Function to fetch current location
   const handleGetCurrentLocation = async () => {
@@ -182,9 +182,10 @@ const MapScreenView = ({ navigation })=> {
 
     try {
       const response = await fetch(
-        `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${searchQuery}&key=${PLACES_API_KEY}`
+        `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${searchQuery}&key=${process.env.EXPO_PUBLIC_PLACES_API_KEY}`
       );
       const data = await response.json();
+      console.log(data)
 
       if (data.status !== "OK") {
         // console.error("Error from Places API:", data.error_message);
@@ -439,17 +440,19 @@ const MapScreenView = ({ navigation })=> {
       ref={bottomSheetRef}
       snapPoints={snapPoints}
       index={initialIndex}
+      scrollLocking={false}
       enablePanDownToClose // Allows dragging down to close
     >
       {/* Content inside Bottom Sheet */}
-      <BottomSheetView style={styles.sheetContentContainer}>
+      <BottomSheetScrollView style={styles.sheetContentContainer}>
   {restaurants && restaurants.length > 0 ? (
     <>
       <Text style={styles.sheetTitle}>Restaurants Nearby Locator</Text>
-      <FlatList
+      <BottomSheetFlatList
         data={restaurants}
         renderItem={({ item }) => listItem(item)}
         keyExtractor={(item) => item.id.toString()}
+        scrollEnabled={false}
       />
     </>
   ) : (
@@ -461,7 +464,7 @@ const MapScreenView = ({ navigation })=> {
   <TouchableOpacity onPress={handleCloseBottomSheet} style={styles.closeButton}>
     <Text style={styles.closeButtonText}>Close</Text>
   </TouchableOpacity>
-</BottomSheetView>
+</BottomSheetScrollView>
     </BottomSheet>
     </GestureHandlerRootView>
     </View>
@@ -586,7 +589,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end', // Ensures BottomSheet is positioned at the bottom
   },
   sheetContentContainer: {
-    padding: 16,
+    // padding: 16,
     backgroundColor: '#fff',
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
@@ -595,25 +598,25 @@ const styles = StyleSheet.create({
     elevation: 5, // Add shadow effect
   },
   sheetTitle: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: '600',
-    marginBottom: 10,
+    // marginBottom: 10,
     color: '#333',
   },
   sheetSubtitle: {
-    fontSize: 14,
+    fontSize: 13,
     color: '#666',
   },
   restaurantItem: {
-    padding: 16,
+    padding: 25,
     borderBottomWidth: 1,
     borderBottomColor: "#ddd",
     flexDirection: "row",
     alignItems: "center",
   },
   thumbnail: {
-    width: 100,
-    height: 100,
+    width: 80,
+    height: 80,
     borderRadius: 5,
     marginRight: 16,
     borderWidth: 1,

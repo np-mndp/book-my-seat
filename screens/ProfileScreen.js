@@ -18,6 +18,7 @@ const ProfileScreen = ({ navigation }) => {
   const dispatch = useDispatch();
   const { user, token } = useSelector((state) => state.auth);
   const [bookings, setBookings] = useState(null);
+  const [loading, setLoading] = useState(null)
 
   // Dummy data for reservations
   const dummyBookings = [
@@ -129,30 +130,33 @@ const ProfileScreen = ({ navigation }) => {
         {/* Reservation List Section */}
         <View style={styles.reservationsContainer}>
           <Text style={styles.title}>Upcoming Bookings</Text>
-          {bookings && (
-            <FlatList
-              data={bookings.bookings}
-              keyExtractor={(item) => item.id}
-              renderItem={({ item }) => (
-                <View style={styles.bookingItem}>
-                  <Image
-                    source={{ uri: item.Restaurant.images[0] }}
-                    style={styles.bookingImage}
-                  />
-                  <View style={styles.bookingInfo}>
-                    <Text style={styles.restaurantName}>
-                      {item.Restaurant.title}
-                    </Text>
-                    <Text style={styles.bookingDetails}>
-                      Date: {moment(item.loadIn).format("MMMM Do YYYY, h:mm a")}
-                    </Text>
-                  </View>
-                </View>
-              )}
-            />
-          )}
+        {bookings?.bookings?.length > 0 ? (
+  <FlatList
+    data={bookings.bookings}
+    keyExtractor={(item) => item.id.toString()} // Ensure `item.id` is unique
+    renderItem={({ item }) => (
+      <View style={styles.bookingItem}>
+        <Image
+          source={{ uri: item?.Restaurant?.images?.[0] || 'fallback-image-uri' }}
+          style={styles.bookingImage}
+        />
+        <View style={styles.bookingInfo}>
+          <Text style={styles.restaurantName}>
+            {item?.Restaurant?.title || 'Unknown Restaurant'}
+          </Text>
+          <Text style={styles.bookingDetails}>
+            Date: {moment(item?.loadIn).isValid() 
+              ? moment(item.loadIn).format("MMMM Do YYYY, h:mm a") 
+              : 'Invalid Date'}
+          </Text>
         </View>
-
+      </View>
+    )}
+  />
+) : (
+  <Text style={styles.midText}>No Booking Available, Go book a table!</Text>
+)}
+</View>
         {/* Sign Out Button */}
         <TouchableOpacity
           style={styles.signOutButton}
@@ -307,6 +311,12 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     fontWeight: "700",
+  },
+  midText: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#9e9898",
+    textAlign: "center"
   },
 });
 

@@ -32,14 +32,16 @@ const ManagerProfileScreen = ({ navigation }) => {
           Authorization: `Bearer ${token}`,
         },
       });
-
-      if (response.ok) {
-        const json = await response.json();
-        setRestaurants(json);
-        console.log("refeshing")
-      } else {
-        throw new Error("Failed to fetch restaurant details.");
-      }
+console.log(response)
+if (response.ok) {
+  const text = await response.text(); // Read the response as text
+  
+  // If text is not empty, parse it as JSON, otherwise set restaurants to null
+  setRestaurants(text ? JSON.parse(text) : null);
+} else {
+  setRestaurants(null);
+  console.error("Failed to fetch restaurant details.");
+}
     } catch (err) {
       console.error("Error:", err.message);
       setError(err.message);
@@ -114,13 +116,17 @@ const ManagerProfileScreen = ({ navigation }) => {
       >
         <View>
           <Text style={styles.restaurantDetailTitle}>My Restaurants</Text>
-          <FlatList
-            data={restaurants}
-            renderItem={renderRestaurant}
-            keyExtractor={(item) => item.id.toString()}
-            style={styles.restaurantList}
-            scrollEnabled= {false}
-          />
+          {restaurants && restaurants.length > 0 ? (
+    <FlatList
+      data={restaurants}
+      renderItem={renderRestaurant}
+      keyExtractor={(item) => item.id.toString()}
+      style={styles.restaurantList}
+      scrollEnabled={false}
+    />
+  ) : (
+    <Text style={[styles.restaurantDetailTitle,styles.colorNoData] }>No restaurants added yet.</Text>
+  )}
         </View>
 
         <View style={styles.buttonsContainer}>
@@ -233,6 +239,10 @@ const styles = StyleSheet.create({
     color: "#2ca850",
     marginBottom: 10,
     textAlign: "center",
+  },
+
+  colorNoData: {
+    color: "#9e9898"
   },
 
   restaurantList: {

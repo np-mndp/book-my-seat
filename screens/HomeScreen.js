@@ -9,6 +9,7 @@ import {
   FlatList,
   ActivityIndicator,
   ScrollView,
+  RefreshControl,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
@@ -22,29 +23,30 @@ const HomeScreen = () => {
   const [restaurants, setRestaurants] = useState([]);
   const [filteredRestaurants, setFilteredRestaurants] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
-    const fetchRestaurants = async () => {
-      try {
-        const response = await fetch(
-          `${API_URL}/api/restaurants?lat=43.676022&lng=-79.411049&radius=400`
-        );
-        if (response.ok) {
-          const json = await response.json();
-          setRestaurants(json);
-          setFilteredRestaurants(json); // Initialize filtered data
-        } else {
-          throw new Error("Failed to fetch restaurants.");
-        }
-      } catch (error) {
-        console.error("Error fetching restaurants:", error.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchRestaurants();
   }, []);
+
+  const fetchRestaurants = async () => {
+    try {
+      const response = await fetch(
+        `${API_URL}/api/restaurants?lat=43.676022&lng=-79.411049&radius=400`
+      );
+      if (response.ok) {
+        const json = await response.json();
+        setRestaurants(json);
+        setFilteredRestaurants(json); // Initialize filtered data
+      } else {
+        throw new Error("Failed to fetch restaurants.");
+      }
+    } catch (error) {
+      console.error("Error fetching restaurants:", error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSearch = (query) => {
     setSearchQuery(query);
@@ -61,6 +63,13 @@ const HomeScreen = () => {
     );
 
     setFilteredRestaurants(filtered);
+  };
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    fetchRestaurants()
+      .then(() => setRefreshing(false))  // Stop refreshing after data fetch
+      .catch(() => setRefreshing(false)); // Handle any errors
   };
 
   const listItem = (item) => {
@@ -98,7 +107,10 @@ const HomeScreen = () => {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView refreshControl={
+      <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+    }
+    contentContainerStyle={styles.container}>
       {/* Top Banner */}
       <View style={styles.header}>
         <Text style={styles.headerText}>Find your</Text>
