@@ -18,21 +18,16 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useSelector } from "react-redux";
 
-
 const HomeScreen = ({ navigation, route }) => {
   const { title, setTitle } = route?.params;
-
-const HomeScreen = () => {
-
   const [searchQuery, setSearchQuery] = useState("");
   const [restaurants, setRestaurants] = useState([]);
   const [filteredRestaurants, setFilteredRestaurants] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
-  const { user, token } = useSelector((state) => state.auth);
-
   const { location } = useSelector((state) => state.auth);
+  const { user, token } = useSelector((state) => state.auth);
 
 
   useFocusEffect(
@@ -79,10 +74,8 @@ const HomeScreen = () => {
   const onRefresh = () => {
     setRefreshing(true);
     fetchRestaurants()
-
       .then(() => setRefreshing(false)) // Stop refreshing after data fetch
       .catch(() => setRefreshing(false)); // Handle any errors
-
   };
 
   const listItem = (item) => {
@@ -118,17 +111,19 @@ const HomeScreen = () => {
 
   return (
     <ScrollView
-
-      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
       contentContainerStyle={styles.container}
     >
-
+      {/* Top Banner */}
       <View style={styles.header}>
         <Text style={styles.headerText}>Find your</Text>
         <Text style={[styles.headerText, { fontSize: 36 }]}>SEAT</Text>
         <Text style={styles.headerText}>for any occasion!</Text>
       </View>
 
+      {/* Search Bar */}
       <View style={styles.searchContainer}>
         <MaterialCommunityIcons name="magnify" size={24} color="#666" />
         <TextInput
@@ -139,65 +134,88 @@ const HomeScreen = () => {
         />
       </View>
 
-      {/* Show message if no restaurants found */}
-      {filteredRestaurants.length === 0 && (
-        <View style={styles.noResultsContainer}>
-          <Text style={styles.noResultsText}>
-            There are no restaurants nearby. Try changing your location from the profile or search for a location on the map.
-          </Text>
-        </View>
-      )}
-
       {/* Featured Restaurant */}
-      {!loading && searchQuery.trim() === "" && filteredRestaurants.length > 0 && (
-        <View style={styles.featuredRestaurant}>
-          <Text style={styles.featuredTitle}>We thought you may like this...</Text>
-          <TouchableOpacity
-            onPress={() =>
-              navigation.navigate("Restaurant Details", { restaurantData: filteredRestaurants[0] })
-            }
-          >
-            <View style={styles.featuredRestaurantContent}>
-              <View style={styles.titleRatingContainer}>
-                <Text style={[styles.restaurantName, styles.primaryColor]}>
-                  {filteredRestaurants[0].title}
-                </Text>
-                <View style={styles.ratingContainer}>
-                  {Array.from({ length: filteredRestaurants[0].expensiveRating }, (_, index) => (
-                    <FontAwesome key={index} name="dollar" size={15} color="#DAA520" />
-                  ))}
+      {!loading &&
+        searchQuery.trim() === "" &&
+        filteredRestaurants.length > 0 && (
+          <View style={styles.featuredRestaurant}>
+            <Text style={styles.featuredTitle}>
+              We thought you may like this...
+            </Text>
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate("Restaurant Details", {
+                  restaurantData: filteredRestaurants[0],
+                })
+              }
+            >
+              <View style={styles.featuredRestaurantContent}>
+                {/* Title and Expensive Rating on the same row */}
+                <View style={styles.titleRatingContainer}>
+                  <Text style={[styles.restaurantName, styles.primaryColor]}>
+                    {filteredRestaurants[0].title}
+                  </Text>
+                  <View style={styles.ratingContainer}>
+                    {Array.from(
+                      { length: filteredRestaurants[0].expensiveRating },
+                      (_, index) => (
+                        <FontAwesome
+                          key={index}
+                          name="dollar"
+                          size={15}
+                          color="#DAA520"
+                        />
+                      )
+                    )}
+                  </View>
                 </View>
-              </View>
 
-              <View style={styles.addressDistanceContainer}>
-                <View style={styles.addressContainer}>
-                  <MaterialIcons name="location-pin" size={16} color="#cb4539" />
-                  <Text style={styles.address}>{filteredRestaurants[0].location.address}</Text>
+                {/* Address and Distance on the same row */}
+                <View style={styles.addressDistanceContainer}>
+                  <View style={styles.addressContainer}>
+                    <MaterialIcons
+                      name="location-pin"
+                      size={16}
+                      color="#cb4539"
+                    />
+                    <Text style={styles.address}>
+                      {filteredRestaurants[0].location.address}
+                    </Text>
+                  </View>
+                  <Text style={styles.distanceText}>
+                    {filteredRestaurants[0].distance >= 1
+                      ? `${filteredRestaurants[0].distance.toFixed(
+                          0
+                        )} km(s) away`
+                      : `~${Math.round(
+                          filteredRestaurants[0].distance * 1000
+                        )} meters away`}
+                  </Text>
                 </View>
-                <Text style={styles.distanceText}>
-                  {filteredRestaurants[0].distance >= 1
-                    ? `${filteredRestaurants[0].distance.toFixed(0)} km(s) away`
-                    : `~${Math.round(filteredRestaurants[0].distance * 1000)} meters away`}
-                </Text>
+
+                {/* Featured Restaurant Image */}
+                <Image
+                  source={{ uri: filteredRestaurants[0].images[0] }}
+                  style={styles.featuredImage}
+                />
               </View>
+            </TouchableOpacity>
+          </View>
+        )}
 
-              <Image source={{ uri: filteredRestaurants[0].images[0] }} style={styles.featuredImage} />
-            </View>
-          </TouchableOpacity>
-        </View>
-      )}
+      {/* Restaurant List */}
 
-{!loading && filteredRestaurants.length > 0 && searchQuery.trim() === "" && (
-  <Text style={styles.restaurantName}>Or check other restaurants...</Text>
-)}
+      <Text style={styles.restaurantName}>Or check other restaurants...</Text>
 
       {loading ? (
         <ActivityIndicator size="large" color="#14AE5C" />
       ) : (
         <FlatList
-
-          data={searchQuery.trim() === "" ? filteredRestaurants.slice(1) : filteredRestaurants}
-
+          data={
+            searchQuery.trim() === ""
+              ? filteredRestaurants.slice(1)
+              : filteredRestaurants
+          } // Skip the featured restaurant if no search query
           renderItem={({ item }) => listItem(item)}
           keyExtractor={(item) => item.id.toString()}
           scrollEnabled={false}

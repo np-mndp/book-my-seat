@@ -11,51 +11,89 @@ import {
 import { FontAwesome5 } from "@expo/vector-icons";
 import { useSelector } from "react-redux";
 import { API_URL } from "../../configs/Constants";
+import FloorPlanScreen from "./FloorPlanScreen";
+import MenuActions from "./ManagerActions/MenuActions";
+import TablesAction from "./ManagerActions/TablesAction";
 
 const RestaurantScreen = ({ route, navigation }) => {
   const { token } = useSelector((state) => state.auth);
-  //   const [restaurant, setRestaurant] = useState(null);
   const [error, setError] = useState(null);
+  const [addTables, setAddTables] = useState(false);
+  const [addMenu, setAddMenu] = useState(false);
+  const [tables, setTables] = useState(null);
+  const [menu, setMenu] = useState(null);
 
   const { restaurant } = route.params;
-  useEffect(() => navigation.setOptions({ title: restaurant.title }), []);
+  useEffect(() => {
+    navigation.setOptions({ title: restaurant.title });
 
-  //   // Function to fetch restaurant details by ID
-  //   const fetchRestaurantDetails = async () => {
-  //     try {
-  //       const response = await fetch(`${API_URL}/api/restaurants/${1}`, {
-  //         method: "GET",
-  //         headers: {
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //       });
+    fetchTables();
+    fetchMenu();
 
-  //       if (response.ok) {
-  //         const data = await response.json();
-  //         setRestaurant(data);
-  //       } else {
-  //         console.error("Failed to fetch restaurant details.");
-  //         setError("Failed to load restaurant details.");
-  //       }
-  //     } catch (err) {
-  //       console.error("Error:", err.message);
-  //       setError(err.message);
-  //     }
-  //   };
+    // console.log({tables, menu});
+  }, []);
 
-  //   useEffect(() => {
-  //     fetchRestaurantDetails();
-  //   }, []);
+  // Function to fetch restaurant data
+  const fetchTables = async () => {
+    try {
+      const response = await fetch(
+        `${API_URL}/api/restaurants/${restaurant.id}/tables`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (response.ok) {
+        const text = await response.text(); // Read the response as text
 
-  const onAddMenuPressed = () => {
-    // Navigate to Add Menu screen
-    navigation.navigate("AddMenuScreen", { restaurantId: restaurant.id });
+        // If text is not empty, parse it as JSON, otherwise set restaurants to null
+        setTables(text ? JSON.parse(text) : null);
+      } else {
+        setTables(null);
+        console.error("Failed to fetch restaurant Tables.");
+      }
+    } catch (err) {
+      console.error("Error:", err.message);
+      setError(err.message);
+    }
+  };
+  const fetchMenu = async () => {
+    try {
+      const response = await fetch(
+        `${API_URL}/api/restaurants/${restaurant.id}/menu`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (response.ok) {
+        const text = await response.text(); // Read the response as text
+
+        // If text is not empty, parse it as JSON, otherwise set restaurants to null
+        setMenu(text ? JSON.parse(text) : null);
+      } else {
+        setMenu(null);
+        console.error("Failed to fetch restaurant menu.");
+      }
+    } catch (err) {
+      console.error("Error:", err.message);
+      setError(err.message);
+    }
   };
 
-  const onAddTablesPressed = () => {
-    // Navigate to Add Tables screen
-    navigation.navigate("AddTablesScreen", { restaurantId: restaurant });
-  };
+  // const onAddMenuPressed = () => {
+  //   // Navigate to Add Menu screen
+  //   navigation.navigate("AddMenuScreen", { restaurantId: restaurant.id });
+  // };
+
+  // const onAddTablesPressed = () => {
+  //   // Navigate to Add Tables screen
+  //   navigation.navigate("AddTablesScreen", { restaurantId: restaurant });
+  // };
 
   if (error) {
     return (
@@ -103,8 +141,188 @@ const RestaurantScreen = ({ route, navigation }) => {
           </Text>
         </View>
 
+        {tables && (
+          <View style={styles.tableWrapper}>
+            <View style={[styles.tableHeader, { backgroundColor: "#CFFCFC" }]}>
+              <Text
+                style={{
+                  fontSize: 15,
+                  fontWeight: "bold",
+                  color: "#000000",
+                  width: "100%",
+                  textAlign: "center",
+                }}
+              >
+                Tables
+              </Text>
+            </View>
+            <View
+              style={{
+                flex: 1,
+                flexDirection: "row",
+                width: "100%",
+                backgroundColor: "#00B3B3",
+              }}
+            >
+              <View style={styles.tableHeader}>
+                <Text
+                  style={{ fontSize: 15, fontWeight: "bold", color: "#FFFF" }}
+                >
+                  Seats
+                </Text>
+              </View>
+              <View style={styles.tableHeader}>
+                <Text
+                  style={{ fontSize: 15, fontWeight: "bold", color: "#FFFF" }}
+                >
+                  Tables
+                </Text>
+              </View>
+              <View style={styles.tableHeader}>
+                <Text
+                  style={{ fontSize: 15, fontWeight: "bold", color: "#FFFF" }}
+                >
+                  Place
+                </Text>
+              </View>
+            </View>
+            {tables.map((table, index) => (
+              <View
+                style={{
+                  flex: 1,
+                  flexDirection: "row",
+                  width: "100%",
+                  borderTopWidth: 1,
+                }}
+              >
+                <View key={index} style={styles.tableHeader}>
+                  <Text>{table.seats}</Text>
+                </View>
+                <View style={styles.tableHeader}>
+                  <Text>{table.tableCount}</Text>
+                </View>
+                <View style={styles.tableHeader}>
+                  <Text>{table.place}</Text>
+                </View>
+              </View>
+            ))}
+          </View>
+        )}
+
+        {menu && (
+          <View style={styles.tableWrapper}>
+            <View style={[styles.tableHeader, { backgroundColor: "#CFFCFC" }]}>
+              <Text
+                style={{
+                  fontSize: 15,
+                  fontWeight: "bold",
+                  color: "#000000",
+                  width: "100%",
+                  textAlign: "center",
+                }}
+              >
+                Menu
+              </Text>
+            </View>
+            <View
+              style={{
+                flex: 1,
+                flexDirection: "row",
+                width: "100%",
+                backgroundColor: "#00B3B3",
+              }}
+            >
+              <View style={styles.tableHeader}>
+                <Text
+                  style={{ fontSize: 15, fontWeight: "bold", color: "#FFFF" }}
+                >
+                  Type
+                </Text>
+              </View>
+              <View style={styles.tableHeader}>
+                <Text
+                  style={{ fontSize: 15, fontWeight: "bold", color: "#FFFF" }}
+                >
+                  Name
+                </Text>
+              </View>
+              <View style={styles.tableHeader}>
+                <Text
+                  style={{ fontSize: 15, fontWeight: "bold", color: "#FFFF" }}
+                >
+                  Price
+                </Text>
+              </View>
+              <View style={styles.tableHeader}>
+                <Text
+                  style={{ fontSize: 15, fontWeight: "bold", color: "#FFFF" }}
+                >
+                  Description
+                </Text>
+              </View>
+              <View style={styles.tableHeader}>
+                <Text
+                  style={{ fontSize: 15, fontWeight: "bold", color: "#FFFF" }}
+                >
+                  Calories
+                </Text>
+              </View>
+              <View style={styles.tableHeader}>
+                <Text
+                  style={{ fontSize: 15, fontWeight: "bold", color: "#FFFF" }}
+                >
+                  Image
+                </Text>
+              </View>
+            </View>
+            {menu.map((item, index) => (
+              <View
+                style={{
+                  flex: 1,
+                  flexDirection: "row",
+                  width: "100%",
+                  borderTopWidth: 1,
+                }}
+              >
+                <View key={index} style={styles.tableHeader}>
+                  <Text>{item.type}</Text>
+                </View>
+                <View style={styles.tableHeader}>
+                  <Text>{item.menuItem}</Text>
+                </View>
+                <View style={styles.tableHeader}>
+                  <Text>{item.price}</Text>
+                </View>
+                <View
+                  style={[styles.tableHeader, {}]}
+                  numberOfLines={1}
+                  ellipsizeMode="tail"
+                >
+                  <Text>
+                    {item?.description?.length > 15
+                      ? item?.description.slice(0, 15) + "..."
+                      : item?.description}
+                  </Text>
+                </View>
+                <View style={styles.tableHeader}>
+                  <Text>{item.calories}</Text>
+                </View>
+                <View style={styles.tableHeader}>
+                  <Image
+                    source={{ uri: item.images[0] }}
+                    style={styles.imagePreview}
+                  />
+                </View>
+              </View>
+            ))}
+          </View>
+        )}
+
         <View style={styles.buttonsContainer}>
-          <TouchableOpacity style={styles.button} onPress={onAddMenuPressed}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => setAddMenu(true)}
+          >
             <FontAwesome5
               name="utensils"
               size={20}
@@ -114,7 +332,14 @@ const RestaurantScreen = ({ route, navigation }) => {
             <Text style={styles.buttonText}>Add Menu</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.button} onPress={onAddTablesPressed}>
+          {addMenu && (
+            <MenuActions restaurantId={restaurant.id} setAddMenu={setAddMenu} />
+          )}
+
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => setAddTables(true)}
+          >
             <FontAwesome5
               name="table"
               size={20}
@@ -123,6 +348,12 @@ const RestaurantScreen = ({ route, navigation }) => {
             />
             <Text style={styles.buttonText}>Add Tables</Text>
           </TouchableOpacity>
+          {addTables && (
+            <TablesAction
+              restaurantId={restaurant.id}
+              setAddTables={setAddTables}
+            />
+          )}
         </View>
       </ScrollView>
     </View>
@@ -195,6 +426,24 @@ const styles = StyleSheet.create({
     color: "red",
     textAlign: "center",
     marginTop: 20,
+  },
+  tableWrapper: {
+    width: "95%",
+    borderWidth: 1,
+    borderRadius: 5,
+    marginHorizontal: "2%",
+    marginVertical: 5,
+  },
+  tableHeader: {
+    flex: 1,
+    borderLeftWidth: 1,
+    paddingHorizontal: 5,
+  },
+  imagePreview: {
+    width: 50,
+    height: 50,
+    marginTop: 1,
+    borderRadius: 5,
   },
 });
 

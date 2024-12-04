@@ -57,8 +57,8 @@ const ManagerProfileScreen = ({ navigation, route }) => {
   };
 
   useEffect(() => {
-    console.log({navigation, route});
-    
+    console.log({ navigation, route });
+
     navigation.setOptions({ headerTitle: `Welcome ${user?.name} Profile` }); // Dynamically set the title
     // navigation.setOptions({ headerTitle: title });
     fetchRestaurants();
@@ -85,41 +85,31 @@ const ManagerProfileScreen = ({ navigation, route }) => {
 
   const renderRestaurant = ({ item }) => (
     <TouchableOpacity
+      style={styles.restaurantCard}
       onPress={() =>
         navigation.navigate("RestaurantScreen", { restaurant: item })
       }
     >
-      <View style={styles.restaurantCard}>
-        <Image
-          source={{ uri: item.images[0] }}
-          style={styles.restaurantImage}
-        />
-        <View style={styles.restaurantInfo}>
-          <Text style={styles.restaurantName}>{item.title || "N/A"}</Text>
-          <Text style={styles.restaurantDescription} numberOfLines={2}>
-            {item.description || "No description available."}
-          </Text>
-          <View style={styles.ratingContainer}>
-            {Array.from({ length: item.expensiveRating }, (_, index) => (
-              <FontAwesome
-                key={index}
-                name="dollar"
-                size={15}
-                color="#DAA520"
-              />
-            ))}
-          </View>
-          <Text style={styles.restaurantAddress}>
-            {item.location.address || "N/A"}
-          </Text>
+      <Image source={{ uri: item.images[0] }} style={styles.restaurantImage} />
+      <View style={styles.restaurantInfo}>
+        <Text style={styles.restaurantName}>{item.title || "N/A"}</Text>
+        <Text style={styles.restaurantDescription} numberOfLines={2}>
+          {item.description || "No description available."}
+        </Text>
+        <View style={styles.ratingContainer}>
+          {Array.from({ length: item.expensiveRating }, (_, index) => (
+            <FontAwesome key={index} name="dollar" size={15} color="#DAA520" />
+          ))}
         </View>
+        <Text style={styles.restaurantAddress}>
+          {item.location.address || "N/A"}
+        </Text>
       </View>
     </TouchableOpacity>
   );
 
   return (
     <View style={styles.container}>
-     
       <View style={styles.profileSection}>
         <Image
           source={{ uri: user?.profilePicture }}

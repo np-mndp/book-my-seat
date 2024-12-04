@@ -15,9 +15,9 @@ import AddMenuItemsScreen from "./screens/manager/AddMenuItemScreen"
 import AddRestaurantScreen from "./screens/manager/AddRestaurantScreen";
 import ReservationConfirmation from "./screens/ReservationConfirmation";
 
-import RestaurantScreen from "./screens/manager/RestaurantScreen";
 
 import SetLocationScreen from "./screens/SetLocationScreen";
+import RestaurantScreen from "./screens/manager/RestaurantScreen";
 
 
 const Stack = createStackNavigator();
@@ -135,7 +135,6 @@ function App() {
                 headerTitle: "Menu Items",
               }}
             />
-
         <Stack.Screen
               name="RestaurantScreen"
               component={RestaurantScreen}

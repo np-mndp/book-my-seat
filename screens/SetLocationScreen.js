@@ -78,15 +78,18 @@ const SetLocationScreen = ({ navigation }) => {
 
     try {
       const response = await fetch(
-        `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${searchQuery}&key=${process.env.EXPO_PUBLIC_PLACES_API_KEY}`
+        `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${searchQuery}&key=AIzaSyAyTHnJZq3WrKkL_4wAZRs9-ajlIK0EGbA`
       );
 
       const data = await response.json();
+      
+      
 
       if (data.status !== "OK" || !data.results || data.results.length === 0) {
         Alert.alert("No results found");
         return;
       }
+      
 
       setPlaces(data.results);
     } catch (error) {

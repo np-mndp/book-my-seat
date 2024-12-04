@@ -170,21 +170,6 @@ const ProfileScreen = ({ navigation, route }) => {
             </Text>
           )}
         </View>
-
-      </View>
-    )}
-  />
-) : (
-  <Text style={styles.midText}>No Booking Available, Go book a table!</Text>
-)}
-</View>
-<TouchableOpacity
-          style={styles.updateLocationButton}
-          onPress={onUpdateLocation}
-        >
-          <Text style={styles.signOutButtonText}>Update My Location</Text>
-        </TouchableOpacity>
-
         {/* Sign Out Button */}
         <TouchableOpacity
           style={styles.signOutButton}
