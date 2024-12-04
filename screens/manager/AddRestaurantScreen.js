@@ -12,6 +12,7 @@ import {
 import { API_URL } from "../../configs/Constants";
 import { useSelector } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
+import { FlatList } from "react-native-gesture-handler";
 
 const AddRestaurantScreen = ({ navigation, route }) => {
   let { user, token } = useSelector((state) => state.auth);
@@ -31,11 +32,57 @@ const AddRestaurantScreen = ({ navigation, route }) => {
   const [county, setCounty] = useState("");
   const [address, setAddress] = useState("");
   const [images, setImages] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [places, setPlaces] = useState();
 
   const handleRatingChange = (text) => {
     // Allow only numbers
     const numericValue = text.replace(/[^0-9]/g, "");
     setExpensiveRating(numericValue);
+  };
+
+  const handleSearchLocation = async (query) => {
+    if (query.trim() === "") {
+      // Alert.alert("Please enter a search term");
+      return setPlaces();
+    }
+
+    setLoading(true); // Start loading when search begins
+
+    try {
+      const response = await fetch(
+        `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${query}&key=AIzaSyAyTHnJZq3WrKkL_4wAZRs9-ajlIK0EGbA`
+      );
+
+      const data = await response.json();
+
+      if (data.status !== "OK" || !data.results || data.results.length === 0) {
+        setPlaces("");
+        return;
+      }
+
+      setPlaces(data.results);
+    } catch (error) {
+      console.error("Error searching for location", error);
+      Alert.alert("An error occurred while searching for places.");
+    } finally {
+      setLoading(false); // Stop loading after the request completes
+    }
+  };
+
+  // Handle selecting a place from search results
+  const handleSelectPlace = async (place) => {
+    const addressParts = place?.formatted_address?.split(",");
+    const country = addressParts[addressParts.length - 1].trim(); // Extracts 'Canada' from the example
+
+    setLatitude(place?.geometry?.location?.lat);
+    setLongitude(place?.geometry?.location?.lng);
+    setAddress(place?.name);
+    setCounty(country);
+    console.log(latitude, longitude, address);
+    return setPlaces();
+
+    // navigation.replace("TabView");
   };
 
   const handleSave = async () => {
@@ -122,37 +169,6 @@ const AddRestaurantScreen = ({ navigation, route }) => {
           value={expensiveRating}
           onChangeText={handleRatingChange}
         />
-        <Text style={styles.sectionTitle}>Location</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Latitude"
-          placeholderTextColor="#999"
-          keyboardType="decimal-pad"
-          value={latitude}
-          onChangeText={setLatitude}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Longitude"
-          placeholderTextColor="#999"
-          keyboardType="decimal-pad"
-          value={longitude}
-          onChangeText={setLongitude}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="County"
-          placeholderTextColor="#999"
-          value={county}
-          onChangeText={setCounty}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Address"
-          placeholderTextColor="#999"
-          value={address}
-          onChangeText={setAddress}
-        />
         <TextInput
           style={styles.input}
           placeholder="Images (comma-separated URLs)"
@@ -160,6 +176,66 @@ const AddRestaurantScreen = ({ navigation, route }) => {
           value={images}
           onChangeText={setImages}
         />
+        <Text style={styles.sectionTitle}>Location</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Address"
+          placeholderTextColor="#999"
+          value={address}
+          onChangeText={(query) => {
+            let timeout;
+            setAddress(query);
+            if (timeout) clearTimeout(timeout);
+            if (query.trim() !== "") {
+              // Set a new timeout that executes the search after 2000ms of no typing
+              timeout = setTimeout(() => {
+                handleSearchLocation(query); // Trigger the search function
+              }, 2000);
+            }
+          }}
+        />
+        {places?.length > 0 && (
+          <FlatList
+            data={places}
+            keyExtractor={(item) => item.place_id}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                style={styles.placeItem}
+                onPress={() => handleSelectPlace(item)}
+              >
+                <Text style={styles.placeName}>{item.name}</Text>
+                <Text style={styles.placeAddress}>
+                  {item.formatted_address}
+                </Text>
+              </TouchableOpacity>
+            )}
+          />
+        )}
+        <TextInput
+          style={styles.input}
+          placeholder="County"
+          placeholderTextColor="#999"
+          value={county}
+          onChangeText={setCounty}
+        />
+        <View style={styles.latLngContainer}>
+          <TextInput
+            style={[styles.input, { flex: 1 }]}
+            placeholder="Latitude"
+            placeholderTextColor="#999"
+            keyboardType="decimal-pad"
+            value={latitude.toString()}
+            // onChangeText={setLatitude}
+          />
+          <TextInput
+            style={[styles.input, { flex: 1 }]}
+            placeholder="Longitude"
+            placeholderTextColor="#999"
+            keyboardType="decimal-pad"
+            value={longitude.toString()}
+            disabled={true}
+          />
+        </View>
 
         {/* Save Button */}
         <TouchableOpacity style={styles.button} onPress={handleSave}>
@@ -234,6 +310,15 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     letterSpacing: 0.5,
+  },
+  latLngContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  placeItem: {
+    padding: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: "#009c5b",
   },
 });
 

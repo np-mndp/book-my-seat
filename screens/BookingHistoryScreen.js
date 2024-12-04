@@ -28,11 +28,9 @@ const BookingHistoryScreen = ({ navigation, route }) => {
 
   const { title, setTitle } = route?.params;
 
-  useFocusEffect(
-    React.useCallback(() => {
-      setTitle(`My Bookings`);
-    }, [navigation])
-  );
+  // useFocusEffect(
+  //   navigation.setOptions({ title: title }),[navigation] // Set screen title
+  // );
 
   useEffect(() => {
     const fetchData = async () => {

@@ -81,7 +81,7 @@ let BookingScreen = ({ navigation, route }) => {
           [
             {
               text: "OK",
-              onPress: () => navigation.navigate("Booking History"),
+              onPress: () => navigation.navigate("Booking History", {title: restaurant.title}),
             },
           ]
         );

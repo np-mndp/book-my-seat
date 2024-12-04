@@ -82,11 +82,14 @@ const SetLocationScreen = ({ navigation }) => {
       );
 
       const data = await response.json();
+      
+      
 
       if (data.status !== "OK" || !data.results || data.results.length === 0) {
         Alert.alert("No results found");
         return;
       }
+      
 
       setPlaces(data.results);
     } catch (error) {

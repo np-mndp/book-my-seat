@@ -16,7 +16,7 @@ import { useNavigation } from "@react-navigation/native";
 
 const Tab = createBottomTabNavigator();
 
-const TabViewScreen = ({ navigation }) => {
+const TabViewScreen = ({ navigation, route }) => {
   const { user, location } = useSelector((state) => state.auth);
   const [title, setTitle] = useState("Book My Seat");
   // let navigation = useNavigation();
