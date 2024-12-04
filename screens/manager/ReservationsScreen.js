@@ -8,14 +8,22 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons"; // For icons
-import { useSelector } from "react-redux";
 import { API_URL } from "../../configs/Constants";
 import moment from "moment/moment";
+import { useSelector } from "react-redux";
+import { useFocusEffect } from "@react-navigation/native";
 
-const ReservationsScreen = ({ navigation }) => {
+const ReservationsScreen = ({ navigation, route }) => {
+  let { user, token } = useSelector((state) => state.auth);
   const [bookings, setBookings] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { title, setTitle } = route?.params;
+  useFocusEffect(
+    React.useCallback(() => {
+      setTitle(`Reservations`);
+    }, [navigation])
+  );
   // Dummy data for reservations
   const reservations = [
     { id: "1", name: "John Doe", people: 4, time: "12:30 PM" },
@@ -29,7 +37,6 @@ const ReservationsScreen = ({ navigation }) => {
   ];
 
   // Calculate first and last reservation times and total people
-  let { user, token } = useSelector((state) => state.auth);
   const firstResoTime = reservations[0]?.time;
   const lastResoTime = reservations[reservations.length - 1]?.time;
   const totalPeople = reservations.reduce(
@@ -49,12 +56,12 @@ const ReservationsScreen = ({ navigation }) => {
 
         if (response.ok) {
           const json = await response.json();
-          setBookings(json.pastBookings);
+          setBookings(json.bookings);
         } else {
-          throw new Error("Failed to fetch");
+          throw new Error(`Failed to fetch ${response.status}`);
         }
       } catch (error) {
-        console.error("Error:", error.message);
+        console.error("Error:", error.stack);
         setError(error.message);
       } finally {
         setLoading(false);
@@ -62,7 +69,7 @@ const ReservationsScreen = ({ navigation }) => {
     };
 
     fetchData();
-  });
+  }, []);
 
   if (loading) {
     return (
@@ -82,7 +89,7 @@ const ReservationsScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Reservations</Text>
+      {/* <Text style={styles.header}>Reservations</Text> */}
       <View style={styles.summaryContainer}>
         <View style={styles.summaryItem}>
           <MaterialIcons name="schedule" size={24} color="#2ca850" />
@@ -110,7 +117,13 @@ const ReservationsScreen = ({ navigation }) => {
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <View style={styles.reservationCard}>
-            <View style={{display:"flex", flexDirection:"row", justifyContent:"space-between"}}>
+            <View
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "space-between",
+              }}
+            >
               <Text style={[styles.cardHeader, { color: "#e67e22" }]}>
                 {item.customer?.name}
               </Text>

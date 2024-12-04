@@ -12,23 +12,35 @@ import {
   RefreshControl,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { API_URL } from "../configs/Constants";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useSelector } from "react-redux";
+
+
+const HomeScreen = ({ navigation, route }) => {
+  const { title, setTitle } = route?.params;
+
 const HomeScreen = () => {
-  const navigation = useNavigation();
+
   const [searchQuery, setSearchQuery] = useState("");
   const [restaurants, setRestaurants] = useState([]);
   const [filteredRestaurants, setFilteredRestaurants] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+
+  const { user, token } = useSelector((state) => state.auth);
+
   const { location } = useSelector((state) => state.auth);
 
-  useEffect(() => {
-    fetchRestaurants();
-  }, []);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      setTitle(`Welcome ${user?.name?.split(" ")[0]}`);
+      fetchRestaurants();
+    }, [navigation])
+  );
 
   const fetchRestaurants = async () => {
     try {
@@ -37,6 +49,7 @@ const HomeScreen = () => {
       );
       if (response.ok) {
         const json = await response.json();
+
         setRestaurants(json);
         setFilteredRestaurants(json); // Initialize filtered data
       } else {
@@ -66,8 +79,10 @@ const HomeScreen = () => {
   const onRefresh = () => {
     setRefreshing(true);
     fetchRestaurants()
-      .then(() => setRefreshing(false))
-      .catch(() => setRefreshing(false));
+
+      .then(() => setRefreshing(false)) // Stop refreshing after data fetch
+      .catch(() => setRefreshing(false)); // Handle any errors
+
   };
 
   const listItem = (item) => {
@@ -103,9 +118,11 @@ const HomeScreen = () => {
 
   return (
     <ScrollView
+
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       contentContainerStyle={styles.container}
     >
+
       <View style={styles.header}>
         <Text style={styles.headerText}>Find your</Text>
         <Text style={[styles.headerText, { fontSize: 36 }]}>SEAT</Text>
@@ -173,11 +190,14 @@ const HomeScreen = () => {
 {!loading && filteredRestaurants.length > 0 && searchQuery.trim() === "" && (
   <Text style={styles.restaurantName}>Or check other restaurants...</Text>
 )}
+
       {loading ? (
         <ActivityIndicator size="large" color="#14AE5C" />
       ) : (
         <FlatList
+
           data={searchQuery.trim() === "" ? filteredRestaurants.slice(1) : filteredRestaurants}
+
           renderItem={({ item }) => listItem(item)}
           keyExtractor={(item) => item.id.toString()}
           scrollEnabled={false}

@@ -11,9 +11,15 @@ import {
 } from "react-native";
 import { API_URL } from "../../configs/Constants";
 import { useSelector } from "react-redux";
+import { useFocusEffect } from "@react-navigation/native";
 
-const AddRestaurantScreen = ({ navigation }) => {
+const AddRestaurantScreen = ({ navigation, route }) => {
   let { user, token } = useSelector((state) => state.auth);
+  useFocusEffect(
+    React.useCallback(() => {
+      route?.params?.setTitle(`Add new Restaurant`);
+    }, [navigation])
+  );
 
   //Restaurant Details
   const [title, setTitle] = useState("");
@@ -54,18 +60,14 @@ const AddRestaurantScreen = ({ navigation }) => {
           images: images.split(",").map((item) => item.trim()), // Convert comma-separated string to an array
         }),
       });
-  
+
       if (response.ok) {
-        Alert.alert(
-          "Success",
-          "Restaurant added successfully!",
-          [
-            {
-              text: "OK",
-              onPress: () => navigation.navigate("ManagerProfile"), // Replace with your target screen
-            },
-          ]
-        );
+        Alert.alert("Success", "Restaurant added successfully!", [
+          {
+            text: "OK",
+            onPress: () => navigation.navigate("ManagerProfile"), // Replace with your target screen
+          },
+        ]);
       } else {
         Alert.alert("Error", "Failed to add the restaurant. Please try again.");
       }
@@ -73,7 +75,6 @@ const AddRestaurantScreen = ({ navigation }) => {
       Alert.alert("Error", `Error occurred: ${error.message}`);
     }
   };
-  
 
   return (
     <ScrollView style={styles.container}>
@@ -194,25 +195,31 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: "bold",
-    color: "#555",
+    fontWeight: "600",
+    color: "#444",
     marginTop: 20,
     marginBottom: 10,
   },
   input: {
-    backgroundColor: "#f8f8f8",
-    borderRadius: 8,
+    backgroundColor: "#f9f9f9",
+    borderRadius: 10,
     borderWidth: 1,
-    borderColor: "#ddd",
-    padding: 15,
+    borderColor: "#ccc",
+    paddingVertical: 8,
+    paddingHorizontal: 15,
     marginBottom: 15,
-    fontSize: 16,
+    fontSize: 15,
     color: "#333",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 2,
   },
   button: {
     backgroundColor: "#2ca850",
-    paddingVertical: 15,
-    borderRadius: 8,
+    paddingVertical: 14,
+    borderRadius: 10,
     justifyContent: "center",
     alignItems: "center",
     shadowColor: "#000",
@@ -220,12 +227,13 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 3,
     elevation: 5,
-    marginTop: 10,
+    marginTop: 15,
   },
   buttonText: {
     color: "#fff",
     fontSize: 16,
     fontWeight: "bold",
+    letterSpacing: 0.5,
   },
 });
 

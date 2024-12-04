@@ -26,8 +26,9 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import BottomSheet, { BottomSheetScrollView, BottomSheetView , BottomSheetFlatList } from "@gorhom/bottom-sheet";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { useFocusEffect } from "@react-navigation/native";
 
-const MapScreenView = ({ navigation })=> {
+const MapScreenView = ({ navigation, route })=> {
   const [location, setLocation] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [places, setPlaces] = useState([]);
@@ -39,7 +40,15 @@ const MapScreenView = ({ navigation })=> {
   const sliderValues = [10, 20, 30, 40, 50];
   const snapPoints = useMemo(() => ["25%", "50%", "70%"], []);
   const initialIndex = -1; // Ensure the BottomSheet starts in a closed state
+  const {title, setTitle } = route?.params;
 
+
+  useFocusEffect(
+    React.useCallback(() => {
+      setTitle(`Nearby Restaurants`);
+    },
+    [navigation])
+  );
   //ref for mapview
   const mapRef = useRef(null);
   // Ref for the Bottom Sheet

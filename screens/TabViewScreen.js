@@ -1,4 +1,7 @@
-import React, { useEffect } from "react";
+
+// TabViewScreen.js
+import React, { useEffect, useState } from "react";
+
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import MapScreenView from "./MapViewScreen";
 import ProfileScreen from "./ProfileScreen";
@@ -11,12 +14,36 @@ import AddRestaurantScreen from "./manager/AddRestaurantScreen";
 import ManagerProfileScreen from "./manager/ManagerProfileScreen";
 import HomeScreen from "./HomeScreen";
 import { useSelector } from "react-redux";
+import { useNavigation } from "@react-navigation/native";
 
 const Tab = createBottomTabNavigator();
 
 const TabViewScreen = ({ navigation }) => {
   const { user, location } = useSelector((state) => state.auth);
+  const [title, setTitle] = useState("Book My Seat");
+  // let navigation = useNavigation();
 
+  // const getHeaderTitle = (routeName) => {
+  //   switch (routeName) {
+  //     case "Home":
+  //       return `Welcome ${user?.name}`;
+  //     case "Search on Map":
+  //       return "Nearby Restaurants";
+  //     case "Profile":
+  //       return `${user?.name}`;
+  //     case "MyBookings":
+  //       return `My Bookings`;
+  //     default:
+  //       return "App";
+  //   }
+  // };
+
+  useEffect(() => {
+    console.log(route);
+
+    navigation.setOptions({ headerTitle: title }); // Dynamically set the title
+    // navigation.setOptions({ headerTitle: title });
+  }, [title]);
   useEffect(() => {
     if (!user) {
       // If the user is not logged in, redirect to the Login screen
@@ -33,12 +60,16 @@ const TabViewScreen = ({ navigation }) => {
   }
 
   // Check if the user is a manager
-  if (user.isManager === true) {
+  if (user.isManager === false) {
     // Render manager's tabs
     return (
       <Tab.Navigator
         initialRouteName="Home"
+        options={{
+          headerTitle: "ASDADSADADSADAS",
+        }}
         screenOptions={({ route }) => ({
+          // headerTitle: getHeaderTitle(route.name),
           tabBarIcon: ({ color, size }) => {
             let iconName;
 
@@ -72,10 +103,26 @@ const TabViewScreen = ({ navigation }) => {
           headerShown: false,
         })}
       >
-        <Tab.Screen name="Home" component={HomeScreen} />
-        <Tab.Screen name="Search on Map" component={MapScreenView} />
-        <Tab.Screen name="Profile" component={ProfileScreen} />
-        <Tab.Screen name="MyBookings" component={BookingHistoryScreen} />
+        <Tab.Screen
+          name="Home"
+          component={HomeScreen}
+          initialParams={{ title, setTitle }}
+        />
+        <Tab.Screen
+          name="Search on Map"
+          component={MapScreenView}
+          initialParams={{ title, setTitle }}
+        />
+        <Tab.Screen
+          name="Profile"
+          component={ProfileScreen}
+          initialParams={{ title, setTitle }}
+        />
+        <Tab.Screen
+          name="MyBookings"
+          component={BookingHistoryScreen}
+          initialParams={{ title, setTitle }}
+        />
       </Tab.Navigator>
     );
   } else {
@@ -83,6 +130,9 @@ const TabViewScreen = ({ navigation }) => {
     return (
       <Tab.Navigator
         initialRouteName="Reservation"
+        options={{
+          headerTitle: "Welcome !",
+        }}
         screenOptions={({ route }) => ({
           tabBarIcon: ({ color, size }) => {
             let iconName;
@@ -117,10 +167,26 @@ const TabViewScreen = ({ navigation }) => {
           headerShown: false,
         })}
       >
-        <Tab.Screen name="Reservation" component={ReservationsScreen} />
-        <Tab.Screen name="AddRestaurant" component={AddRestaurantScreen} />
-        <Tab.Screen name="FloorPlan" component={FloorPlanScreen} />
-        <Tab.Screen name="ManagerProfile" component={ManagerProfileScreen} />
+        <Tab.Screen
+          name="Reservation"
+          component={ReservationsScreen}
+          initialParams={{ title, setTitle }}
+        />
+        <Tab.Screen
+          name="AddRestaurant"
+          component={AddRestaurantScreen}
+          initialParams={{ title, setTitle }}
+        />
+        <Tab.Screen
+          name="FloorPlan"
+          component={FloorPlanScreen}
+          initialParams={{ title, setTitle }}
+        />
+        <Tab.Screen
+          name="ManagerProfile"
+          component={ManagerProfileScreen}
+          initialParams={{ title, setTitle }}
+        />
       </Tab.Navigator>
     );
   }
