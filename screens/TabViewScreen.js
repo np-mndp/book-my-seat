@@ -1,7 +1,5 @@
-
 // TabViewScreen.js
 import React, { useEffect, useState } from "react";
-
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import MapScreenView from "./MapViewScreen";
 import ProfileScreen from "./ProfileScreen";
@@ -48,7 +46,7 @@ const TabViewScreen = ({ navigation }) => {
     if (!user) {
       // If the user is not logged in, redirect to the Login screen
       navigation.replace("Login");
-    } else if (!location.lat || !location.long) {
+    } else if (!location?.lat || !location?.long) {
       // If location is not set, navigate to SetLocation screen
       navigation.replace("SetLocation");
     }
