@@ -18,7 +18,9 @@ import { API_URL } from "../configs/Constants";
 
 let BookingScreen = ({ navigation, route }) => {
   let { user, token } = useSelector((state) => state.auth);
-  let [reservationDateTime, setReservationDateTime] = useState(
+
+  const [loadIn, setLoadIn] = useState(moment().format("YYYY-MM-DD HH:mm:ss"));
+  const [loadOut, setLoadOut] = useState(
     moment().format("YYYY-MM-DD HH:mm:ss")
   );
   let [openDateTimePicker, setOpenDateTimePicker] = useState(false);
@@ -67,7 +69,8 @@ let BookingScreen = ({ navigation, route }) => {
           specialAccommodations,
           note,
           RestaurantId: route.params?.restaurant?.id,
-          reservationDateTime,
+          loadIn,
+          loadOut,
         }),
       });
       // console.log(response)
@@ -82,8 +85,7 @@ let BookingScreen = ({ navigation, route }) => {
             },
           ]
         );
-      }
-      else{
+      } else {
         Alert.alert(
           `Error occurred while trying to book a table for ${guests} at ${restaurant.title}`
         );
@@ -106,7 +108,8 @@ let BookingScreen = ({ navigation, route }) => {
   };
 
   const handleDateTimeConfirm = (date) => {
-    setReservationDateTime(moment(date).format("YYYY-MM-DD HH:mm:ss"));
+    setLoadIn(moment(date).format("YYYY-MM-DD HH:mm:ss"));
+    setLoadOut(moment(date).add(2, "hours").format("YYYY-MM-DD HH:mm:ss"));
     hideDateTimePicker();
   };
 
@@ -216,15 +219,20 @@ let BookingScreen = ({ navigation, route }) => {
       />
 
       {/* Reservation Date and Time Picker */}
-      <TouchableOpacity onPress={showDateTimePicker} style={styles.datePickerButton}>
+      <TouchableOpacity
+        onPress={showDateTimePicker}
+        style={styles.datePickerButton}
+      >
         <Text style={styles.datePickerText}>
-          {reservationDateTime ? moment(reservationDateTime).format("MMMM Do YYYY, h:mm A") : "Select Date & Time"}
+          {loadIn
+            ? moment(loadIn).format("MMMM Do YYYY, h:mm A")
+            : "Select Date & Time"}
         </Text>
       </TouchableOpacity>
       <DateTimePickerModal
         isVisible={openDateTimePicker}
         mode="datetime"
-        date={new Date(reservationDateTime)}
+        date={new Date(loadIn)}
         onConfirm={handleDateTimeConfirm}
         onCancel={hideDateTimePicker}
       />
