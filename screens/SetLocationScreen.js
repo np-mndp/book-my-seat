@@ -5,7 +5,7 @@ import * as Location from "expo-location";
 import { setUserLocation } from "../reducers/authReducer";
 
 // Google API Key for location fetching
-const GOOGLE_API_KEY = ""; // Replace with your Google API key
+// const GOOGLE_API_KEY = process.env.EXPO_PUBLIC_PLACES_API_KEY; // Replace with your Google API key
 
 const SetLocationScreen = ({ navigation }) => {
   const [currentLocation, setCurrentLocation] = useState(null);
@@ -27,7 +27,7 @@ const SetLocationScreen = ({ navigation }) => {
       const { latitude, longitude } = location.coords;
 
       const response = await fetch(
-        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${GOOGLE_API_KEY}`
+        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${process.env.EXPO_PUBLIC_PLACES_API_KEY}`
       );
 
       const data = await response.json();
