@@ -14,14 +14,22 @@ import { FontAwesome5, MaterialIcons, FontAwesome } from "@expo/vector-icons";
 import { useDispatch, useSelector } from "react-redux";
 import { logoutUser } from "../../actions/authActions";
 import { API_URL } from "../../configs/Constants";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 
-const ManagerProfileScreen = ({ navigation }) => {
+const ManagerProfileScreen = ({ navigation, route }) => {
+  // const navigation = useNavigation();
   const dispatch = useDispatch();
   const { user, token } = useSelector((state) => state.auth);
 
   const [restaurants, setRestaurants] = useState([]);
   const [error, setError] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      route?.params?.setTitle(`My Profile`);
+    }, [navigation])
+  );
 
   // Function to fetch restaurant data
   const fetchRestaurants = async () => {
@@ -32,16 +40,16 @@ const ManagerProfileScreen = ({ navigation }) => {
           Authorization: `Bearer ${token}`,
         },
       });
-console.log(response)
-if (response.ok) {
-  const text = await response.text(); // Read the response as text
-  
-  // If text is not empty, parse it as JSON, otherwise set restaurants to null
-  setRestaurants(text ? JSON.parse(text) : null);
-} else {
-  setRestaurants(null);
-  console.error("Failed to fetch restaurant details.");
-}
+      console.log(response);
+      if (response.ok) {
+        const text = await response.text(); // Read the response as text
+
+        // If text is not empty, parse it as JSON, otherwise set restaurants to null
+        setRestaurants(text ? JSON.parse(text) : null);
+      } else {
+        setRestaurants(null);
+        console.error("Failed to fetch restaurant details.");
+      }
     } catch (err) {
       console.error("Error:", err.message);
       setError(err.message);
@@ -49,8 +57,12 @@ if (response.ok) {
   };
 
   useEffect(() => {
+    console.log({navigation, route});
+    
+    navigation.setOptions({ headerTitle: `Welcome ${user?.name} Profile` }); // Dynamically set the title
+    // navigation.setOptions({ headerTitle: title });
     fetchRestaurants();
-  }, []);
+  }, [navigation]);
 
   const onSignOutPressed = () => {
     Alert.alert("Sign Out", `User Signed out successfully!`, [
@@ -67,44 +79,61 @@ if (response.ok) {
   const onRefresh = () => {
     setRefreshing(true);
     fetchRestaurants()
-      .then(() => setRefreshing(false))  // Stop refreshing after data fetch
+      .then(() => setRefreshing(false)) // Stop refreshing after data fetch
       .catch(() => setRefreshing(false)); // Handle any errors
   };
 
   const renderRestaurant = ({ item }) => (
-    <View style={styles.restaurantCard}>
-      <Image source={{ uri: item.images[0] }} style={styles.restaurantImage} />
-      <View style={styles.restaurantInfo}>
-        <Text style={styles.restaurantName}>{item.title || "N/A"}</Text>
-        <Text style={styles.restaurantDescription} numberOfLines={2}>
-          {item.description || "No description available."}
-        </Text>
-        <View style={styles.ratingContainer}>
-          {Array.from({ length: item.expensiveRating }, (_, index) => (
-            <FontAwesome
-              key={index}
-              name="dollar"
-              size={15}
-              color="#DAA520"
-            />
-          ))}
+    <TouchableOpacity
+      onPress={() =>
+        navigation.navigate("RestaurantScreen", { restaurant: item })
+      }
+    >
+      <View style={styles.restaurantCard}>
+        <Image
+          source={{ uri: item.images[0] }}
+          style={styles.restaurantImage}
+        />
+        <View style={styles.restaurantInfo}>
+          <Text style={styles.restaurantName}>{item.title || "N/A"}</Text>
+          <Text style={styles.restaurantDescription} numberOfLines={2}>
+            {item.description || "No description available."}
+          </Text>
+          <View style={styles.ratingContainer}>
+            {Array.from({ length: item.expensiveRating }, (_, index) => (
+              <FontAwesome
+                key={index}
+                name="dollar"
+                size={15}
+                color="#DAA520"
+              />
+            ))}
+          </View>
+          <Text style={styles.restaurantAddress}>
+            {item.location.address || "N/A"}
+          </Text>
         </View>
-        <Text style={styles.restaurantAddress}>{item.location.address || "N/A"}</Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 
   return (
     <View style={styles.container}>
-      <View style={styles.titleSection}>
-        <Text style={styles.title}>My Profile</Text>
-      </View>
+     
       <View style={styles.profileSection}>
-        <Image source={{ uri: user?.profilePicture }} style={styles.profileImage} />
+        <Image
+          source={{ uri: user?.profilePicture }}
+          style={styles.profileImage}
+        />
         <View>
           <Text style={styles.managerName}>{user?.name}</Text>
           <View style={styles.managerNumber}>
-            <FontAwesome5 name="phone-alt" size={16} color="#666" style={{ marginRight: 5 }} />
+            <FontAwesome5
+              name="phone-alt"
+              size={16}
+              color="#666"
+              style={{ marginRight: 5 }}
+            />
             <Text>{user?.phone}</Text>
           </View>
         </View>
@@ -117,16 +146,18 @@ if (response.ok) {
         <View>
           <Text style={styles.restaurantDetailTitle}>My Restaurants</Text>
           {restaurants && restaurants.length > 0 ? (
-    <FlatList
-      data={restaurants}
-      renderItem={renderRestaurant}
-      keyExtractor={(item) => item.id.toString()}
-      style={styles.restaurantList}
-      scrollEnabled={false}
-    />
-  ) : (
-    <Text style={[styles.restaurantDetailTitle,styles.colorNoData] }>No restaurants added yet.</Text>
-  )}
+            <FlatList
+              data={restaurants}
+              renderItem={renderRestaurant}
+              keyExtractor={(item) => item.id.toString()}
+              style={styles.restaurantList}
+              scrollEnabled={false}
+            />
+          ) : (
+            <Text style={[styles.restaurantDetailTitle, styles.colorNoData]}>
+              No restaurants added yet.
+            </Text>
+          )}
         </View>
 
         <View style={styles.buttonsContainer}>
@@ -169,7 +200,10 @@ if (response.ok) {
             <Text style={styles.buttonText}>View Reservations</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.signOutButton} onPress={onSignOutPressed}>
+          <TouchableOpacity
+            style={styles.signOutButton}
+            onPress={onSignOutPressed}
+          >
             <Text style={styles.signOutButtonText}>Sign Out</Text>
           </TouchableOpacity>
         </View>
@@ -212,6 +246,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 10,
     elevation: 5,
+    marginTop: 10,
   },
   profileImage: {
     width: 70,
@@ -242,7 +277,7 @@ const styles = StyleSheet.create({
   },
 
   colorNoData: {
-    color: "#9e9898"
+    color: "#9e9898",
   },
 
   restaurantList: {

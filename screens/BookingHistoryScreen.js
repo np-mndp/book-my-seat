@@ -14,8 +14,9 @@ import { useSelector } from "react-redux";
 import moment from "moment";
 import { ReactNativeModal } from "react-native-modal";
 import { ScrollView } from "react-native-gesture-handler";
+import { useFocusEffect } from "@react-navigation/native";
 
-const BookingHistoryScreen = () => {
+const BookingHistoryScreen = ({ navigation, route }) => {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -24,6 +25,14 @@ const BookingHistoryScreen = () => {
   const [recentBookingsVisible, setRecentBookingsVisible] = useState(true);
   const [oldBookingsVisible, setOldBookingsVisible] = useState(true);
   let { user, token } = useSelector((state) => state.auth);
+
+  const { title, setTitle } = route?.params;
+
+  useFocusEffect(
+    React.useCallback(() => {
+      setTitle(`My Bookings`);
+    }, [navigation])
+  );
 
   useEffect(() => {
     const fetchData = async () => {
@@ -69,8 +78,8 @@ const BookingHistoryScreen = () => {
           <View style={styles.addressContainer}>
             <MaterialIcons name="location-pin" size={16} color="#cb4539" />
             <Text style={styles.address}>
-            {selectedBooking?.Restaurant?.location?.address ?? "N/A"}
-            </Text> 
+              {selectedBooking?.Restaurant?.location?.address ?? "N/A"}
+            </Text>
           </View>
           <View style={styles.bookingDetailsContainer}>
             <Text style={styles.bookingDetail}>
@@ -100,8 +109,6 @@ const BookingHistoryScreen = () => {
 
   return (
     <ScrollView style={styles.container}>
-      <Text style={styles.headerText}>My bookings</Text>
-      {/* Recent Bookings */}
       <TouchableOpacity
         style={styles.sectionHeader}
         onPress={() => setRecentBookingsVisible(!recentBookingsVisible)}
@@ -115,18 +122,17 @@ const BookingHistoryScreen = () => {
           color="#666"
         />
       </TouchableOpacity>
-      {recentBookingsVisible && (
-  bookings.bookings && bookings.bookings.length > 0 ? (
-    <FlatList
-      data={bookings.bookings}
-      renderItem={({ item }) => renderBooking(item)}
-      keyExtractor={(item) => item.id.toString()}
-      scrollEnabled={false} // Scroll fixed for ScrollView child
-    />
-  ) : (
-    <Text style={styles.sectionHeaderText}>No booking available</Text>
-  )
-)}
+      {recentBookingsVisible &&
+        (bookings.bookings && bookings.bookings.length > 0 ? (
+          <FlatList
+            data={bookings.bookings}
+            renderItem={({ item }) => renderBooking(item)}
+            keyExtractor={(item) => item.id.toString()}
+            scrollEnabled={false} // Scroll fixed for ScrollView child
+          />
+        ) : (
+          <Text style={styles.sectionHeaderText}>No booking available</Text>
+        ))}
 
       {/* Old Bookings */}
       <TouchableOpacity
@@ -142,18 +148,17 @@ const BookingHistoryScreen = () => {
           color="#666"
         />
       </TouchableOpacity>
-      {oldBookingsVisible && (
-  bookings.pastBookings && bookings.pastBookings.length > 0 ? (
-    <FlatList
-      data={bookings.pastBookings}
-      renderItem={({ item }) => renderBooking(item)}
-      keyExtractor={(item) => item.id.toString()}
-      scrollEnabled={false} // Scroll fixed for ScrollView child
-    />
-  ) : (
-    <Text style={styles.sectionHeaderText}>No booking available</Text>
-  )
-)}
+      {oldBookingsVisible &&
+        (bookings.pastBookings && bookings.pastBookings.length > 0 ? (
+          <FlatList
+            data={bookings.pastBookings}
+            renderItem={({ item }) => renderBooking(item)}
+            keyExtractor={(item) => item.id.toString()}
+            scrollEnabled={false} // Scroll fixed for ScrollView child
+          />
+        ) : (
+          <Text style={styles.sectionHeaderText}>No booking available</Text>
+        ))}
 
       {/* Booking Details Modal */}
       <ReactNativeModal
@@ -232,7 +237,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     color: "#333",
-    textAlign: "center"
+    textAlign: "center",
   },
   bookingCard: {
     padding: 16,

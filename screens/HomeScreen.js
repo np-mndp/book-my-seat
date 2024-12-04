@@ -12,22 +12,27 @@ import {
   RefreshControl,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { API_URL } from "../configs/Constants";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { useSelector } from "react-redux";
 
-const HomeScreen = () => {
-  const navigation = useNavigation();
+const HomeScreen = ({ navigation, route }) => {
+  const { title, setTitle } = route?.params;
   const [searchQuery, setSearchQuery] = useState("");
   const [restaurants, setRestaurants] = useState([]);
   const [filteredRestaurants, setFilteredRestaurants] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const { user, token } = useSelector((state) => state.auth);
 
-  useEffect(() => {
-    fetchRestaurants();
-  }, []);
+  useFocusEffect(
+    React.useCallback(() => {
+      setTitle(`Welcome ${user?.name?.split(" ")[0]}`);
+      fetchRestaurants();
+    }, [navigation])
+  );
 
   const fetchRestaurants = async () => {
     try {
@@ -36,7 +41,7 @@ const HomeScreen = () => {
       );
       if (response.ok) {
         const json = await response.json();
-        console.log(json)
+        console.log(json);
         setRestaurants(json);
         setFilteredRestaurants(json); // Initialize filtered data
       } else {
@@ -69,7 +74,7 @@ const HomeScreen = () => {
   const onRefresh = () => {
     setRefreshing(true);
     fetchRestaurants()
-      .then(() => setRefreshing(false))  // Stop refreshing after data fetch
+      .then(() => setRefreshing(false)) // Stop refreshing after data fetch
       .catch(() => setRefreshing(false)); // Handle any errors
   };
 
@@ -101,8 +106,11 @@ const HomeScreen = () => {
                 />
               ))}
             </View>
-            <Text>{item.distance >= 1 ? `${item.distance.toFixed(0)} km(s) away` : `~${Math.round(item.distance * 1000)} meters away`}</Text>
-
+            <Text>
+              {item.distance >= 1
+                ? `${item.distance.toFixed(0)} km(s) away`
+                : `~${Math.round(item.distance * 1000)} meters away`}
+            </Text>
           </View>
         </View>
       </TouchableOpacity>
@@ -110,17 +118,19 @@ const HomeScreen = () => {
   };
 
   return (
-    <ScrollView refreshControl={
-      <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-    }
-    contentContainerStyle={styles.container}>
+    <ScrollView
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+      contentContainerStyle={styles.container}
+    >
       {/* Top Banner */}
       <View style={styles.header}>
         <Text style={styles.headerText}>Find your</Text>
         <Text style={[styles.headerText, { fontSize: 36 }]}>SEAT</Text>
         <Text style={styles.headerText}>for any occasion!</Text>
       </View>
-  
+
       {/* Search Bar */}
       <View style={styles.searchContainer}>
         <MaterialCommunityIcons name="magnify" size={24} color="#666" />
@@ -131,72 +141,88 @@ const HomeScreen = () => {
           onChangeText={handleSearch}
         />
       </View>
-  
-{/* Featured Restaurant */}
-{!loading && searchQuery.trim() === "" && filteredRestaurants.length > 0 && (
-  <View style={styles.featuredRestaurant}>
-    <Text style={styles.featuredTitle}>We thought you may like this...</Text>
-    <TouchableOpacity
-      onPress={() =>
-        navigation.navigate("Restaurant Details", {
-          restaurantData: filteredRestaurants[0],
-        })
-      }
-    >
-      <View style={styles.featuredRestaurantContent}>
-        {/* Title and Expensive Rating on the same row */}
-        <View style={styles.titleRatingContainer}>
-          <Text style={[styles.restaurantName, styles.primaryColor]}>
-            {filteredRestaurants[0].title}
-          </Text>
-          <View style={styles.ratingContainer}>
-            {Array.from({ length: filteredRestaurants[0].expensiveRating }, (_, index) => (
-              <FontAwesome
-                key={index}
-                name="dollar"
-                size={15}
-                color="#DAA520"
-              />
-            ))}
+
+      {/* Featured Restaurant */}
+      {!loading &&
+        searchQuery.trim() === "" &&
+        filteredRestaurants.length > 0 && (
+          <View style={styles.featuredRestaurant}>
+            <Text style={styles.featuredTitle}>
+              We thought you may like this...
+            </Text>
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate("Restaurant Details", {
+                  restaurantData: filteredRestaurants[0],
+                })
+              }
+            >
+              <View style={styles.featuredRestaurantContent}>
+                {/* Title and Expensive Rating on the same row */}
+                <View style={styles.titleRatingContainer}>
+                  <Text style={[styles.restaurantName, styles.primaryColor]}>
+                    {filteredRestaurants[0].title}
+                  </Text>
+                  <View style={styles.ratingContainer}>
+                    {Array.from(
+                      { length: filteredRestaurants[0].expensiveRating },
+                      (_, index) => (
+                        <FontAwesome
+                          key={index}
+                          name="dollar"
+                          size={15}
+                          color="#DAA520"
+                        />
+                      )
+                    )}
+                  </View>
+                </View>
+
+                {/* Address and Distance on the same row */}
+                <View style={styles.addressDistanceContainer}>
+                  <View style={styles.addressContainer}>
+                    <MaterialIcons
+                      name="location-pin"
+                      size={16}
+                      color="#cb4539"
+                    />
+                    <Text style={styles.address}>
+                      {filteredRestaurants[0].location.address}
+                    </Text>
+                  </View>
+                  <Text style={styles.distanceText}>
+                    {filteredRestaurants[0].distance >= 1
+                      ? `${filteredRestaurants[0].distance.toFixed(
+                          0
+                        )} km(s) away`
+                      : `~${Math.round(
+                          filteredRestaurants[0].distance * 1000
+                        )} meters away`}
+                  </Text>
+                </View>
+
+                {/* Featured Restaurant Image */}
+                <Image
+                  source={{ uri: filteredRestaurants[0].images[0] }}
+                  style={styles.featuredImage}
+                />
+              </View>
+            </TouchableOpacity>
           </View>
-        </View>
-
-        {/* Address and Distance on the same row */}
-        <View style={styles.addressDistanceContainer}>
-          <View style={styles.addressContainer}>
-            <MaterialIcons name="location-pin" size={16} color="#cb4539" />
-            <Text style={styles.address}>{filteredRestaurants[0].location.address}</Text>
-          </View>
-          <Text style={styles.distanceText}>
-            {filteredRestaurants[0].distance >= 1 
-              ? `${filteredRestaurants[0].distance.toFixed(0)} km(s) away` 
-              : `~${Math.round(filteredRestaurants[0].distance * 1000)} meters away`}
-          </Text>
-        </View>
-
-        {/* Featured Restaurant Image */}
-        <Image
-          source={{ uri: filteredRestaurants[0].images[0] }}
-          style={styles.featuredImage}
-        />
-      </View>
-    </TouchableOpacity>
-  </View>
-)}
-
+        )}
 
       {/* Restaurant List */}
-      
-   <Text style={styles.restaurantName}>
-              Or check other restaurants...
-            </Text>
-      
+
+      <Text style={styles.restaurantName}>Or check other restaurants...</Text>
+
       {loading ? (
         <ActivityIndicator size="large" color="#14AE5C" />
       ) : (
         <FlatList
           data={
-            searchQuery.trim() === "" ? filteredRestaurants.slice(1) : filteredRestaurants
+            searchQuery.trim() === ""
+              ? filteredRestaurants.slice(1)
+              : filteredRestaurants
           } // Skip the featured restaurant if no search query
           renderItem={({ item }) => listItem(item)}
           keyExtractor={(item) => item.id.toString()}
@@ -205,9 +231,7 @@ const HomeScreen = () => {
       )}
     </ScrollView>
   );
-  
 };
-
 
 const styles = StyleSheet.create({
   container: {
@@ -263,7 +287,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     color: "#14AE5C",
-    flex: 1, 
+    flex: 1,
   },
   ratingContainer: {
     flexDirection: "row",
@@ -322,6 +346,5 @@ const styles = StyleSheet.create({
     color: "#14AE5C",
   },
 });
-
 
 export default HomeScreen;

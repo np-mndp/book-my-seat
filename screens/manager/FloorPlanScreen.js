@@ -1,18 +1,29 @@
+import { useFocusEffect } from "@react-navigation/native";
 import React, { useState } from "react";
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+} from "react-native";
 
-const FloorPlanScreen = ({ navigation }) => {
+const FloorPlanScreen = ({ navigation, route }) => {
   // Initial tables data
   const [tables, setTables] = useState([
     { seats: "", tableCount: "", place: "" },
   ]);
 
+  useFocusEffect(
+    React.useCallback(() => {
+      route?.params?.setTitle(`Floor Plan`);
+    }, [navigation])
+  );
+
   // Add new table set
   const addTableSet = () => {
-    setTables([
-      ...tables,
-      { seats: "", tableCount: "", place: "" },
-    ]);
+    setTables([...tables, { seats: "", tableCount: "", place: "" }]);
   };
 
   // Remove table set
@@ -57,7 +68,9 @@ const FloorPlanScreen = ({ navigation }) => {
               style={styles.input}
               placeholder="Table Count"
               value={table.tableCount}
-              onChangeText={(text) => handleInputChange(index, "tableCount", text)}
+              onChangeText={(text) =>
+                handleInputChange(index, "tableCount", text)
+              }
               keyboardType="number-pad"
             />
 
