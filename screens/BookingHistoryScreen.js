@@ -82,10 +82,6 @@ const BookingHistoryScreen = () => {
     </TouchableOpacity>
   );
 
-  // const last7DaysBookings = bookings.bookings;
-  // console.log(last7DaysBookings)
-  // const oldBookings = bookings.pastBookings;
-
   if (loading) {
     return (
       <View style={styles.loaderContainer}>
