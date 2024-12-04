@@ -78,7 +78,7 @@ const SetLocationScreen = ({ navigation }) => {
 
     try {
       const response = await fetch(
-        `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${searchQuery}&key=${GOOGLE_API_KEY}`
+        `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${searchQuery}&key=${process.env.EXPO_PUBLIC_PLACES_API_KEY}`
       );
 
       const data = await response.json();
