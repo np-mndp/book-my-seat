@@ -32,10 +32,11 @@ const HomeScreen = () => {
   const fetchRestaurants = async () => {
     try {
       const response = await fetch(
-        `${API_URL}/api/restaurants?lat=43.676022&lng=-79.411049&radius=400`
+        `${API_URL}/api/restaurants?lat=43.676022&lng=-79.411049&radius=100`
       );
       if (response.ok) {
         const json = await response.json();
+        console.log(json)
         setRestaurants(json);
         setFilteredRestaurants(json); // Initialize filtered data
       } else {
@@ -100,6 +101,8 @@ const HomeScreen = () => {
                 />
               ))}
             </View>
+            <Text>{item.distance >= 1 ? `${item.distance.toFixed(0)} km(s) away` : `~${Math.round(item.distance * 1000)} meters away`}</Text>
+
           </View>
         </View>
       </TouchableOpacity>
@@ -129,27 +132,58 @@ const HomeScreen = () => {
         />
       </View>
   
-      {/* Featured Restaurant */}
-      {!loading && searchQuery.trim() === "" && filteredRestaurants.length > 0 && (
-        <View style={styles.featuredRestaurant}>
-          <Text style={styles.featuredTitle}>We thought you may like this...</Text>
-          <TouchableOpacity
-            onPress={() =>
-              navigation.navigate("Restaurant Details", {
-                restaurantData: filteredRestaurants[0],
-              })
-            }
-          >
-            <Text style={styles.restaurantName}>
-              {filteredRestaurants[0].title}
-            </Text>
-            <Image
-              source={{ uri: filteredRestaurants[0].images[0] }}
-              style={styles.featuredImage}
-            />
-          </TouchableOpacity>
+{/* Featured Restaurant */}
+{!loading && searchQuery.trim() === "" && filteredRestaurants.length > 0 && (
+  <View style={styles.featuredRestaurant}>
+    <Text style={styles.featuredTitle}>We thought you may like this...</Text>
+    <TouchableOpacity
+      onPress={() =>
+        navigation.navigate("Restaurant Details", {
+          restaurantData: filteredRestaurants[0],
+        })
+      }
+    >
+      <View style={styles.featuredRestaurantContent}>
+        {/* Title and Expensive Rating on the same row */}
+        <View style={styles.titleRatingContainer}>
+          <Text style={[styles.restaurantName, styles.primaryColor]}>
+            {filteredRestaurants[0].title}
+          </Text>
+          <View style={styles.ratingContainer}>
+            {Array.from({ length: filteredRestaurants[0].expensiveRating }, (_, index) => (
+              <FontAwesome
+                key={index}
+                name="dollar"
+                size={15}
+                color="#DAA520"
+              />
+            ))}
+          </View>
         </View>
-      )}
+
+        {/* Address and Distance on the same row */}
+        <View style={styles.addressDistanceContainer}>
+          <View style={styles.addressContainer}>
+            <MaterialIcons name="location-pin" size={16} color="#cb4539" />
+            <Text style={styles.address}>{filteredRestaurants[0].location.address}</Text>
+          </View>
+          <Text style={styles.distanceText}>
+            {filteredRestaurants[0].distance >= 1 
+              ? `${filteredRestaurants[0].distance.toFixed(0)} km(s) away` 
+              : `~${Math.round(filteredRestaurants[0].distance * 1000)} meters away`}
+          </Text>
+        </View>
+
+        {/* Featured Restaurant Image */}
+        <Image
+          source={{ uri: filteredRestaurants[0].images[0] }}
+          style={styles.featuredImage}
+        />
+      </View>
+    </TouchableOpacity>
+  </View>
+)}
+
 
       {/* Restaurant List */}
       
@@ -209,24 +243,56 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   featuredRestaurant: {
-    marginBottom: 20,
+    marginBottom: 2,
   },
   featuredTitle: {
     fontSize: 20,
     fontWeight: "bold",
     marginBottom: 10,
   },
-  featuredImage: {
-    width: "100%",
-    height: 200,
-    borderRadius: 10,
-    alignItems: "left",
+  featuredRestaurantContent: {
+    marginBottom: 10,
+  },
+  titleRatingContainer: {
+    flexDirection: "row", // Align title and expensive rating horizontally
+    alignItems: "center", // Vertically center the items
+    justifyContent: "space-between", // Ensure there's space between title and rating
+    marginBottom: 2,
   },
   restaurantName: {
     fontSize: 18,
     fontWeight: "bold",
     color: "#14AE5C",
-    paddingBottom: 5
+    flex: 1, 
+  },
+  ratingContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  addressDistanceContainer: {
+    flexDirection: "row", // Align address and distance horizontally
+    justifyContent: "space-between", // Space between address and distance
+    // marginBottom: 10,
+  },
+  addressContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  address: {
+    fontSize: 16,
+    color: "#666",
+    marginLeft: 8,
+  },
+  distanceText: {
+    fontSize: 14,
+    color: "#666",
+    marginLeft: 8,
+  },
+  featuredImage: {
+    width: "100%",
+    height: 200,
+    borderRadius: 10,
+    marginTop: 10,
   },
   restaurantItem: {
     flexDirection: "row",
@@ -248,29 +314,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
   },
-  address: {
-    color: "#666",
-    fontSize: 14,
-  },
-  addressContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 8,
-  },
-  address: {
-    fontSize: 16,
-    color: "#666",
-    marginLeft: 8,
-  },
-  ratingContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  rating: {
-    fontSize: 16,
-    color: "#333",
-    marginRight: 8,
-  },
   expensiveness: {
     fontSize: 16,
     color: "#666",
@@ -279,5 +322,6 @@ const styles = StyleSheet.create({
     color: "#14AE5C",
   },
 });
+
 
 export default HomeScreen;

@@ -70,6 +70,7 @@ let BookingScreen = ({ navigation, route }) => {
           reservationDateTime,
         }),
       });
+      // console.log(response)
       if (response.ok) {
         Alert.alert(
           "Booking Confirmed",
@@ -80,6 +81,11 @@ let BookingScreen = ({ navigation, route }) => {
               onPress: () => navigation.navigate("Booking History"),
             },
           ]
+        );
+      }
+      else{
+        Alert.alert(
+          `Error occurred while trying to book a table for ${guests} at ${restaurant.title}`
         );
       }
     } catch (error) {
