@@ -1,5 +1,4 @@
-// TabViewScreen.js
-import React from "react";
+import React, { useEffect } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import MapScreenView from "./MapViewScreen";
 import ProfileScreen from "./ProfileScreen";
@@ -15,9 +14,27 @@ import { useSelector } from "react-redux";
 
 const Tab = createBottomTabNavigator();
 
-const TabViewScreen = ({ isManager }) => {
-  let { user } = useSelector((state) => state.auth);
-  if (user?.isManager == true) {
+const TabViewScreen = ({ navigation }) => {
+  const { user, location } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    if (!user) {
+      // If the user is not logged in, redirect to the Login screen
+      navigation.replace("Login");
+    } else if (!location.lat || !location.long) {
+      // If location is not set, navigate to SetLocation screen
+      navigation.replace("SetLocation");
+    }
+  }, [user, location, navigation]);
+
+  if (!user) {
+    // If the user is not logged in, do not render anything yet
+    return null;
+  }
+
+  // Check if the user is a manager
+  if (user.isManager === true) {
+    // Render manager's tabs
     return (
       <Tab.Navigator
         initialRouteName="Home"
@@ -62,6 +79,7 @@ const TabViewScreen = ({ isManager }) => {
       </Tab.Navigator>
     );
   } else {
+    // Render non-manager's tabs
     return (
       <Tab.Navigator
         initialRouteName="Reservation"

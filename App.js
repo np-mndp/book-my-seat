@@ -14,8 +14,7 @@ import BookingHistoryScreen from "./screens/BookingHistoryScreen";
 import AddMenuItemsScreen from "./screens/manager/AddMenuItemScreen"
 import AddRestaurantScreen from "./screens/manager/AddRestaurantScreen";
 import ReservationConfirmation from "./screens/ReservationConfirmation";
-import { loginUser } from "./actions/authActions";
-import SplashScreen from "./screens/SplashScreen";
+import SetLocationScreen from "./screens/SetLocationScreen";
 
 const Stack = createStackNavigator();
 
@@ -31,28 +30,6 @@ export default function Root() {
 
 function App() {
   let { user, token } = useSelector((state) => state.auth);
-  const dispatch = useDispatch();
-  // const { user, token } = useSelector((state) => state.auth);
-  const [isSplashVisible, setSplashVisible] = useState(true);
-  
-  // Simulate Splash Screen Timeout and User Authentication Check
-  useEffect(() => {
-    if (user && token) {
-      // User is logged in, navigate to TabView after splash
-      setTimeout(() => {
-        setSplashVisible(false);
-      }, 2000); // Adjust the timeout as necessary
-    } else {
-      // If not logged in, show the splash screen for a short duration before checking login state
-      setTimeout(() => {
-        setSplashVisible(false);
-      }, 2000); // Adjust the timeout for splash
-    }
-  }, [user, token]);
-
-  if (isSplashVisible) {
-    return <SplashScreen />;
-  }
   return (
     <NavigationContainer>
       <Stack.Navigator
@@ -70,12 +47,12 @@ function App() {
       >
         <Stack.Screen
           name="TabView"
-         //  component={TabViewScreen}
+          component={TabViewScreen}
           options={{
             headerTitle: "Book My Seat",
           }}
         >
-           {() => <TabViewScreen />}
+           {/* {() => <TabViewScreen />} */}
         </Stack.Screen>
         
         {/* Other Screens */}
@@ -153,6 +130,13 @@ function App() {
                 headerTitle: "Menu Items",
               }}
             />
+            <Stack.Screen
+          name="SetLocation"
+          component={SetLocationScreen}
+          options={{
+            headerTitle: "",
+          }}
+        />
       </Stack.Navigator>
       
     </NavigationContainer>
