@@ -34,5 +34,5 @@ export let loginUser = (email, password) => async (dispatch) => {
 
 export let logoutUser = () => (dispatch) => {
   // Clear the user data from the Redux store
-  dispatch(setUserData({ user: null, token: null }));
-};
+  dispatch(setUserData({ user: null, token: null, location: null }));
+};``
