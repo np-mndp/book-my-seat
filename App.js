@@ -14,7 +14,11 @@ import BookingHistoryScreen from "./screens/BookingHistoryScreen";
 import AddMenuItemsScreen from "./screens/manager/AddMenuItemScreen"
 import AddRestaurantScreen from "./screens/manager/AddRestaurantScreen";
 import ReservationConfirmation from "./screens/ReservationConfirmation";
+
 import RestaurantScreen from "./screens/manager/RestaurantScreen";
+
+import SetLocationScreen from "./screens/SetLocationScreen";
+
 
 const Stack = createStackNavigator();
 
@@ -30,7 +34,6 @@ export default function Root() {
 
 function App() {
   let { user, token } = useSelector((state) => state.auth);
-
   return (
     <NavigationContainer>
       <Stack.Navigator
@@ -52,8 +55,10 @@ function App() {
           options={{
             headerTitle: "Book My Seat",
           }}
+
         />
           
+
         
         {/* Other Screens */}
         <Stack.Screen
@@ -130,6 +135,7 @@ function App() {
                 headerTitle: "Menu Items",
               }}
             />
+
         <Stack.Screen
               name="RestaurantScreen"
               component={RestaurantScreen}
@@ -142,6 +148,15 @@ function App() {
                 },
               ]}
             />
+
+            <Stack.Screen
+          name="SetLocation"
+          component={SetLocationScreen}
+          options={{
+            headerTitle: "",
+          }}
+        />
+
       </Stack.Navigator>
       
     </NavigationContainer>

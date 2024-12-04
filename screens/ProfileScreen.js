@@ -17,7 +17,7 @@ import { useFocusEffect, useNavigation } from "@react-navigation/native";
 
 const ProfileScreen = ({ navigation, route }) => {
   const dispatch = useDispatch();
-  const { user, token } = useSelector((state) => state.auth);
+  const { location, user, token } = useSelector((state) => state.auth);
   const [bookings, setBookings] = useState(null);
   const [loading, setLoading] = useState(null);
 
@@ -38,27 +38,9 @@ const ProfileScreen = ({ navigation, route }) => {
     // navigation.setOptions({ headerTitle: title });
   }, [route]);
 
-  // Dummy data for reservations
-  const dummyBookings = [
-    {
-      id: "1",
-      restaurant: "Joe's Diner",
-      date: "2024-11-30",
-      time: "7:00 PM",
-      image:
-        "https://assets.cntraveller.in/photos/63d8e5103d7229d4cf308f01/16:9/w_1024,c_limit/Prequel-lead.jpg",
-    },
-    {
-      id: "2",
-      restaurant: "La Bella Italia",
-      date: "2024-11-25",
-      time: "6:30 PM",
-      image:
-        "https://assets.cntraveller.in/photos/63d8e5103d7229d4cf308f01/16:9/w_1024,c_limit/Prequel-lead.jpg",
-    },
-  ];
+ 
 
-  const userLocation = "Toronto, ON";
+  const userLocation = location.name;
 
   const onSignOutPressed = () => {
     Alert.alert("Sign Out", "User Signed out successfully!", [
@@ -71,6 +53,13 @@ const ProfileScreen = ({ navigation, route }) => {
       },
     ]);
   };
+
+  const onUpdateLocation = () => {
+    
+          navigation.replace("SetLocation");
+        
+  };
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -181,6 +170,21 @@ const ProfileScreen = ({ navigation, route }) => {
             </Text>
           )}
         </View>
+
+      </View>
+    )}
+  />
+) : (
+  <Text style={styles.midText}>No Booking Available, Go book a table!</Text>
+)}
+</View>
+<TouchableOpacity
+          style={styles.updateLocationButton}
+          onPress={onUpdateLocation}
+        >
+          <Text style={styles.signOutButtonText}>Update My Location</Text>
+        </TouchableOpacity>
+
         {/* Sign Out Button */}
         <TouchableOpacity
           style={styles.signOutButton}
@@ -325,6 +329,14 @@ const styles = StyleSheet.create({
   },
   signOutButton: {
     backgroundColor: "#ff4757",
+    paddingVertical: 15,
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 20,
+  },
+  updateLocationButton: {
+    backgroundColor: "#009c5b",
     paddingVertical: 15,
     borderRadius: 10,
     alignItems: "center",
