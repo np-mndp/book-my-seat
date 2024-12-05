@@ -42,15 +42,17 @@ const TabViewScreen = ({ navigation, route }) => {
     navigation.setOptions({ headerTitle: title }); // Dynamically set the title
     // navigation.setOptions({ headerTitle: title });
   }, [title]);
-  useEffect(() => {
-    if (!user) {
-      // If the user is not logged in, redirect to the Login screen
-      navigation.replace("Login");
-    } else if (!location?.lat || !location?.long) {
-      // If location is not set, navigate to SetLocation screen
-      navigation.replace("SetLocation");
-    }
-  }, [user, location, navigation]);
+
+
+  // useEffect(() => {
+  //   if (!user) {
+  //     // If the user is not logged in, redirect to the Login screen
+  //     navigation.replace("Login");
+  //   } else if (!location?.lat || !location?.long) {
+  //     // If location is not set, navigate to SetLocation screen
+  //     navigation.replace("SetLocation");
+  //   }
+  // }, [user, location, navigation]);
 
   if (!user) {
     // If the user is not logged in, do not render anything yet

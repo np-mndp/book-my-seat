@@ -14,6 +14,19 @@ const SetLocationScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(false); // For loading state
   const dispatch = useDispatch();
 
+
+  useEffect(() => {
+    if (!user) {
+      // If the user is not logged in, redirect to the Login screen
+      navigation.replace("Login");
+    } 
+    if (user?.isManager === true)
+      {
+        navigation.replace("TabView");
+    }
+  }, []);
+
+  
   // Handle getting the current location
   const handleGetCurrentLocation = async () => {
     try {
