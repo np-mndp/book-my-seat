@@ -3,9 +3,8 @@ import {
   View,
   Text,
   StyleSheet,
-  TouchableOpacity,
   FlatList,
-  ActivityIndicator,
+  ActivityIndicator, RefreshControl,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons"; // For icons
 import { API_URL } from "../../configs/Constants";
@@ -15,61 +14,63 @@ import { useFocusEffect } from "@react-navigation/native";
 
 const ReservationsScreen = ({ navigation, route }) => {
   let { user, token } = useSelector((state) => state.auth);
-  const [bookings, setBookings] = useState({});
+  const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { title, setTitle } = route?.params;
+  const [refreshing, setRefreshing] = useState(false);
+
   useFocusEffect(
     React.useCallback(() => {
       setTitle(`Reservations`);
     }, [navigation])
   );
-  // Dummy data for reservations
-  const reservations = [
-    { id: "1", name: "John Doe", people: 4, time: "12:30 PM" },
-    { id: "2", name: "Jane Smith", people: 2, time: "1:00 PM" },
-    { id: "3", name: "Sam Wilson", people: 6, time: "1:30 PM" },
-    { id: "4", name: "Anna Lee", people: 3, time: "2:00 PM" },
-    { id: "5", name: "Tommy Taylor", people: 5, time: "2:30 PM" },
-    { id: "6", name: "Emily Johnson", people: 2, time: "3:00 PM" },
-    { id: "7", name: "David Brown", people: 4, time: "3:30 PM" },
-    { id: "8", name: "Sarah White", people: 7, time: "4:00 PM" },
-  ];
-
-  // Calculate first and last reservation times and total people
-  const firstResoTime = reservations[0]?.time;
-  const lastResoTime = reservations[reservations.length - 1]?.time;
-  const totalPeople = reservations.reduce(
-    (total, res) => total + res.people,
-    0
-  );
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(`${API_URL}/api/bookings`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (response.ok) {
-          const json = await response.json();
-          setBookings(json.bookings);
-        } else {
-          throw new Error(`Failed to fetch ${response.status}`);
-        }
-      } catch (error) {
-        console.error("Error:", error.stack);
-        setError(error.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchData();
   }, []);
+
+  const fetchData = async () => {
+    try {
+      const response = await fetch(`${API_URL}/api/bookings`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        const json = await response.json();
+        // Sort bookings by loadIn date
+        const sortedBookings = json.bookings.sort((a, b) =>
+          moment(a.loadIn).isBefore(moment(b.loadIn)) ? -1 : 1
+        );
+        setBookings(sortedBookings);
+      } else {
+        throw new Error(`Failed to fetch ${response.status}`);
+      }
+    } catch (error) {
+      console.error("Error:", error.stack);
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    fetchData()
+      .then(() => setRefreshing(false)) // Stop refreshing after data fetch
+      .catch(() => setRefreshing(false)); // Handle any errors
+  };
+
+  // Calculate first and last reservation times and total people from API response
+  const firstResoTime = bookings.length > 0 ? moment(bookings[0].loadIn).calendar() : "";
+  const lastResoTime =
+    bookings.length > 0
+      ? moment(bookings[bookings.length - 1].loadIn).calendar()
+      : "";
+  const totalPeople = bookings.reduce((total, booking) => total + booking.guests, 0);
 
   if (loading) {
     return (
@@ -89,7 +90,6 @@ const ReservationsScreen = ({ navigation, route }) => {
 
   return (
     <View style={styles.container}>
-      {/* <Text style={styles.header}>Reservations</Text> */}
       <View style={styles.summaryContainer}>
         <View style={styles.summaryItem}>
           <MaterialIcons name="schedule" size={24} color="#2ca850" />
@@ -113,17 +113,12 @@ const ReservationsScreen = ({ navigation, route }) => {
 
       {/* List of reservations */}
       <FlatList
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         data={bookings}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <View style={styles.reservationCard}>
-            <View
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "space-between",
-              }}
-            >
+            <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
               <Text style={[styles.cardHeader, { color: "#e67e22" }]}>
                 {item.customer?.name}
               </Text>
@@ -137,18 +132,27 @@ const ReservationsScreen = ({ navigation, route }) => {
               <Text style={styles.detailText}>
                 Time: {moment(item.loadIn).calendar()}
               </Text>
+              {item.eventSpecial && (
+                <Text style={styles.detailText}>Event: {item.eventSpecial}</Text>
+              )}
+              {item.note && (
+                <Text style={styles.detailText}>Note: {item.note}</Text>
+              )}
+              {item.specialAccomodations && (
+               <Text style={styles.detailText}>
+               {`Special Accommodations: ${
+                 item.specialAccomodations && Object.keys(item.specialAccomodations).length > 0 
+                   ? JSON.stringify(item.specialAccomodations) 
+                   : "N/A"
+               }`}
+             </Text>
+              
+               )}
             </View>
           </View>
         )}
         contentContainerStyle={styles.listContainer}
       />
-
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.goBack()}
-      >
-        <Text style={styles.buttonText}>Back to Profile</Text>
-      </TouchableOpacity>
     </View>
   );
 };
@@ -158,13 +162,6 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     backgroundColor: "#f7f7f7",
-  },
-  header: {
-    fontSize: 32,
-    fontWeight: "700",
-    color: "#333",
-    marginBottom: 20,
-    textAlign: "center",
   },
   summaryContainer: {
     backgroundColor: "#fff",

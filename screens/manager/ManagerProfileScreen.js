@@ -165,32 +165,6 @@ const ManagerProfileScreen = ({ navigation, route }) => {
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={styles.button}
-            onPress={() => navigation.navigate("FloorPlanScreen")}
-          >
-            <MaterialIcons
-              name="edit"
-              size={20}
-              color="white"
-              style={styles.icon}
-            />
-            <Text style={styles.buttonText}>View & Edit Floor Plan</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => navigation.navigate("ReservationsScreen")}
-          >
-            <FontAwesome5
-              name="clipboard-list"
-              size={20}
-              color="white"
-              style={styles.icon}
-            />
-            <Text style={styles.buttonText}>View Reservations</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
             style={styles.signOutButton}
             onPress={onSignOutPressed}
           >

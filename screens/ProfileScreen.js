@@ -13,30 +13,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { logoutUser } from "../actions/authActions";
 import { API_URL } from "../configs/Constants";
 import moment from "moment";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
 
-const ProfileScreen = ({ navigation, route }) => {
+const ProfileScreen = ({ navigation }) => {
   const dispatch = useDispatch();
   const { location, user, token } = useSelector((state) => state.auth);
   const [bookings, setBookings] = useState(null);
-  const [loading, setLoading] = useState(null);
-
-  const { title, setTitle } = route?.params;
-
-  useFocusEffect(
-    React.useCallback(() => {
-      setTitle(`Profile`);
-    }, [navigation])
-  );
-
-  console.log(route);
-
-  useEffect(() => {
-    console.log(route.params);
-
-    navigation.setOptions({ headerTitle: "route.name" }); // Dynamically set the title
-    // navigation.setOptions({ headerTitle: title });
-  }, [route]);
+  const [loading, setLoading] = useState(null)
 
  
 
@@ -137,39 +119,39 @@ const ProfileScreen = ({ navigation, route }) => {
         {/* Reservation List Section */}
         <View style={styles.reservationsContainer}>
           <Text style={styles.title}>Upcoming Bookings</Text>
-          {bookings?.bookings?.length > 0 ? (
-            <FlatList
-              data={bookings.bookings}
-              keyExtractor={(item) => item.id.toString()} // Ensure `item.id` is unique
-              renderItem={({ item }) => (
-                <View style={styles.bookingItem}>
-                  <Image
-                    source={{
-                      uri:
-                        item?.Restaurant?.images?.[0] || "fallback-image-uri",
-                    }}
-                    style={styles.bookingImage}
-                  />
-                  <View style={styles.bookingInfo}>
-                    <Text style={styles.restaurantName}>
-                      {item?.Restaurant?.title || "Unknown Restaurant"}
-                    </Text>
-                    <Text style={styles.bookingDetails}>
-                      Date:{" "}
-                      {moment(item?.loadIn).isValid()
-                        ? moment(item.loadIn).format("MMMM Do YYYY, h:mm a")
-                        : "Invalid Date"}
-                    </Text>
-                  </View>
-                </View>
-              )}
-            />
-          ) : (
-            <Text style={styles.midText}>
-              No Booking Available, Go book a table!
-            </Text>
-          )}
+        {bookings?.bookings?.length > 0 ? (
+  <FlatList
+    data={bookings.bookings}
+    keyExtractor={(item) => item.id.toString()} // Ensure `item.id` is unique
+    renderItem={({ item }) => (
+      <View style={styles.bookingItem}>
+        <Image
+          source={{ uri: item?.Restaurant?.images?.[0] || 'fallback-image-uri' }}
+          style={styles.bookingImage}
+        />
+        <View style={styles.bookingInfo}>
+          <Text style={styles.restaurantName}>
+            {item?.Restaurant?.title || 'Unknown Restaurant'}
+          </Text>
+          <Text style={styles.bookingDetails}>
+            Date: {moment(item?.loadIn).isValid() 
+              ? moment(item.loadIn).format("MMMM Do YYYY, h:mm a") 
+              : 'Invalid Date'}
+          </Text>
         </View>
+      </View>
+    )}
+  />
+) : (
+  <Text style={styles.midText}>No Booking Available, Go book a table!</Text>
+)}
+</View>
+<TouchableOpacity
+          style={styles.updateLocationButton}
+          onPress={onUpdateLocation}
+        >
+          <Text style={styles.signOutButtonText}>Update My Location</Text>
+        </TouchableOpacity>
         {/* Sign Out Button */}
         <TouchableOpacity
           style={styles.signOutButton}
@@ -337,7 +319,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     color: "#9e9898",
-    textAlign: "center",
+    textAlign: "center"
   },
 });
 

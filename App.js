@@ -14,6 +14,7 @@ import BookingHistoryScreen from "./screens/BookingHistoryScreen";
 import AddMenuItemsScreen from "./screens/manager/AddMenuItemScreen"
 import AddRestaurantScreen from "./screens/manager/AddRestaurantScreen";
 import ReservationConfirmation from "./screens/ReservationConfirmation";
+// import FloorPlanScreen from "./screens/manager/FloorPlanScreen";
 
 
 import SetLocationScreen from "./screens/SetLocationScreen";
@@ -147,7 +148,13 @@ function App() {
                 },
               ]}
             />
-
+ {/* <Stack.Screen
+          name="FloorPlanScreen"
+          component={FloorPlanScreen}
+          options={{
+            headerTitle: "Floor Plan",
+          }}
+        /> */}
             <Stack.Screen
           name="SetLocation"
           component={SetLocationScreen}

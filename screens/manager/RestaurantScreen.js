@@ -188,6 +188,7 @@ const RestaurantScreen = ({ route, navigation }) => {
             </View>
             {tables.map((table, index) => (
               <View
+              key={table.id}
                 style={{
                   flex: 1,
                   flexDirection: "row",
@@ -210,9 +211,10 @@ const RestaurantScreen = ({ route, navigation }) => {
         )}
 
         {menu && (
-          <View style={styles.tableWrapper}>
+          <View key={menu.id} style={styles.tableWrapper}>
             <View style={[styles.tableHeader, { backgroundColor: "#CFFCFC" }]}>
               <Text
+              
                 style={{
                   fontSize: 15,
                   fontWeight: "bold",
@@ -277,6 +279,7 @@ const RestaurantScreen = ({ route, navigation }) => {
             </View>
             {menu.map((item, index) => (
               <View
+              key={menu.id}
                 style={{
                   flex: 1,
                   flexDirection: "row",

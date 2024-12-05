@@ -4,7 +4,6 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import MapScreenView from "./MapViewScreen";
 import ProfileScreen from "./ProfileScreen";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import RestaurantListScreen from "./RestaurantListScreen";
 import BookingHistoryScreen from "./BookingHistoryScreen";
 import ReservationsScreen from "./manager/ReservationsScreen";
 import FloorPlanScreen from "./manager/FloorPlanScreen";
@@ -12,7 +11,6 @@ import AddRestaurantScreen from "./manager/AddRestaurantScreen";
 import ManagerProfileScreen from "./manager/ManagerProfileScreen";
 import HomeScreen from "./HomeScreen";
 import { useSelector } from "react-redux";
-import { useNavigation } from "@react-navigation/native";
 
 const Tab = createBottomTabNavigator();
 
@@ -117,6 +115,9 @@ const TabViewScreen = ({ navigation, route }) => {
           name="Profile"
           component={ProfileScreen}
           initialParams={{ title, setTitle }}
+          options={{
+            headerTitle: "Restaurants",
+          }}
         />
         <Tab.Screen
           name="MyBookings"
@@ -129,7 +130,7 @@ const TabViewScreen = ({ navigation, route }) => {
     // Render non-manager's tabs
     return (
       <Tab.Navigator
-        initialRouteName="Reservation"
+        initialRouteName="Home"
         options={{
           headerTitle: "Welcome !",
         }}
@@ -147,7 +148,7 @@ const TabViewScreen = ({ navigation, route }) => {
               case "FloorPlan":
                 iconName = "floor-plan";
                 break;
-              case "ManagerProfile":
+              case "Home":
                 iconName = "account-tie";
                 break;
               default:
@@ -168,25 +169,26 @@ const TabViewScreen = ({ navigation, route }) => {
         })}
       >
         <Tab.Screen
+      name="Home"
+      component={ManagerProfileScreen}
+      initialParams={{ title, setTitle }}
+    />
+        <Tab.Screen
           name="Reservation"
           component={ReservationsScreen}
           initialParams={{ title, setTitle }}
         />
-        <Tab.Screen
+        {/* <Tab.Screen
           name="AddRestaurant"
           component={AddRestaurantScreen}
           initialParams={{ title, setTitle }}
-        />
-        <Tab.Screen
+        /> */}
+        {/* <Tab.Screen
           name="FloorPlan"
           component={FloorPlanScreen}
           initialParams={{ title, setTitle }}
-        />
-        <Tab.Screen
-          name="ManagerProfile"
-          component={ManagerProfileScreen}
-          initialParams={{ title, setTitle }}
-        />
+        /> */}
+        
       </Tab.Navigator>
     );
   }
