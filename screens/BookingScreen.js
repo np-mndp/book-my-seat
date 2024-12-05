@@ -75,13 +75,16 @@ let BookingScreen = ({ navigation, route }) => {
       });
       // console.log(response)
       if (response.ok) {
+        
+        const json = await response.json();
+        console.log(json)
         Alert.alert(
           "Booking Confirmed",
           `Your table for ${guests} at ${restaurant.title} has been booked!`,
           [
             {
               text: "OK",
-              onPress: () => navigation.navigate("Booking History", {title: restaurant.title}),
+              onPress: () => navigation.navigate("Reservation Confirmation", {title: restaurant.title, reservationData: json}),
             },
           ]
         );

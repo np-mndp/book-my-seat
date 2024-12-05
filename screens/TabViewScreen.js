@@ -61,7 +61,7 @@ const TabViewScreen = ({ navigation, route }) => {
     // Render user's tabs
     return (
       <Tab.Navigator
-        initialRouteName="SetLocation"
+        initialRouteName="Home"
         options={{
           headerTitle: "ASDADSADADSADAS",
         }}
