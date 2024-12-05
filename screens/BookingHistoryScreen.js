@@ -76,7 +76,7 @@ const BookingHistoryScreen = ({ navigation, route }) => {
           <View style={styles.addressContainer}>
             <MaterialIcons name="location-pin" size={16} color="#cb4539" />
             <Text style={styles.address}>
-              {selectedBooking?.Restaurant?.location?.address ?? "N/A"}
+              {item?.Restaurant?.location?.address ?? "N/A"}
             </Text>
           </View>
           <View style={styles.bookingDetailsContainer}>

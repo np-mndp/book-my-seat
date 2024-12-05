@@ -196,6 +196,7 @@ const AddRestaurantScreen = ({ navigation, route }) => {
         />
         {places?.length > 0 && (
           <FlatList
+            scrollEnabled={false}
             data={places}
             keyExtractor={(item) => item.place_id}
             renderItem={({ item }) => (

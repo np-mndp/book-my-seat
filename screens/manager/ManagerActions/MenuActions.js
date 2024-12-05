@@ -270,7 +270,6 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     paddingHorizontal: 12,
     backgroundColor: "#fafafa",
-    fontFamily: "Roboto-Regular",
     fontSize: 16,
   },
   textArea: {
@@ -289,7 +288,6 @@ const styles = StyleSheet.create({
   },
   typeLabel: {
     fontSize: 16,
-    fontFamily: "Roboto-Regular",
     marginRight: 10,
     alignSelf: "center",
   },
@@ -305,7 +303,6 @@ const styles = StyleSheet.create({
   },
   typeButtonText: {
     color: "#fff",
-    fontFamily: "Roboto-Bold",
     fontSize: 16,
   },
   addButton: {
@@ -321,7 +318,6 @@ const styles = StyleSheet.create({
   addButtonText: {
     color: "#fff",
     fontSize: 16,
-    fontFamily: "Roboto-Bold",
   },
   submitButton: {
     backgroundColor: "#4CAF50",
@@ -336,7 +332,6 @@ const styles = StyleSheet.create({
   submitButtonText: {
     color: "#fff",
     fontSize: 16,
-    fontFamily: "Roboto-Bold",
   },
   deleteButton: {
     marginTop: 10,
