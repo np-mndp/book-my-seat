@@ -37,7 +37,7 @@ const TabViewScreen = ({ navigation, route }) => {
   // };
 
   useEffect(() => {
-    console.log(route);
+    // console.log(route);
 
     navigation.setOptions({ headerTitle: title }); // Dynamically set the title
     // navigation.setOptions({ headerTitle: title });

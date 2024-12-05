@@ -14,7 +14,6 @@ import { useSelector } from "react-redux";
 import moment from "moment";
 import { ReactNativeModal } from "react-native-modal";
 import { ScrollView } from "react-native-gesture-handler";
-import { useFocusEffect } from "@react-navigation/native";
 
 const BookingHistoryScreen = ({ navigation, route }) => {
   const [bookings, setBookings] = useState([]);
