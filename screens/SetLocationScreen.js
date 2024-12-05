@@ -134,7 +134,7 @@ const SetLocationScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       {/* Splash Screen Image */}
-      <Image source={require("../assets/favicon.png")} style={styles.image} />
+      <Image source={require("../assets/table.jpg")} style={styles.image} />
 
       <Text style={styles.title}>Welcome to Book My Seat</Text>
       <Text style={styles.subtitle}>Let's update your location to show you restaurants nearby</Text>
@@ -188,11 +188,13 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     backgroundColor: "#FFF",
+    alignItems: "center"
   },
   image: {
-    width: 100,
-    height: 100,
-    marginBottom: 20,
+    width: 150,
+    height: 150,
+    // marginBottom: 20,
+    alignItems: "center"
   },
   title: {
     fontSize: 30,
@@ -216,9 +218,11 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     marginBottom: 20,
     fontSize: 16,
+    
   },
   button: {
     backgroundColor: "#009c5b",
+    width: "100%",
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 10,
