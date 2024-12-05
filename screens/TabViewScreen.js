@@ -36,33 +36,32 @@ const TabViewScreen = ({ navigation, route }) => {
 
   useEffect(() => {
     // console.log(route);
-
+    // console.log(user?.isManager)
     navigation.setOptions({ headerTitle: title }); // Dynamically set the title
     // navigation.setOptions({ headerTitle: title });
   }, [title]);
 
 
-  // useEffect(() => {
-  //   if (!user) {
-  //     // If the user is not logged in, redirect to the Login screen
-  //     navigation.replace("Login");
-  //   } else if (!location?.lat || !location?.long) {
-  //     // If location is not set, navigate to SetLocation screen
-  //     navigation.replace("SetLocation");
-  //   }
-  // }, [user, location, navigation]);
+  useEffect(() => {
+    if (!user) {
+      // If the user is not logged in, redirect to the Login screen
+      navigation.replace("Login");
+    } 
+    
+    else if (!user?.isManager && !location?.lat) {
+      // If location is not set, navigate to SetLocation screen
+      navigation.replace("SetLocation");
+    }
+  }, [user, location, navigation]);
 
-  if (!user) {
-    // If the user is not logged in, do not render anything yet
-    return null;
-  }
+  
 
   // Check if the user is a manager
-  if (user.isManager === false) {
-    // Render manager's tabs
+  if (user?.isManager === false) {
+    // Render user's tabs
     return (
       <Tab.Navigator
-        initialRouteName="Home"
+        initialRouteName="SetLocation"
         options={{
           headerTitle: "ASDADSADADSADAS",
         }}
@@ -127,7 +126,7 @@ const TabViewScreen = ({ navigation, route }) => {
       </Tab.Navigator>
     );
   } else {
-    // Render non-manager's tabs
+    // Render manager's tabs
     return (
       <Tab.Navigator
         initialRouteName="Home"

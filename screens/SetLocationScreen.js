@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect} from "react";
 import { View, Text, TextInput, TouchableOpacity, FlatList, Alert, Image, StyleSheet, ActivityIndicator } from "react-native";
 import { useDispatch } from "react-redux";
 import * as Location from "expo-location";
 import { setUserLocation } from "../reducers/authReducer";
+import { useSelector } from "react-redux";
 
 // Google API Key for location fetching
 // const GOOGLE_API_KEY = process.env.EXPO_PUBLIC_PLACES_API_KEY; // Replace with your Google API key
@@ -12,19 +13,22 @@ const SetLocationScreen = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [places, setPlaces] = useState([]);
   const [loading, setLoading] = useState(false); // For loading state
+  const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
 
   useEffect(() => {
+    console.log(user.isManager);
+  
     if (!user) {
       // If the user is not logged in, redirect to the Login screen
       navigation.replace("Login");
-    } 
-    if (user?.isManager === true)
-      {
-        navigation.replace("TabView");
+    } else if (user?.isManager === true) {
+      // If the user is a manager, redirect to TabView
+      navigation.replace("TabView");
     }
-  }, []);
+  }, [user, navigation]); // Make sure to add user and navigation as dependencies
+  
 
   
   // Handle getting the current location

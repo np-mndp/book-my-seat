@@ -214,7 +214,6 @@ const RestaurantScreen = ({ route, navigation }) => {
           <View key={menu.id} style={styles.tableWrapper}>
             <View style={[styles.tableHeader, { backgroundColor: "#CFFCFC" }]}>
               <Text
-              
                 style={{
                   fontSize: 15,
                   fontWeight: "bold",
