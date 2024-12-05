@@ -46,7 +46,6 @@ export default {
       [
         "expo-notifications",
         {
-          icon: "./assets/notification-icon.png",
           color: "#ffffff",
           notificationPermission: {
             allowAlert: true,
