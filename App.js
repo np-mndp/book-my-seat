@@ -66,7 +66,7 @@ function App() {
           name="Login"
           component={LoginScreen}
           options={{
-            headerTitle: "Welcome to Book MY Seat",
+            headerTitle: "Book My Seat",
           }}
         />
         <Stack.Screen
@@ -83,13 +83,6 @@ function App() {
             headerTitle: "Sign Up",
           }}
         />
-        {/* <Stack.Screen
-          name="Restaurant List"
-          component={RestaurantListScreen}
-          options={{
-            headerTitle: "Restaurants",
-          }}
-        /> */}
         <Stack.Screen
           name="Booking Screen"
           component={BookingScreen}

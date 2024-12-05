@@ -13,7 +13,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { logoutUser } from "../actions/authActions";
 import { API_URL } from "../configs/Constants";
 import moment from "moment";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useFocusEffect } from "@react-navigation/native";
 
 const ProfileScreen = ({ navigation, route }) => {
   const dispatch = useDispatch();
@@ -21,7 +21,7 @@ const ProfileScreen = ({ navigation, route }) => {
   const [bookings, setBookings] = useState(null);
   const [loading, setLoading] = useState(null);
 
-  const { title, setTitle } = route?.params;
+  const { setTitle } = route?.params;
 
   useFocusEffect(
     React.useCallback(() => {
@@ -170,6 +170,13 @@ const ProfileScreen = ({ navigation, route }) => {
             </Text>
           )}
         </View>
+        <TouchableOpacity
+          style={styles.updateLocationButton}
+          onPress={onUpdateLocation}
+        >
+          <Text style={styles.signOutButtonText}>Update My Location</Text>
+        </TouchableOpacity>
+
         {/* Sign Out Button */}
         <TouchableOpacity
           style={styles.signOutButton}
@@ -189,12 +196,12 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    padding: 20,
+    padding: 10,
   },
   profileCard: {
     flexDirection: "row",
     backgroundColor: "#fff",
-    padding: 20,
+    padding: 10,
     borderRadius: 12,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 6 },
@@ -242,14 +249,14 @@ const styles = StyleSheet.create({
   },
   detailsCard: {
     backgroundColor: "#fff",
-    padding: 20,
+    padding: 10,
     borderRadius: 12,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 8,
-    marginBottom: 15,
+    marginBottom: 5,
   },
   infoRow: {
     flexDirection: "row",
@@ -317,7 +324,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 20,
+    marginTop: 2,
   },
   updateLocationButton: {
     backgroundColor: "#009c5b",
@@ -325,7 +332,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 20,
+    marginTop: 5,
   },
   signOutButtonText: {
     color: "#fff",

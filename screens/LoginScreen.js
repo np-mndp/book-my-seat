@@ -11,8 +11,8 @@ import { useDispatch } from "react-redux";
 import { loginUser } from "../actions/authActions";
 
 let LoginScreen = ({ navigation }) => {
-  let [email, setEmail] = useState("radwane@gmail.com");
-  let [password, setPassword] = useState("Radwane1234*");
+  let [email, setEmail] = useState("biraj@gmail.com");
+  let [password, setPassword] = useState("Biraj1234*");
   let [error, setError] = useState(null);
   const [isDisabled, setIsDisabled] = useState(false);
   let dispatch = useDispatch();

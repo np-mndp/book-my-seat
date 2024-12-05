@@ -14,7 +14,7 @@ import { useSelector } from "react-redux";
 import moment from "moment";
 import { ReactNativeModal } from "react-native-modal";
 import { ScrollView } from "react-native-gesture-handler";
-// import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect } from "@react-navigation/native";
 import * as Notifications from 'expo-notifications';
 
 
@@ -28,15 +28,16 @@ const BookingHistoryScreen = ({ navigation, route }) => {
   const [oldBookingsVisible, setOldBookingsVisible] = useState(true);
   let { user, token } = useSelector((state) => state.auth);
   const [notificationIds, setNotificationIds] = useState({});
+  const { setTitle } = route?.params;
 
-
-  // const { title, setTitle } = route?.params;
-
-  // useFocusEffect(
-  //   navigation.setOptions({ title: title }),[navigation] // Set screen title
-  // );
+  useFocusEffect(
+    React.useCallback(() => {
+      setTitle(`My Bookings`);
+    }, [navigation])
+  );
 
   useEffect(() => {
+    // setTitle(`My Bookings`);
     fetchData();
     requestPermissions();
   }, []);
