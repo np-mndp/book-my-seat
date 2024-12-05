@@ -35,7 +35,7 @@ const MapScreenView = ({ navigation, route })=> {
   const [loading, setLoading] = useState(false); // State for loader visibility
   const [currentLocationMarker, setCurrentLocationMarker] = useState();
   const [restaurants, setRestaurants] = useState(); //results from backend
-  const [sliderValue, setSliderValue] = useState(100000);
+  const [sliderValue, setSliderValue] = useState(10);
 
   const sliderValues = [10, 20, 30, 40, 50];
   const snapPoints = useMemo(() => ["25%", "50%", "70%"], []);
