@@ -25,12 +25,14 @@ const BookingHistoryScreen = ({ navigation, route }) => {
   const [recentBookingsVisible, setRecentBookingsVisible] = useState(true);
   const [oldBookingsVisible, setOldBookingsVisible] = useState(true);
   let { token } = useSelector((state) => state.auth);
-  const { setTitle } = route?.params;
 
-
+  const setTitle = route?.params?.setTitle || null;
   useFocusEffect(
     React.useCallback(() => {
+      if(setTitle){
       setTitle(`Booking History`);
+      }
+
     }, [navigation])
   );
 
