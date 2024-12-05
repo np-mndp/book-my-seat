@@ -3,57 +3,105 @@ import {
   View,
   Text,
   Image,
-  FlatList,
   StyleSheet,
   TouchableOpacity,
   ActivityIndicator,
+  FlatList,
+  ScrollView,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import commonStyles from "../assets/styles";
 import { API_URL } from "../configs/Constants";
-import { MaterialCommunityIcons } from "@expo/vector-icons"; // Importing MaterialIcons for food icons
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useSelector } from "react-redux";
 
 const RestaurantDetailScreen = ({ route }) => {
   const navigation = useNavigation();
   const { restaurantData } = route.params;
-
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [selectedRestaurant, setSelectedRestaurant] = useState({});
+  const [menu, setMenu] = useState([]);
+  const { token } = useSelector((state) => state.auth);
 
   useEffect(() => {
     navigation.setOptions({ title: restaurantData.title });
-
-    const fetchData = async () => {
-      try {
-        const response = await fetch(
-          `${API_URL}/api/restaurants/${restaurantData.id}`,
-          { method: "GET" }
-        );
-
-        if (response.ok) {
-          const json = await response.json();
-          if (json) {
-            setSelectedRestaurant(json);
-          } else {
-            setError(`No such restaurant ${restaurantData.title} found`);
-          }
-        } else {
-          throw new Error("Failed to fetch");
-        }
-      } catch (error) {
-        setError(error.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
+    fetchRestroData();
+    fetchMenu();
   }, [navigation, restaurantData.id]);
+
+  const fetchMenu = async () => {
+    try {
+      const response = await fetch(
+        `${API_URL}/api/restaurants/${restaurantData.id}/menu`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.ok) {
+        const json = await response.json();
+        setMenu(json);
+      } else {
+        console.error("Failed to fetch restaurant menu.");
+        setMenu([]);
+      }
+    } catch (err) {
+      console.error("Error:", err.message);
+      setError(err.message);
+      setMenu([]);
+    }
+  };
+
+  const fetchRestroData = async () => {
+    try {
+      const response = await fetch(
+        `${API_URL}/api/restaurants/${restaurantData.id}`,
+        { method: "GET" }
+      );
+
+      if (response.ok) {
+        const json = await response.json();
+        setSelectedRestaurant(json);
+      } else {
+        throw new Error("Failed to fetch");
+      }
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const renderMenuItem = ({ item }) => (
+    <View style={styles.menuItem}>
+      <Image
+        source={{ uri: item.images && item.images[0] }}
+        style={styles.menuImage}
+      />
+      <View style={{ flex: 1 }}>
+        <Text style={styles.menuItemTitle}>{item.menuItem}</Text>
+        <Text style={styles.menuItemDetails}>
+          ${item.price} | {item.calories} cal
+        </Text>
+      </View>
+    </View>
+  );
+
+  const groupedMenu = menu.reduce((acc, item) => {
+    if (!acc[item.type]) {
+      acc[item.type] = [];
+    }
+    acc[item.type].push(item);
+    return acc;
+  }, {});
 
   if (loading) {
     return (
-      <View style={styles.container}>
+      <View style={styles.loaderContainer}>
         <ActivityIndicator size="large" color="#0000ff" />
       </View>
     );
@@ -61,79 +109,75 @@ const RestaurantDetailScreen = ({ route }) => {
 
   if (error) {
     return (
-      <View style={styles.container}>
-        <Text style={styles.text}>{error}</Text>
+      <View style={styles.errorContainer}>
+        <Text style={styles.errorText}>{error}</Text>
       </View>
     );
   }
 
-  const restaurant = {
-    name: selectedRestaurant.title || restaurantData.title,
-    description:
-      "A cozy restaurant serving a variety of delicious dishes made from fresh ingredients. Enjoy our warm atmosphere and friendly service.",
-    image: selectedRestaurant.thumbnail || restaurantData.thumbnail,
-    foodMenu: selectedRestaurant.foodMenu || [
-      { id: 1, title: "Spaghetti Carbonara", price: "$12.99", icon: "pasta" },
-      { id: 2, title: "Grilled Salmon", price: "$15.99", icon: "fish" },
-      { id: 3, title: "Caesar Salad", price: "$10.99", icon: "leaf" },
-    ],
-    beverageMenu: selectedRestaurant.beverageMenu || [
-      { id: 1, title: "Coca Cola", price: "$1.99" },
-      { id: 2, title: "Fresh Orange Juice", price: "$3.50" },
-      { id: 3, title: "Craft Beer", price: "$5.00" },
-    ],
-  };
-
-  const renderMenuItem = ({ item }) => (
-    <View style={styles.menuItem}>
-      <MaterialCommunityIcons
-        name={item.icon || "food"}
-        size={24}
-        color="#000"
-        style={styles.menuItemIcon}
-      />
-      <Text style={styles.menuItemTitle}>{item.title}</Text>
-      <Text style={styles.menuItemPrice}>{item.price}</Text>
-    </View>
-  );
-
-  const handlePress = () => {
-    navigation.navigate("Booking Screen", { restaurant: selectedRestaurant });
-  };
-
   return (
-    <View style={styles.container}>
-      <Image
-        source={{ uri: selectedRestaurant.images[0] }}
-        style={styles.image}
-      />
-      <Text style={styles.description}>{selectedRestaurant.description}</Text>
+    <View>
+      <ScrollView contentContainerStyle={styles.container}>
+        <Image
+          source={{ uri: selectedRestaurant.images && selectedRestaurant.images[0] }}
+          style={styles.image}
+        />
+        <Text style={styles.description}>{selectedRestaurant.description}</Text>
 
-      <Text style={styles.menuHeader}>Food Menu</Text>
-      <FlatList
-        data={restaurant.foodMenu}
-        renderItem={renderMenuItem}
-        keyExtractor={(item) => item.id.toString()}
-      />
+        {Object.keys(groupedMenu).length > 0 ? (
+          Object.keys(groupedMenu).map((type) => (
+            <View key={type}>
+              <Text style={styles.menuHeader}>{type} Menu</Text>
+              <FlatList
+                data={groupedMenu[type]}
+                keyExtractor={(item) => item.id.toString()}
+                renderItem={renderMenuItem}
+                scrollEnabled={false}
+              />
+            </View>
+          ))
+        ) : (
+          <Text style={styles.noMenuText}>
+            No menu available for this restaurant.
+          </Text>
+        )}
 
-      <Text style={styles.menuHeader}>Beverage Menu</Text>
-      <FlatList
-        data={restaurant.beverageMenu}
-        renderItem={renderMenuItem}
-        keyExtractor={(item) => item.id.toString()}
-      />
-      <TouchableOpacity style={commonStyles.button} onPress={handlePress}>
-        <Text style={commonStyles.buttonText}>Book My Seat</Text>
-      </TouchableOpacity>
+        <TouchableOpacity
+          style={commonStyles.button}
+          onPress={() =>
+            navigation.navigate("Booking Screen", {
+              restaurant: selectedRestaurant,
+            })
+          }
+        >
+          <Text style={commonStyles.buttonText}>Book My Seat</Text>
+        </TouchableOpacity>
+      </ScrollView>
     </View>
   );
 };
 
+export default RestaurantDetailScreen;
+
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     padding: 16,
     backgroundColor: "#fff",
+  },
+  loaderContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  errorText: {
+    fontSize: 18,
+    color: "red",
   },
   image: {
     width: "100%",
@@ -156,27 +200,28 @@ const styles = StyleSheet.create({
   menuItem: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
     paddingVertical: 12,
     borderBottomWidth: 1,
     borderBottomColor: "#ccc",
   },
-  menuItemIcon: {
+  menuImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 8,
     marginRight: 10,
   },
   menuItemTitle: {
     fontSize: 16,
     flex: 1,
   },
-  menuItemPrice: {
-    fontSize: 16,
+  menuItemDetails: {
+    fontSize: 14,
     color: "#888",
   },
-  text: {
+  noMenuText: {
+    fontSize: 16,
+    color: "#888",
     textAlign: "center",
-    fontSize: 18,
-    color: "red",
+    marginVertical: 10,
   },
 });
-
-export default RestaurantDetailScreen;
