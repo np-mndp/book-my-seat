@@ -56,11 +56,7 @@ function App() {
           options={{
             headerTitle: "Book My Seat",
           }}
-
         />
-          
-
-        
         {/* Other Screens */}
         <Stack.Screen
           name="Login"

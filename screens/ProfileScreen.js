@@ -74,6 +74,7 @@ const ProfileScreen = ({ navigation, route }) => {
         if (response.ok) {
           const json = await response.json();
           setBookings(json);
+          console.log(json)
         } else {
           throw new Error("Failed to fetch");
         }
@@ -103,11 +104,12 @@ const ProfileScreen = ({ navigation, route }) => {
             <Text style={styles.profileName}>{user?.name || "John Doe"}</Text>
             <View style={styles.statsContainer}>
               <View style={styles.statBox}>
-                <Text style={styles.statValue}>10</Text>
-                <Text style={styles.statLabel}>Last Month Resos</Text>
+                <Text style={styles.statValue}>{bookings?.bookings ? bookings?.bookings.length : 0}</Text>
+                <Text style={styles.statLabel}>Upcoming Resos</Text>
               </View>
               <View style={styles.statBox}>
-                <Text style={styles.statValue}>50</Text>
+                <Text style={styles.statValue}>{bookings?.bookings?.length + bookings?.pastBookings?.length || 0}
+              </Text>
                 <Text style={styles.statLabel}>All-Time Resos</Text>
               </View>
             </View>
