@@ -111,19 +111,15 @@ const HomeScreen = ({ navigation, route }) => {
 
   return (
     <ScrollView
-      refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-      }
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       contentContainerStyle={styles.container}
     >
-      {/* Top Banner */}
       <View style={styles.header}>
         <Text style={styles.headerText}>Find your</Text>
         <Text style={[styles.headerText, { fontSize: 36 }]}>SEAT</Text>
         <Text style={styles.headerText}>for any occasion!</Text>
       </View>
 
-      {/* Search Bar */}
       <View style={styles.searchContainer}>
         <MaterialCommunityIcons name="magnify" size={24} color="#666" />
         <TextInput
@@ -134,88 +130,62 @@ const HomeScreen = ({ navigation, route }) => {
         />
       </View>
 
+      {/* Show message if no restaurants found */}
+      {filteredRestaurants.length === 0 && (
+        <View style={styles.noResultsContainer}>
+          <Text style={styles.noResultsText}>
+            There are no restaurants nearby. Try changing your location from the profile or search for a location on the map.
+          </Text>
+        </View>
+      )}
+
       {/* Featured Restaurant */}
-      {!loading &&
-        searchQuery.trim() === "" &&
-        filteredRestaurants.length > 0 && (
-          <View style={styles.featuredRestaurant}>
-            <Text style={styles.featuredTitle}>
-              We thought you may like this...
-            </Text>
-            <TouchableOpacity
-              onPress={() =>
-                navigation.navigate("Restaurant Details", {
-                  restaurantData: filteredRestaurants[0],
-                })
-              }
-            >
-              <View style={styles.featuredRestaurantContent}>
-                {/* Title and Expensive Rating on the same row */}
-                <View style={styles.titleRatingContainer}>
-                  <Text style={[styles.restaurantName, styles.primaryColor]}>
-                    {filteredRestaurants[0].title}
-                  </Text>
-                  <View style={styles.ratingContainer}>
-                    {Array.from(
-                      { length: filteredRestaurants[0].expensiveRating },
-                      (_, index) => (
-                        <FontAwesome
-                          key={index}
-                          name="dollar"
-                          size={15}
-                          color="#DAA520"
-                        />
-                      )
-                    )}
-                  </View>
+      {!loading && searchQuery.trim() === "" && filteredRestaurants.length > 0 && (
+        <View style={styles.featuredRestaurant}>
+          <Text style={styles.featuredTitle}>We thought you may like this...</Text>
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate("Restaurant Details", { restaurantData: filteredRestaurants[0] })
+            }
+          >
+            <View style={styles.featuredRestaurantContent}>
+              <View style={styles.titleRatingContainer}>
+                <Text style={[styles.restaurantName, styles.primaryColor]}>
+                  {filteredRestaurants[0].title}
+                </Text>
+                <View style={styles.ratingContainer}>
+                  {Array.from({ length: filteredRestaurants[0].expensiveRating }, (_, index) => (
+                    <FontAwesome key={index} name="dollar" size={15} color="#DAA520" />
+                  ))}
                 </View>
-
-                {/* Address and Distance on the same row */}
-                <View style={styles.addressDistanceContainer}>
-                  <View style={styles.addressContainer}>
-                    <MaterialIcons
-                      name="location-pin"
-                      size={16}
-                      color="#cb4539"
-                    />
-                    <Text style={styles.address}>
-                      {filteredRestaurants[0].location.address}
-                    </Text>
-                  </View>
-                  <Text style={styles.distanceText}>
-                    {filteredRestaurants[0].distance >= 1
-                      ? `${filteredRestaurants[0].distance.toFixed(
-                          0
-                        )} km(s) away`
-                      : `~${Math.round(
-                          filteredRestaurants[0].distance * 1000
-                        )} meters away`}
-                  </Text>
-                </View>
-
-                {/* Featured Restaurant Image */}
-                <Image
-                  source={{ uri: filteredRestaurants[0].images[0] }}
-                  style={styles.featuredImage}
-                />
               </View>
-            </TouchableOpacity>
-          </View>
-        )}
 
-      {/* Restaurant List */}
+              <View style={styles.addressDistanceContainer}>
+                <View style={styles.addressContainer}>
+                  <MaterialIcons name="location-pin" size={16} color="#cb4539" />
+                  <Text style={styles.address}>{filteredRestaurants[0].location.address}</Text>
+                </View>
+                <Text style={styles.distanceText}>
+                  {filteredRestaurants[0].distance >= 1
+                    ? `${filteredRestaurants[0].distance.toFixed(0)} km(s) away`
+                    : `~${Math.round(filteredRestaurants[0].distance * 1000)} meters away`}
+                </Text>
+              </View>
 
-      <Text style={styles.restaurantName}>Or check other restaurants...</Text>
+              <Image source={{ uri: filteredRestaurants[0].images[0] }} style={styles.featuredImage} />
+            </View>
+          </TouchableOpacity>
+        </View>
+      )}
 
+{!loading && filteredRestaurants.length > 0 && searchQuery.trim() === "" && (
+  <Text style={styles.restaurantName}>Or check other restaurants...</Text>
+)}
       {loading ? (
         <ActivityIndicator size="large" color="#14AE5C" />
       ) : (
         <FlatList
-          data={
-            searchQuery.trim() === ""
-              ? filteredRestaurants.slice(1)
-              : filteredRestaurants
-          } // Skip the featured restaurant if no search query
+          data={searchQuery.trim() === "" ? filteredRestaurants.slice(1) : filteredRestaurants}
           renderItem={({ item }) => listItem(item)}
           keyExtractor={(item) => item.id.toString()}
           scrollEnabled={false}
