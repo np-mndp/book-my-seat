@@ -15,8 +15,6 @@ import moment from "moment";
 import { ReactNativeModal } from "react-native-modal";
 import { ScrollView } from "react-native-gesture-handler";
 import { useFocusEffect } from "@react-navigation/native";
-import * as Notifications from 'expo-notifications';
-
 
 const BookingHistoryScreen = ({ navigation, route }) => {
   const [bookings, setBookings] = useState([]);
@@ -26,100 +24,47 @@ const BookingHistoryScreen = ({ navigation, route }) => {
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [recentBookingsVisible, setRecentBookingsVisible] = useState(true);
   const [oldBookingsVisible, setOldBookingsVisible] = useState(true);
-  let { user, token } = useSelector((state) => state.auth);
-  const [notificationIds, setNotificationIds] = useState({});
+  let { token } = useSelector((state) => state.auth);
   const { setTitle } = route?.params;
+
 
   useFocusEffect(
     React.useCallback(() => {
-      setTitle(`My Bookings`);
+      setTitle(`Booking History`);
     }, [navigation])
   );
 
   useEffect(() => {
-    // setTitle(`My Bookings`);
+    const fetchData = async () => {
+      try {
+        const response = await fetch(`${API_URL}/api/bookings`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (response.ok) {
+          const json = await response.json();
+          setBookings(json);
+        } else {
+          throw new Error("Failed to fetch");
+        }
+      } catch (error) {
+        console.error("Error:", error.message);
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchData();
-    requestPermissions();
   }, []);
 
-  const requestPermissions = async () => {
-    const { status } = await Notifications.getPermissionsAsync();
-    if (status !== 'granted') {
-      const { status: newStatus } = await Notifications.requestPermissionsAsync();
-      if (newStatus !== 'granted') {
-        alert('Notification permissions are required to set reminders.');
-      }
-    }
-  };
-  
-
-  const fetchData = async () => {
-    try {
-      const response = await fetch(`${API_URL}/api/bookings`, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (response.ok) {
-        const json = await response.json();
-        setBookings(json);
-      } else {
-        throw new Error("Failed to fetch");
-      }
-    } catch (error) {
-      console.error("Error:", error.message);
-      setError(error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const scheduleNotification = async (booking) => {
-    const notificationId = await Notifications.scheduleNotificationAsync({
-      content: {
-        title: "Upcoming Booking Reminder",
-        body: `Your booking at ${booking.Restaurant.title} is in one hour.`,
-        data: { booking },
-      },
-      trigger: new Date(new Date(booking.loadIn).getTime() - 60 * 60 * 1000), // One hour before event
-    });
-    return notificationId;
-  };
-  
-  const cancelNotification = async (notificationId) => {
-    await Notifications.cancelScheduledNotificationAsync(notificationId);
-  };
-
-  const toggleModal = async (booking) => {
+  const toggleModal = (booking) => {
     setSelectedBooking(booking);
     setModalVisible(!isModalVisible);
   };
-
-  const toggleNotification = async (booking) => {
-    if (notificationIds[booking.id]) {
-      // Cancel notification
-      await cancelNotification(notificationIds[booking.id]);
-      setNotificationIds((prev) => {
-        const updated = { ...prev };
-        delete updated[booking.id];
-        return updated;
-      });
-      alert("Notification removed.");
-    } else {
-      // Schedule notification
-      const notificationId = await scheduleNotification(booking);
-      setNotificationIds((prev) => ({ ...prev, [booking.id]: notificationId }));
-  
-      // Calculate and show notification time
-      const notificationTime = new Date(new Date(booking.loadIn).getTime() - 60 * 60 * 1000);
-      alert(`Notification set for ${moment(notificationTime).format('dddd, MMMM Do YYYY, h:mm A')}`);
-    }
-  };
-  
-
-  
 
   const renderBooking = (item) => (
     <TouchableOpacity onPress={() => toggleModal(item)}>
@@ -243,26 +188,12 @@ const BookingHistoryScreen = ({ navigation, route }) => {
             <Text style={styles.modalDetail}>
               Special Occasion: {selectedBooking.eventSpecial}
             </Text>
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
-  <TouchableOpacity
-    onPress={() => toggleNotification(selectedBooking)}
-    style={[styles.notificationBox]}
-  >
-    <MaterialIcons
-      name={notificationIds[selectedBooking?.id] ? "notifications-active" : "notifications-none"}
-      size={24}
-      color="#009c5b"
-    />
-  </TouchableOpacity>
-  <TouchableOpacity
-    style={[styles.closeButton]}
-    onPress={() => setModalVisible(false)}
-  >
-    <Text style={styles.closeButtonText}>Close</Text>
-  </TouchableOpacity>
-</View>
-
-
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={() => setModalVisible(false)}
+            >
+              <Text style={styles.closeButtonText}>Close</Text>
+            </TouchableOpacity>
           </View>
         ) : (
           // Fallback content when no booking is selected
@@ -367,28 +298,16 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   closeButton: {
+    marginTop: 10,
     alignItems: "center",
-    justifyContent: "center",
     backgroundColor: "#009c5b",
     padding: 10,
-    flex: 0.65,
-    marginLeft: 5,
-    borderWidth: 1,
-    borderColor: "#009c5b", // Green border
     borderRadius: 5,
   },
   closeButtonText: {
     color: "white",
     fontSize: 16,
   },
-  notificationBox: {flex: 0.25,
-    alignItems: "center",
-    justifyContent: "center",
-    borderWidth: 1,
-    borderColor: "#009c5b", // Green border
-    padding: 8,
-    borderRadius: 5,
-}
 });
 
 export default BookingHistoryScreen;

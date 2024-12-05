@@ -24,7 +24,6 @@ export default {
       permissions: [
         "ACCESS_FINE_LOCATION",
         "ACCESS_COARSE_LOCATION",
-        "NOTIFICATIONS",
       ],
       package: "com.birajgtm.bookmyseat",
       config: {
@@ -41,23 +40,6 @@ export default {
         "expo-location",
         {
           locationAlwaysAndWhenInUsePermission: "Allow Book My Seat to use your location.",
-        },
-      ],
-      [
-        "expo-notifications",
-        {
-          color: "#ffffff",
-          notificationPermission: {
-            allowAlert: true,
-            allowBadge: true,
-            allowSound: true,
-            allowCriticalAlerts: true,
-            provideAppNotificationSettings: true,
-            alert: {
-              title: "Book My Seat Notifications",
-              body: "Stay updated with your reservations and important alerts!",
-            },
-          },
         },
       ],
       "expo-font",
