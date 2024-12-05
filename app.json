@@ -36,6 +36,13 @@
         {
           "locationAlwaysAndWhenInUsePermission": "Allow Book My Seat to use your location."
         }
+       
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/notification-icon.png"
+        }
       ],
       "expo-font" 
     ]

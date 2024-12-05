@@ -4,7 +4,7 @@ import RestaurantDetailScreen from "./screens/RestaurantDetailScreen";
 import SignupScreen from "./screens/SignupScreen";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import RestaurantListScreen from "./screens/RestaurantListScreen";
+// import RestaurantListScreen from "./screens/RestaurantListScreen";
 import TabViewScreen from "./screens/TabViewScreen";
 import { Provider, useSelector } from "react-redux";
 import store, { persistor } from "./configs/Store";
@@ -66,7 +66,7 @@ function App() {
           name="Login"
           component={LoginScreen}
           options={{
-            headerTitle: "",
+            headerTitle: "Welcome to Book MY Seat",
           }}
         />
         <Stack.Screen
@@ -80,16 +80,16 @@ function App() {
           name="Signup"
           component={SignupScreen}
           options={{
-            headerTitle: "",
+            headerTitle: "Sign Up",
           }}
         />
-        <Stack.Screen
+        {/* <Stack.Screen
           name="Restaurant List"
           component={RestaurantListScreen}
           options={{
             headerTitle: "Restaurants",
           }}
-        />
+        /> */}
         <Stack.Screen
           name="Booking Screen"
           component={BookingScreen}

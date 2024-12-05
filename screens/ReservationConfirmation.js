@@ -1,19 +1,21 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, Button, TouchableOpacity } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 
-const ReservationConfirmation = () => {
+const ReservationConfirmation = ({ route, navigation }) => {
+  const { title, reservationData } = route.params;
+
   return (
     <View style={styles.container}>
       {/* Restaurant Image */}
       <Image
-        source={{ uri: 'https://t3.ftcdn.net/jpg/03/24/73/92/360_F_324739203_keeq8udvv0P2h1MLYJ0GLSlTBagoXS48.jpg' }}
+        source={{ uri: 'https://img.freepik.com/free-vector/check-mark-green-3d_78370-4446.jpg' }}
         style={styles.restaurantImage}
       />
 
       {/* Restaurant Details */}
       <View style={styles.restaurantDetails}>
-        <Text style={styles.restaurantName}>The Good Son's Cafe and Bar</Text>
-        <Text style={styles.restaurantAddress}>123 Main St, Cityville</Text>
+        <Text style={styles.restaurantName}>Restaurant: {title}</Text>
+        <Text style={styles.restaurantAddress}>Table Number: {reservationData.TableId}</Text>
       </View>
 
       {/* Reservation Receipt */}
@@ -21,33 +23,43 @@ const ReservationConfirmation = () => {
         <Text style={styles.receiptTitle}>Reservation Confirmation</Text>
         <View style={styles.receiptRow}>
           <Text style={styles.receiptLabel}>Reference No:</Text>
-          <Text style={styles.receiptValue}>ABC12345</Text>
+          <Text style={styles.receiptValue}>{reservationData.id}</Text>
         </View>
         <View style={styles.receiptRow}>
           <Text style={styles.receiptLabel}>Name:</Text>
-          <Text style={styles.receiptValue}>John Doe</Text>
+          <Text style={styles.receiptValue}>{reservationData.customer.name}</Text>
         </View>
         <View style={styles.receiptRow}>
           <Text style={styles.receiptLabel}>Guests:</Text>
-          <Text style={styles.receiptValue}>4</Text>
+          <Text style={styles.receiptValue}>{reservationData.guests}</Text>
         </View>
         <View style={styles.receiptRow}>
           <Text style={styles.receiptLabel}>Time:</Text>
-          <Text style={styles.receiptValue}>7:30 PM</Text>
+          <Text style={styles.receiptValue}>
+            {new Date(reservationData.loadIn).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+          </Text>
         </View>
         <View style={styles.receiptRow}>
           <Text style={styles.receiptLabel}>Date:</Text>
-          <Text style={styles.receiptValue}>March 15, 2024</Text>
+          <Text style={styles.receiptValue}>
+            {new Date(reservationData.loadIn).toLocaleDateString()}
+          </Text>
         </View>
       </View>
 
       {/* Buttons */}
       <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.button} onPress={() => console.log("Call Restaurant")}>
-          <Text style={styles.buttonText}>Call Restaurant</Text>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => navigation.navigate('Booking History')}
+        >
+          <Text style={styles.buttonText}>See All Bookings</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.returnButton} onPress={() => console.log("Return")}>
-          <Text style={styles.buttonText}>Return</Text>
+        <TouchableOpacity
+          style={styles.returnButton}
+          onPress={() => navigation.navigate('TabView')}
+        >
+          <Text style={styles.buttonText}>Home Page</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -61,8 +73,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   restaurantImage: {
-    width: '100%',
-    height: 150,
+    width: 200,
+    height: 200,
   },
   restaurantDetails: {
     marginVertical: 10,
