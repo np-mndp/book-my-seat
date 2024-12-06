@@ -112,7 +112,7 @@ const AddRestaurantScreen = ({ navigation, route }) => {
         Alert.alert("Success", "Restaurant added successfully!", [
           {
             text: "OK",
-            onPress: () => navigation.navigate("ManagerProfile"), // Replace with your target screen
+            onPress: () => navigation.replace("TabView"), // Replace with your target screen
           },
         ]);
       } else {
@@ -163,7 +163,7 @@ const AddRestaurantScreen = ({ navigation, route }) => {
         />
         <TextInput
           style={styles.input}
-          placeholder="Expensive Rating (1-5)"
+          placeholder="Expensive Rating (1-3)"
           placeholderTextColor="#999"
           keyboardType="number-pad"
           value={expensiveRating}

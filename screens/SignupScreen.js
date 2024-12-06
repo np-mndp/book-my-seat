@@ -46,7 +46,7 @@ const SignupScreen = ({ navigation }) => {
           "User Created !",
           "User account has been created successfully !"
         );
-        navigation.replace("TabView");
+        navigation.replace("Login");
       } else {
         Alert.alert("Error", "Failed to create user account");
       }
